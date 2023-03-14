@@ -30,7 +30,7 @@ Neste repositório estará o código fonte do backend da plataforma de dados met
 
 ## Equipe e contato
 
-Esse projeto está sendo desenvolvido por Romildo C Marques$^1$ e Victor Gabriel F Ferrari$^2$, alunos de Tecnologia em Análise e Desenvolvimento de Sistemas ([IFPR - Foz](https://ifpr.edu.br/foz-do-iguacu/superior/tecnologia-em-analise-e-desenvolvimento-de-sistemas-superior/)), sob orientação do professor Daniel Di Domenico$^3$ e da professora Marcela Turim Koschevic$^4$
+Esse projeto está sendo desenvolvido por Romildo C Marques$^1$ e Victor Gabriel F Ferrari$^2$, alunos de Tecnologia em Análise e Desenvolvimento de Sistemas ([IFPR - Foz](https://ifpr.edu.br/foz-do-iguacu/superior/tecnologia-em-analise-e-desenvolvimento-de-sistemas-superior/)), sob orientação do professor Daniel Di Domenico$^3$ e da professora Marcela Turim Koschevic$^4$.
 
 $^1$romildodcm@gmail.com Contato
 $^2$victorfonsecaferrari@gmail.com 
