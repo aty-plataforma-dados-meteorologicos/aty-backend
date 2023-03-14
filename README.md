@@ -26,7 +26,7 @@ O backend do projeto será desenvolvido utilizando a stack [.NET Core](https://l
 
 ## O Repositório
 
-Neste repositório estará o código fonte do backend da plataforma de dados meteorológicos. O código fonte do frontend pode ser encontrado em [Frontend](https://github.com/aty-plataforma-dados-meteorologicos/aty-frontend). Ao longo do desenvolvimento, também será adicionado aqui a documentação do projeto, seja para implementar ou para usar.
+Neste repositório estará o código fonte do backend da plataforma de dados meteorológicos. O código fonte do frontend pode ser encontrado em [aty-frontend](https://github.com/aty-plataforma-dados-meteorologicos/aty-frontend). Ao longo do desenvolvimento, também será adicionado aqui a documentação do projeto, seja para implementar ou para usar.
 
 ## Equipe e contato
 
