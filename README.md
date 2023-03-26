@@ -28,6 +28,10 @@ O backend do projeto será desenvolvido utilizando a stack [.NET Core](https://l
 
 Neste repositório estará o código fonte do backend da plataforma de dados meteorológicos. O código fonte do frontend pode ser encontrado em [aty-frontend](https://github.com/aty-plataforma-dados-meteorologicos/aty-frontend). Ao longo do desenvolvimento, também será adicionado aqui a documentação do projeto, seja para implementar ou para usar.
 
+## Executar o projeto
+
+Para executar o projeto é necessário baixar a instalar a [IDE Visual Studio](https://visualstudio.microsoft.com/pt-br/downloads/), o [.NET Core 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) e instalar o banco de dados [SQL Server](https://www.microsoft.com/pt-br/sql-server/sql-server-downloads). Para o banco de dados NoSQL, é necessário baixar e instalar o [InfluxDB](https://www.influxdata.com/products/influxdb-overview/), recomendamos usar o Docker para executar instâncias com os banco de dados, para ambos tem imagem disponível no [Docker Hub](https://hub.docker.com/).
+
 ## Equipe e contato
 
 Esse projeto está sendo desenvolvido por Romildo C Marques$^1$ e Victor Gabriel F Ferrari$^2$, alunos de Tecnologia em Análise e Desenvolvimento de Sistemas ([IFPR - Foz](https://ifpr.edu.br/foz-do-iguacu/superior/tecnologia-em-analise-e-desenvolvimento-de-sistemas-superior/)), sob orientação do professor Daniel Di Domenico$^3$ e da professora Marcela Turim Koschevic$^4$.
@@ -36,3 +40,4 @@ $^1$romildodcm@gmail.com
 $^2$victorfonsecaferrari@gmail.com 
 $^3$daniel.domenico@ifpr.edu.br
 $^4$marcela.turim@ifpr.edu.br
+
