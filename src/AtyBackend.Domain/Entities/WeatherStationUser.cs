@@ -1,4 +1,5 @@
 ﻿using AtyBackend.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtyBackend.Domain.Entities
 {
@@ -7,7 +8,9 @@ namespace AtyBackend.Domain.Entities
         public int WeatherStationId { get; set; }
         public WeatherStation WeatherStation { get; set; }
 
-        public int ApplicationUserId { get; set; }
+        public string ApplicationUserId { get; set; }
+
+        [NotMapped]
         public IApplicationUser? ApplicationUser { get; set; }
 
         public bool IsDataAuthorized { get; set; }

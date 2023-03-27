@@ -15,5 +15,5 @@ public class ApplicationUser : IdentityUser, IApplicationUser
     public bool IsEnabled { get; set; }
     public bool IsDeleted { get; set; }
 
-    public List<WeatherStationUser>? WeatherStationUser { get; set; }
+    public List<WeatherStationUser>? WeatherStationUsers { get; set; }
 }

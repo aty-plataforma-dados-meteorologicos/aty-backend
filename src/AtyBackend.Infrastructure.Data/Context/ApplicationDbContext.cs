@@ -22,7 +22,33 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
+
+
+        builder.Entity<WeatherStationSensor>()
+           .HasKey(wsu => new { wsu.WeatherStationId, wsu.SensorId });
+
+        //builder.Entity<WeatherStationUser>()
+
+        //builder.Entity<WeatherStationUser>()
+        //    .HasKey(wsu => new { wsu.WeatherStationId, wsu.ApplicationUserId })
+        //    .HasOne(wsu => wsu.ApplicationUser)
+        //    .WithMany()
+        //    .HasForeignKey(wsu => wsu.ApplicationUserId);
+
         builder.Entity<WeatherStationUser>()
-           .HasKey(ii => new { ii.WeatherStationId, ii.ApplicationUserId });
+               .HasKey(wsu => new { wsu.WeatherStationId, wsu.ApplicationUserId });
+        
+        //builder.Entity<WeatherStationUser>()
+        //    .HasOne(wsu => wsu.ApplicationUser)
+        //    .WithMany()
+        //    .HasForeignKey(wsu => wsu.ApplicationUserId);
+
+        //builder.Entity<WeatherStationUser>()
+        //    .HasOne(wsu => wsu.WeatherStation)
+        //    .WithMany(ws => ws.WeatherStationUsers)
+        //    .HasForeignKey(wsu => wsu.WeatherStationId);
+
+        // Configure a chave composta como a chave primária da entidade
+
     }
 }

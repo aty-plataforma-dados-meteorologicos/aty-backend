@@ -6,6 +6,6 @@
         public WeatherStation WeatherStation { get; set; }
 
         public int SensorId { get; set; }
-        public Sensor ApplicationUser { get; set; }
+        public Sensor Sensor { get; set; }
     }
 }
