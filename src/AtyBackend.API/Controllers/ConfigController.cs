@@ -34,7 +34,7 @@ namespace AtyBackend.API.Controllers
         [HttpGet]
         public async Task<ActionResult> Test()
         {
-            return _configController ? Ok("Go for config") : NotFound();
+            return _configController ? Ok("Permitido criar roles e usuários iniciais") : NotFound();
         }
 
         [HttpGet("SeedRoles")]
