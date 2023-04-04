@@ -4,10 +4,10 @@ namespace AtyBackend.Domain.Interfaces
 {
     public interface IApplicationUser
     {
-        string Nome { get; set; }
+        string Name { get; set; }
         string? RefreshToken { get; set; }
         DateTime? RefreshTokenExpiration { get; set; }
-        UserTypeEnum UserType { get; set; }
+        UserTypeEnum Type { get; set; }
 
         bool IsEnabled { get; set; }
         bool IsDeleted { get; set; }

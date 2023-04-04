@@ -13,9 +13,6 @@ namespace AtyBackend.Application.DTOs
         public string TagSensorId { get; set; }
         public string Measurement { get; set; }
 
-        public int? ValueInt { get; set; }
         public double? ValueDouble { get; set; }
-        public string? ValueString { get; set; }
-
     }
 }

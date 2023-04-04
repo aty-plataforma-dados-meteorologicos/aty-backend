@@ -53,6 +53,36 @@ namespace AtyBackend.API.Controllers
                 });
         }
 
+        #region RemoveRoles
+        //[HttpGet("RemoveRoles")]
+        //public async Task<ActionResult> RemoveRoles()
+        //{
+        //    if (!_configController)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    List<string> rolesToRemove = UserRoles.ToList();
+        //    List<string> rolesRemoved = new List<string>();
+
+        //    foreach (var role in rolesToRemove)
+        //    {
+        //        var r = await RemoveRoles(role);
+
+        //        if (r)
+        //        {
+        //            rolesRemoved.Add(role);
+        //        }
+        //    }
+
+        //    return Ok(
+        //        new object[]
+        //        {
+        //            new { RolesRemoved = rolesRemoved }
+        //        });
+        //}
+        #endregion
+
         [HttpPost("RegisterUser")]
         public async Task<ActionResult> CreateUsers([FromBody] RegisterModel userInfo)
         {
@@ -63,13 +93,18 @@ namespace AtyBackend.API.Controllers
 
             try
             {
+                // update to user
                 var result = await _authentication.RegisterUser(userInfo.Email, userInfo.Password);
 
                 if (result)
                 {
                     var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
+                    user.Name = 
+                        userInfo.Name ?? 
+                        userInfo.Email.Substring(0, userInfo.Email.IndexOf('@'));
                     user.IsEnabled = true;
+                    user.Type = userInfo.Type;
                     await _userManager.UpdateAsync(user);
 
                     switch (userInfo.Role)
@@ -80,12 +115,14 @@ namespace AtyBackend.API.Controllers
                         case UserRoles.Manager:
                             _userManager.AddToRoleAsync(user, UserRoles.Manager).Wait();
                             break;
+                        case UserRoles.Maintainer:
+                            _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+                            break;
                         case UserRoles.User:
                             _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
                             break;
                         default:
-                            _userManager.AddToRoleAsync(user, UserRoles.Guest).Wait();
-                            break;
+                            throw new Exception("Invalid role");
                     }
 
                     return Created("User", new ApplicationUserDTO
@@ -93,6 +130,7 @@ namespace AtyBackend.API.Controllers
                         Id = user.Id,
                         Email = user.Email,
                         Role = userInfo.Role,
+                        Type = user.Type,
                         IsEnabled = user.IsEnabled
                     });
                 }
@@ -104,6 +142,17 @@ namespace AtyBackend.API.Controllers
                 ModelState.AddModelError("Error", e.Message);
                 return BadRequest(ModelState);
             }
+        }
+
+        private async Task<bool> RemoveRoles(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role != null)
+            {
+                var result = await _roleManager.DeleteAsync(role);
+                return result.Succeeded;
+            }
+            return false;
         }
 
         private List<string> SeedRoles()

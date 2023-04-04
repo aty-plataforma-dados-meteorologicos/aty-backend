@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AtyBackend.Domain.Enums
+﻿namespace AtyBackend.Domain.Enums
 {
     public enum UserTypeEnum
     {
-        ADMIN = 10,
-        MAINTAINER = 20,
-        USER = 30
+        INDIVIDUAL = 10,
+        PRIVATE_INSTITUTION = 20,
+        PUBLIC_INSTITUTION = 30,
+        OTHERS = 40
     }
 }

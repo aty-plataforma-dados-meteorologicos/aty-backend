@@ -2,8 +2,21 @@
 
 public static class UserRoles
 {
-    public const string Guest = "Guest";
+
     public const string User = "User";
+    public const string Maintainer = "Maintainer";
     public const string Manager = "Manager";
     public const string Admin = "Admin";
+
+    public static List<string> ToList()
+    {
+        return new List<string>
+        {
+            User,
+            Maintainer,
+            Manager,
+            Admin
+        };
+    }   
 }
+

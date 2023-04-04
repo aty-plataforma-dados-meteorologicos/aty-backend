@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AtyBackend.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace AtyBackend.API.Models
 {
@@ -13,6 +14,9 @@ namespace AtyBackend.API.Models
 
         [Required(ErrorMessage = "Role is required.")]
         public string Role { get; set; }
+
+        [Required(ErrorMessage = "Type is required.")]
+        public UserTypeEnum Type { get; set; }
 
         [Required(ErrorMessage = "UserStatus is required.")]
         public bool IsEnabled { get; set; }
