@@ -21,6 +21,6 @@ namespace AtyBackend.Domain.Entities
          */
         public int Accuracy { get; set; }
 
-        public List<WeatherStationSensor> WeatherStationSensors { get; set; }
+        public List<WeatherStationSensor>? WeatherStationSensors { get; set; }
     }
 }

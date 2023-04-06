@@ -42,32 +42,11 @@ public class UsersController : ControllerBase
                 user.Type = userInfo.Type;
                 await _userManager.UpdateAsync(user);
 
-                switch (userInfo.Role)
-                {
-                    case UserRoles.Admin:
-                        _userManager.AddToRoleAsync(user, UserRoles.Admin).Wait();
-                        break;
-                    case UserRoles.Manager:
-                        _userManager.AddToRoleAsync(user, UserRoles.Manager).Wait();
-                        break;
-                    case UserRoles.Maintainer:
-                        _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
-                        break;
-                    case UserRoles.User:
-                        _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
-                        break;
-                    default:
-                        throw new Exception("Invalid role");
-                }
+                _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
 
-                return Created("User", new ApplicationUserDTO
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Role = userInfo.Role,
-                    Type = user.Type,
-                    IsEnabled = user.IsEnabled
-                });
+                // return only a 201 created
+                return StatusCode(201);
+
             }
 
             throw new Exception("Invalid user.");
