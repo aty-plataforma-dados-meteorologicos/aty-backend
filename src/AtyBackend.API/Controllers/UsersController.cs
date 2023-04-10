@@ -43,10 +43,7 @@ public class UsersController : ControllerBase
                 await _userManager.UpdateAsync(user);
 
                 _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
-
-                // return only a 201 created
                 return StatusCode(201);
-
             }
 
             throw new Exception("Invalid user.");
