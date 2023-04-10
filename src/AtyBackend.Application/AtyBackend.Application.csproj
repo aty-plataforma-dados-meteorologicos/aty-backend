@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AtyBackend.Domain\AtyBackend.Domain.csproj" />
+    <ProjectReference Include="..\AtyBackend.Infrastructure.Data\AtyBackend.Infrastructure.Data.csproj" />
   </ItemGroup>
 
 </Project>

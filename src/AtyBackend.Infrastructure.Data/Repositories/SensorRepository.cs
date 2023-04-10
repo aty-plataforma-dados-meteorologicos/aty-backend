@@ -7,25 +7,26 @@ using System.Linq.Expressions;
 
 namespace AtyBackend.Infrastructure.Data.Repositories
 {
-    public class ExemploRepository : IExemploRepository
+    public class SensorRepository : ISensorRepository
     {
         private ApplicationDbContext _context;
-        private readonly DbSet<Exemplo> _entitiesExemplo;
+        private readonly DbSet<Sensor> _entitiesSensor;
 
-        public ExemploRepository(ApplicationDbContext context)
+        public SensorRepository(ApplicationDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
 
-            _entitiesExemplo = context.Set<Exemplo>();
+            _entitiesSensor = context.Set<Sensor>();
         }
 
-        public async Task<Exemplo> CreateAsync(Exemplo entity)
+
+        public async Task<Sensor> CreateAsync(Sensor entity)
         {
             var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                await _entitiesExemplo.AddAsync(entity);
+                await _entitiesSensor.AddAsync(entity);
                 //var result = _entities.Add(entity);
                 // System.Diagnostics.Trace.WriteLine(result.ToString());
 
@@ -43,37 +44,37 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<int> CountAsync() => await _entitiesExemplo
+        public async Task<int> CountAsync() => await _entitiesSensor
             .CountAsync();
 
-        public async Task<int> CountByConditionAsync(Expression<Func<Exemplo, bool>> expression) => await _entitiesExemplo
+        public async Task<int> CountByConditionAsync(Expression<Func<Sensor, bool>> expression) => await _entitiesSensor
             .Where(expression)
             .CountAsync();
 
-        public async Task<List<Exemplo>> GetAllAsync() => await _entitiesExemplo
+        public async Task<List<Sensor>> GetAllAsync() => await _entitiesSensor
             .ToListAsync();
 
-        public async Task<List<Exemplo>> GetAllAsync(int pageSize, int pageNumber) => await _entitiesExemplo
+        public async Task<List<Sensor>> GetAllAsync(int pageSize, int pageNumber) => await _entitiesSensor
             .OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
-        public async Task<List<Exemplo>> FindByConditionAsync(Expression<Func<Exemplo, bool>> expression) => await _entitiesExemplo
+        public async Task<List<Sensor>> FindByConditionAsync(Expression<Func<Sensor, bool>> expression) => await _entitiesSensor
             .Where(expression)
             .ToListAsync();
 
-        public async Task<List<Exemplo>> FindByConditionAsync(Expression<Func<Exemplo, bool>> expression, int pageSize, int pageNumber) => await _entitiesExemplo
+        public async Task<List<Sensor>> FindByConditionAsync(Expression<Func<Sensor, bool>> expression, int pageSize, int pageNumber) => await _entitiesSensor
             .Where(expression)
             .OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
-        public async Task<Exemplo> GetByIdAsync(int? id) => await _entitiesExemplo
+        public async Task<Sensor> GetByIdAsync(int? id) => await _entitiesSensor
             .SingleOrDefaultAsync(s => s.Id == id);
 
-        public async Task<Exemplo> UpdateAsync(Exemplo entity)
+        public async Task<Sensor> UpdateAsync(Sensor entity)
         {
             if (entity == null)
             {
@@ -84,10 +85,10 @@ namespace AtyBackend.Infrastructure.Data.Repositories
 
             try
             {
-                if (await _entitiesExemplo.AnyAsync(i => i.Id == entity.Id))
+                if (await _entitiesSensor.AnyAsync(i => i.Id == entity.Id))
                 {
 
-                    _entitiesExemplo.Update(entity);
+                    _entitiesSensor.Update(entity);
                     await _context.SaveChangesAsync();
                     transaction.Commit();
                 }
@@ -107,14 +108,14 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(Exemplo entity)
+        public async Task<bool> DeleteAsync(Sensor entity)
         {
             var transaction = _context.Database.BeginTransaction();
 
             try
             {
                 entity.IsDeleted = true;
-                _entitiesExemplo.Update(entity);
+                _entitiesSensor.Update(entity);
                 var response = await _context.SaveChangesAsync();
                 transaction.Commit();
 

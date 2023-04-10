@@ -9,7 +9,11 @@ public class DomainToDTOMappingProfile : Profile
     public DomainToDTOMappingProfile()
     {
         CreateMap<EntityDTO, Entity>()
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+            //.ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+            .ReverseMap();
+
+        CreateMap<SensorDTO, Sensor>()
+            //.ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
             .ReverseMap();
 
         CreateMap<ExemploDTO, Exemplo>()

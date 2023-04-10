@@ -35,32 +35,26 @@ public class GenericRepository<T> : IGenericRepository<T> where T : Entity
     }
 
     public async Task<int> CountAsync() => await _entities
-        .Where(i => i.IsDeleted == false)
         .CountAsync();
 
     public async Task<int> CountByConditionAsync(Expression<Func<T, bool>> expression) => await _entities
-        .Where(i => i.IsDeleted == false)
         .Where(expression)
         .CountAsync();
 
     public async Task<List<T>> GetAllAsync() => await _entities
-        .Where(i => i.IsDeleted == false)
         .ToListAsync();
 
     public async Task<List<T>> GetAllAsync(int pageSize, int pageNumber) => await _entities
-        .Where(i => i.IsDeleted == false)
         .OrderByDescending(i => i.Id)
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
 
     public async Task<List<T>> FindByConditionAsync(Expression<Func<T, bool>> expression) => await _entities
-        .Where(i => i.IsDeleted == false)
         .Where(expression)
         .ToListAsync();
 
     public async Task<List<T>> FindByConditionAsync(Expression<Func<T, bool>> expression, int pageSize, int pageNumber) => await _entities
-        .Where(i => i.IsDeleted == false)
         .Where(expression)
         .OrderByDescending(i => i.Id)
         .Skip((pageNumber - 1) * pageSize)
@@ -68,7 +62,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : Entity
         .ToListAsync();
 
     public async Task<T> GetByIdAsync(int? id) => await _entities
-        .Where(i => i.IsDeleted == false)
         .SingleOrDefaultAsync(s => s.Id == id);
 
     public async Task<T> UpdateAsync(T entity)
@@ -78,7 +71,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : Entity
             throw new ArgumentNullException(nameof(entity));
         }
 
-        if (await _entities.AnyAsync(i => i.Id == entity.Id && i.IsDeleted == false))
+        if (await _entities.AnyAsync(i => i.Id == entity.Id))
         {
             _entities.Update(entity);
             await _context.SaveChangesAsync();
@@ -98,7 +91,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : Entity
             throw new ArgumentNullException(nameof(entity));
         }
 
-        if (await _entities.AnyAsync(i => i.Id == entity.Id && i.IsDeleted == false))
+        if (await _entities.AnyAsync(i => i.Id == entity.Id))
         {
             entity.IsDeleted = true;
             _entities.Update(entity);
