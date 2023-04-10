@@ -118,12 +118,11 @@ public class UsersController : ControllerBase
                 var usersDTO = users.Select(user => new ApplicationUserDTO
                 {
                     Id = user.Id,
+                    Name = user.Name,
                     Email = user.Email,
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault(),
                     IsEnabled = user.IsEnabled
                 });
-
-
 
                 var paginatedUsers = new Paginated<ApplicationUserDTO>
                 {

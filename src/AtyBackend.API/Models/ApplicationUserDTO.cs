@@ -7,7 +7,10 @@ namespace AtyBackend.API.Models
     {
         [Required(ErrorMessage = "Id is required")]
         public string Id { get; set; }
-        
+
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid format email.")]
         public string Email { get; set; }
