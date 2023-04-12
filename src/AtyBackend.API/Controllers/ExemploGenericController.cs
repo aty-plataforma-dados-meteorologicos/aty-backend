@@ -1,5 +1,8 @@
-﻿using AtyBackend.Application.DTOs;
+﻿using AtyBackend.API.Helpers;
+using AtyBackend.Application.DTOs;
 using AtyBackend.Application.Interfaces;
+using AtyBackend.Application.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +21,7 @@ namespace AtyBackend.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExemploGenericDTO>>> GetExemploGenericAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+        public async Task<ActionResult<ApiResponsePaginated<ExemploGenericDTO>>> GetExemploGenericAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
         {
             var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
             var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
@@ -26,8 +29,9 @@ namespace AtyBackend.API.Controllers
             url = Request.IsHttps ? url : url.Replace("https", "http");
 
             var exemplos = await _exemploGenericService.GetAsync(pageSizeNotNull, pageNumberNotNull, url);
+            var paginado = new ApiResponsePaginated<ExemploGenericDTO>(exemplos, Request);
 
-            return exemplos is null ? NotFound("Generics not found") : Ok(exemplos);
+            return exemplos is null ? NotFound("Generics not found") : Ok(paginado);
         }
 
         [HttpGet("{id:int}", Name = "GetExemploGenericById")]
