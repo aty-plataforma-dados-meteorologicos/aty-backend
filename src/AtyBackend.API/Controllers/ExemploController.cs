@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using AtyBackend.Application.ViewModels;
 using AtyBackend.Application.Services;
 using AtyBackend.Domain.Entities;
+using AtyBackend.API.Helpers;
 
 namespace AtyBackend.API.Controllers;
 
@@ -24,14 +25,20 @@ public class ExemploController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<Paginated<ExemploDTO>>> GetExemploAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
-        var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
-        var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
-        url = Request.IsHttps ? url : url.Replace("https", "http");
+        var paginated = new ApiResponsePaginated<ExemploDTO>(pageNumber, pageSize);
+        var exemplos = await _exemploService.GetAsync(paginated.PageNumber, paginated.PageSize);
+        paginated.AddData(exemplos, Request);
 
-        var exemplos = await _exemploService.GetAsync(pageNumberNotNull, pageSizeNotNull, url);
+        return paginated.Data is null ? NotFound("Exemplos not found") : Ok(paginated);
 
-        return exemplos is null ? NotFound("Exemplos not found") : Ok(exemplos);
+        //var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
+        //var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
+        ////var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
+        ////url = Request.IsHttps ? url : url.Replace("https", "http");
+
+        //var exemplos = await _exemploService.GetAsync(pageNumberNotNull, pageSizeNotNull);
+
+        //return exemplos is null ? NotFound("Exemplos not found") : Ok(exemplos);
     }
 
     [HttpGet("{id:int}", Name = "GetExemploById")]

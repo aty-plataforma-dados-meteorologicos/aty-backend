@@ -40,13 +40,14 @@ public class AuthenticationController : ControllerBase
         {
             var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
-            if (user is not null || (user.IsEnabled && !user.IsDeleted))
+            if (user is null)
             {
-                var result = await _authentication.Authenticate(userInfo.Email, userInfo.Password);
-                if (result)
-                {
-                    return await GenerateTokenAsync(userInfo);
-                }
+                return NotFound("Usuário não cadastrado");
+            }
+
+            if (await _authentication.Authenticate(userInfo.Email, userInfo.Password))
+            {
+                return await GenerateTokenAsync(userInfo);
             }
 
             //if (user is null || !user.IsEnabled || user.IsDeleted)
@@ -61,7 +62,7 @@ public class AuthenticationController : ControllerBase
             //}
 
             //ModelState.AddModelError("Error", "Invalid Login attempt");
-            return BadRequest("Invalid Login attempt");
+            return BadRequest("Tentativa de acesso inválida");
         }
         catch (Exception e)
         {
@@ -78,7 +79,7 @@ public class AuthenticationController : ControllerBase
             string? accessToken = tokenRefresh.AccessToken;
             string? refreshToken = tokenRefresh.RefreshToken;
             var user = await GetUserByToken(accessToken);
-            
+
             ValidateRefreshToken(refreshToken, user);
 
             if (user.IsEnabled && !user.IsDeleted)
@@ -86,7 +87,7 @@ public class AuthenticationController : ControllerBase
                 var userInfo = new LoginModel();
                 userInfo.Email = user.Email;
                 var newTokens = await GenerateTokenAsync(userInfo);
-                
+
                 return Ok(newTokens);
             }
 
@@ -184,7 +185,7 @@ public class AuthenticationController : ControllerBase
         }
 
         var userRoles = await _userManager.GetRolesAsync(user);
-        
+
         var claims = new List<Claim>
         {
             new Claim("email", userInfo.Email),

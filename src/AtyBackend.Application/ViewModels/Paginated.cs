@@ -12,19 +12,19 @@ public class Paginated<T>
     //public string? PreviousPageUrl { get; set; }
     public List<T> Data { get; set; }
 
-    public Paginated(int? pageNumber, int? pageSize, int totalItems, List<T> dtos)
+    public Paginated(int pageNumber, int pageSize, int totalItems, List<T> dtos)
     {
-        pageNumber = pageNumber is null ? 1 : pageNumber.Value;
-        pageSize = pageSize is null ? 20 : pageSize.Value;
+        //pageNumber = pageNumber is null ? 1 : pageNumber.Value;
+        //pageSize = pageSize is null ? 20 : pageSize.Value;
 
-        // colocar limite do page size baseado no appsettings.json
-        // var pageSizeMaxLength = _configuration["ConnectionStrings:DefaultConnection"];
-        // var test = pageSizeMaxLength is null ? true : false;
-        int pageSizeMaxLength = 1000;
-        pageSize = pageSize <= pageSizeMaxLength ? pageSize : pageSizeMaxLength;
+        //// colocar limite do page size baseado no appsettings.json
+        //// var pageSizeMaxLength = _configuration["ConnectionStrings:DefaultConnection"];
+        //// var test = pageSizeMaxLength is null ? true : false;
+        //int pageSizeMaxLength = 1000;
+        //pageSize = pageSize <= pageSizeMaxLength ? pageSize : pageSizeMaxLength;
 
-        PageNumber = pageNumber.Value;
-        PageSize = pageSize.Value;
+        PageNumber = pageNumber;
+        PageSize = pageSize;
         TotalItems = totalItems;
         TotalPages = (totalItems > 0 && totalItems < pageSize) ? 1 : (int)Math.Ceiling(totalItems / (double)pageSize);
         Data = dtos;
@@ -37,4 +37,5 @@ public class Paginated<T>
         //PreviousPageUrl = previousPageNumber < 1 ? null : $"{url}?pageNumber={previousPageNumber}&pageSize={pageSize}";
         //NextPageUrl = nextPageNumber > TotalPages ? null : $"{url}?pageNumber={nextPageNumber}&pageSize={pageSize}";
     }
+
 }

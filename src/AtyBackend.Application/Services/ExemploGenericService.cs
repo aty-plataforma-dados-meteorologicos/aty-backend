@@ -32,10 +32,10 @@ public class ExemploGenericService : IExemploGenericService
         return exemploGenericDTO;
     }
 
-    public async Task<Paginated<ExemploGenericDTO>> GetAsync(int pageSize, int pageNumber, string url)
+    public async Task<Paginated<ExemploGenericDTO>> GetAsync(int pageSize, int pageNumber)
     {
         var totalExemploGenerics = await _genericRepository.CountAsync();
-        var totalPages = (totalExemploGenerics > 0 && totalExemploGenerics < pageSize) ? 1 : TotalPages(totalExemploGenerics, pageSize);
+        //var totalPages = (totalExemploGenerics > 0 && totalExemploGenerics < pageSize) ? 1 : TotalPages(totalExemploGenerics, pageSize);
 
         var exemploGenericEntities = await _genericRepository.GetAllAsync(pageSize, pageNumber);
         var exemploGenerics = _mapper.Map<List<ExemploGenericDTO>>(exemploGenericEntities);
