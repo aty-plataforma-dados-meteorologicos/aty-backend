@@ -26,21 +26,11 @@ public class WeatherStationController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ApiResponsePaginated<WeatherStationDTO>>> GetWeatherStationAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        // isso aqui ser processado em um contrutor
-        //var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
-        //var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
-
-
-        // passar request para o ApiResponsePaginated.AddData
-        //var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
-        //url = Request.IsHttps ? url : url.Replace("https", "http");
-
-        // aqio
         var paginated = new ApiResponsePaginated<WeatherStationDTO>(pageNumber, pageSize);
         var weatherStations = await _weatherStationService.GetAsync(paginated.PageNumber, paginated.PageSize);
         paginated.AddData(weatherStations, Request);
 
-        return paginated.Data is null ? NotFound("WeatherStations not found") : Ok(paginated);
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
     }
 
     [HttpGet("{id:int}", Name = "GetWeatherStationById")]

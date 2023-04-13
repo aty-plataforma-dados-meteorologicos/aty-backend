@@ -98,16 +98,8 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ApiResponsePaginated<ApplicationUserDTO>>> GetUsers([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        //var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
-        //var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
         var paginated = new ApiResponsePaginated<ApplicationUserDTO>(pageNumber, pageSize);
         var total = await _userManager.Users.Where(i => i.IsDeleted == false).CountAsync();
-
-
-        //var totalPages = (totalUsers > 0 && totalUsers < pageSizeNotNull) ? 1 : TotalPages(totalUsers, pageSizeNotNull);
-
-        //var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
-        //url = Request.IsHttps ? url : url.Replace("https", "http");
 
         try
         {
@@ -131,19 +123,8 @@ public class UsersController : ControllerBase
 
                 var paginatedDtos = new Paginated<ApplicationUserDTO>(paginated.PageNumber, paginated.PageSize, total, usersDTO.ToList());
                 paginated.AddData(paginatedDtos, Request);
-                //var paginatedUsers = new Paginated<ApplicationUserDTO>
-                //{
-                //    PageNumber = pageNumberNotNull,
-                //    PageSize = pageSizeNotNull,
-                //    TotalPages = totalPages,
-                //    TotalItems = totalUsers,
-                //    Data = usersDTO.ToList()
-                //};
 
-                //paginatedUsers.PreviousPageUrl = HasPreviousPage(paginatedUsers) ? GetPageUrl(paginatedUsers, url, false) : null;
-                //paginatedUsers.NextPageUrl = HasNextPage(paginatedUsers) ? GetPageUrl(paginatedUsers, url) : null;
-
-                return paginated;
+                return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
             }
 
             return NotFound("Users is null");

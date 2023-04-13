@@ -26,21 +26,11 @@ public class SensorsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ApiResponsePaginated<SensorDTO>>> GetSensorAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        // isso aqui ser processado em um contrutor
-        //var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
-        //var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
-
-
-        // passar request para o ApiResponsePaginated.AddData
-        //var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
-        //url = Request.IsHttps ? url : url.Replace("https", "http");
-
-        // aqio
         var paginated = new ApiResponsePaginated<SensorDTO>(pageNumber, pageSize);
         var exemplos = await _exemploService.GetAsync(paginated.PageNumber, paginated.PageSize);
         paginated.AddData(exemplos, Request);
 
-        return paginated.Data is null ? NotFound("Sensors not found") : Ok(paginated);
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
     }
 
     [HttpGet("{id:int}", Name = "GetSensorById")]
