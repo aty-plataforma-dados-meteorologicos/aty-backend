@@ -19,7 +19,7 @@ namespace AtyBackend.Domain.Entities
         Por exemplo, se uma medida digital tiver uma acurácia de ± 1%, isso significa que o resultado pode variar até 1% em relação
         ao valor real. Se o valor real for de 100, o resultado pode variar entre 99 e 101.
          */
-        public int Accuracy { get; set; }
+        public double Accuracy { get; set; }
 
         public List<WeatherStationSensor>? WeatherStationSensors { get; set; }
     }
