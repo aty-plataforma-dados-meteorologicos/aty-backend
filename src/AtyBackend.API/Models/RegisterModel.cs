@@ -1,9 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AtyBackend.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace AtyBackend.API.Models;
 
 public class RegisterModel
 {
+    [Required(ErrorMessage = "Name is required")]
+    public string Name { get; set; }
+
     [Required]
     [EmailAddress]
     public string? Email { get; set; }
@@ -13,6 +17,9 @@ public class RegisterModel
         "{1} characters long.", MinimumLength = 8)]
     [DataType(DataType.Password)]
     public string? Password { get; set; }
+
+    [Required(ErrorMessage = "Type ir required")]
+    public UserTypeEnum Type { get; set; }
 
     //[DataType(DataType.Password)]
     //[Display(Name = "Confirm password")]

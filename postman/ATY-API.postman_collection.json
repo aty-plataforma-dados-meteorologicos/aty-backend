@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "aa9ee8af-3032-4de5-9d86-0ffd7f721ab2",
-		"name": "Exemplo-API",
+		"_postman_id": "fe1c1516-aca9-43bf-95ca-753b35b0f7c7",
+		"name": "ATY-API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -51,7 +51,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"romildo.marques@h2oinnovation.com.py\",\r\n  \"password\": \"#24Tentativas\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test.user@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -288,6 +288,29 @@
 					"response": []
 				},
 				{
+					"name": "Remove Roles",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{url}}/api/Config/RemoveRoles",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Config",
+								"RemoveRoles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create User",
 					"event": [
 						{
@@ -327,7 +350,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test@h2oinnovation.com.py\",\r\n    \"password\": \"#23Tentativas\",\r\n    \"role\": \"Admin\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"Teste Admin\",\r\n    \"email\": \"test.user@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1346,73 +1369,20 @@
 					"response": []
 				},
 				{
-					"name": "Update User",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						},
-						"strictSSL": false
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "text/plain",
-								"type": "default"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\": \"8c2d2a23-d5ce-4259-9c04-c2d3c9b1fbac\",\r\n    \"email\": \"test.user@h2oinnovation.com.py\",\r\n    \"role\": \"User\",\r\n    \"isEnabled\": true\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{url}}/api/Users",
-							"protocol": "https",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"Users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create User",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"userId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -1446,7 +1416,76 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test.admin@h2oinnovation.com.py\",\r\n    \"password\": \"#123456Adfs\",\r\n    \"role\": \"Admin\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"Usuario teste\",\r\n    \"email\": \"test.teste@io.tec.br\",\r\n    \"password\": \"#1Adngd4sfsdf@q\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Users",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"userId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"e46cca03-6150-471c-9464-4b9774bdb58c\",\r\n    \"email\": \"test.teste@io.tec.br\",\r\n    \"role\": \"User\",\r\n    \"type\": 10,\r\n    \"isEnabled\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1539,7 +1578,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1555,7 +1594,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"romildo.marques@h2oinnovation.com.py\",\r\n  \"password\": \"#23Tentativas\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test.teste@io.tec.br\",\r\n    \"password\": \"#1Adngd4sf3@q\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1563,14 +1602,15 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{url}}/api/Exemplo",
+							"raw": "https://{{url}}/api/Users/Password",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"Exemplo"
+								"Users",
+								"Password"
 							]
 						}
 					},

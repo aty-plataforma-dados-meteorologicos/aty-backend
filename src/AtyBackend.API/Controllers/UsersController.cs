@@ -11,7 +11,7 @@ using System.Data;
 
 namespace AtyBackend.API.Controllers;
 
-[Authorize(Roles = "Admin,Manager")]
+//[Authorize(Roles = "Admin,Manager")]
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController : ControllerBase
@@ -39,31 +39,11 @@ public class UsersController : ControllerBase
 
                 user.IsEnabled = true;
                 user.IsDeleted = false;
+                user.Type = userInfo.Type;
                 await _userManager.UpdateAsync(user);
 
-                switch (userInfo.Role)
-                {
-                    case UserRoles.Admin:
-                        _userManager.AddToRoleAsync(user, UserRoles.Admin).Wait();
-                        break;
-                    case UserRoles.Manager:
-                        _userManager.AddToRoleAsync(user, UserRoles.Manager).Wait();
-                        break;
-                    case UserRoles.User:
-                        _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
-                        break;
-                    default:
-                        _userManager.AddToRoleAsync(user, UserRoles.Guest).Wait();
-                        break;
-                }
-
-                return Created("User", new ApplicationUserDTO
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Role = userInfo.Role,
-                    IsEnabled = user.IsEnabled
-                });
+                _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
+                return StatusCode(201);
             }
 
             throw new Exception("Invalid user.");
@@ -75,7 +55,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteUser(string id)
     {
@@ -111,6 +91,7 @@ public class UsersController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,Manager")]
     [HttpGet]
     public async Task<ActionResult<Paginated<ApplicationUserDTO>>> GetUsers([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
@@ -137,12 +118,11 @@ public class UsersController : ControllerBase
                 var usersDTO = users.Select(user => new ApplicationUserDTO
                 {
                     Id = user.Id,
+                    Name = user.Name,
                     Email = user.Email,
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault(),
                     IsEnabled = user.IsEnabled
                 });
-
-
 
                 var paginatedUsers = new Paginated<ApplicationUserDTO>
                 {
@@ -168,7 +148,7 @@ public class UsersController : ControllerBase
         }
     }
 
-
+    [Authorize(Roles = "Admin,Manager")]
     [HttpGet("{id}")]
     public async Task<ActionResult<ApplicationUserDTO>> GetUserById(string id)
     {
@@ -201,6 +181,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("Password")]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<ActionResult> ChangePassword([FromBody] LoginModel userInfo)
     {
         try
@@ -240,6 +221,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<ActionResult<ApplicationUserDTO>> UpdateUser([FromBody] ApplicationUserDTO userDTO)
     {
         try
@@ -264,11 +246,11 @@ public class UsersController : ControllerBase
                     case UserRoles.Manager:
                         _userManager.AddToRoleAsync(user, UserRoles.Manager).Wait();
                         break;
+                    case UserRoles.Maintainer:
+                        _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+                        break;
                     case UserRoles.User:
                         _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
-                        break;
-                    case UserRoles.Guest:
-                        _userManager.AddToRoleAsync(user, UserRoles.Guest).Wait();
                         break;
                     default:
                         throw new Exception("Invalid role");
@@ -305,16 +287,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    private static List<string> GetRoles()
-    {
-        var roles = new List<string>();
-        roles.Add(UserRoles.Admin);
-        roles.Add(UserRoles.Manager);
-        roles.Add(UserRoles.User);
-        roles.Add(UserRoles.Guest);
-
-        return roles;
-    }
+    private static List<string> GetRoles() => UserRoles.ToList();
 
     private static int TotalPages(double totalItems, double pageSize) => (int)Math.Ceiling(totalItems / pageSize);
 
