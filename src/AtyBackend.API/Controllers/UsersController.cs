@@ -1,6 +1,9 @@
-﻿using AtyBackend.API.Models;
+﻿using AtyBackend.API.Helpers;
+using AtyBackend.API.Models;
+using AtyBackend.Application.DTOs;
 using AtyBackend.Application.ViewModels;
 using AtyBackend.Domain.Account;
+using AtyBackend.Domain.Entities;
 using AtyBackend.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -93,24 +96,18 @@ public class UsersController : ControllerBase
 
     [Authorize(Roles = "Admin,Manager")]
     [HttpGet]
-    public async Task<ActionResult<Paginated<ApplicationUserDTO>>> GetUsers([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    public async Task<ActionResult<ApiResponsePaginated<ApplicationUserDTO>>> GetUsers([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
-        var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
-
-        var totalUsers = await _userManager.Users.Where(i => i.IsDeleted == false).CountAsync();
-        var totalPages = (totalUsers > 0 && totalUsers < pageSizeNotNull) ? 1 : TotalPages(totalUsers, pageSizeNotNull);
-
-        var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
-        url = Request.IsHttps ? url : url.Replace("https", "http");
+        var paginated = new ApiResponsePaginated<ApplicationUserDTO>(pageNumber, pageSize);
+        var total = await _userManager.Users.Where(i => i.IsDeleted == false).CountAsync();
 
         try
         {
             var users = await _userManager.Users
                 .Where(i => i.IsDeleted == false)
                 .OrderByDescending(i => i.Id)
-                .Skip((pageNumberNotNull - 1) * pageSizeNotNull)
-                .Take(pageSizeNotNull)
+                .Skip((paginated.PageNumber - 1) * paginated.PageSize)
+                .Take(paginated.PageSize)
                 .ToListAsync();
 
             if (users != null)
@@ -124,22 +121,13 @@ public class UsersController : ControllerBase
                     IsEnabled = user.IsEnabled
                 });
 
-                var paginatedUsers = new Paginated<ApplicationUserDTO>
-                {
-                    PageNumber = pageNumberNotNull,
-                    PageSize = pageSizeNotNull,
-                    TotalPages = totalPages,
-                    TotalItems = totalUsers,
-                    Data = usersDTO.ToList()
-                };
+                var paginatedDtos = new Paginated<ApplicationUserDTO>(paginated.PageNumber, paginated.PageSize, total, usersDTO.ToList());
+                paginated.AddData(paginatedDtos, Request);
 
-                paginatedUsers.PreviousPageUrl = HasPreviousPage(paginatedUsers) ? GetPageUrl(paginatedUsers, url, false) : null;
-                paginatedUsers.NextPageUrl = HasNextPage(paginatedUsers) ? GetPageUrl(paginatedUsers, url) : null;
-
-                return paginatedUsers;
+                return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
             }
 
-            throw new Exception("Users is null");
+            return NotFound("Users is null");
         }
         catch (Exception e)
         {

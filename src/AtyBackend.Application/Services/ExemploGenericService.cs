@@ -32,27 +32,27 @@ public class ExemploGenericService : IExemploGenericService
         return exemploGenericDTO;
     }
 
-    public async Task<Paginated<ExemploGenericDTO>> GetAsync(int pageSize, int pageNumber, string url)
+    public async Task<Paginated<ExemploGenericDTO>> GetAsync(int pageSize, int pageNumber)
     {
         var totalExemploGenerics = await _genericRepository.CountAsync();
-        var totalPages = (totalExemploGenerics > 0 && totalExemploGenerics < pageSize) ? 1 : TotalPages(totalExemploGenerics, pageSize);
+        //var totalPages = (totalExemploGenerics > 0 && totalExemploGenerics < pageSize) ? 1 : TotalPages(totalExemploGenerics, pageSize);
 
         var exemploGenericEntities = await _genericRepository.GetAllAsync(pageSize, pageNumber);
-        var exemploGenerics = _mapper.Map<IEnumerable<ExemploGenericDTO>>(exemploGenericEntities);
+        var exemploGenerics = _mapper.Map<List<ExemploGenericDTO>>(exemploGenericEntities);
 
-        var paginated = new Paginated<ExemploGenericDTO>
-        {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalPages = totalPages,
-            TotalItems = totalExemploGenerics,
-            Data = exemploGenerics
-        };
+        //var paginated = new Paginated<ExemploGenericDTO>
+        //{
+        //    PageNumber = pageNumber,
+        //    PageSize = pageSize,
+        //    TotalPages = totalPages,
+        //    TotalItems = totalExemploGenerics,
+        //    Data = exemploGenerics
+        //};
 
-        paginated.PreviousPageUrl = HasPreviousPage(paginated) ? GetPageUrl(paginated, url, false) : null;
-        paginated.NextPageUrl = HasNextPage(paginated) ? GetPageUrl(paginated, url, true) : null;
+        //paginated.PreviousPageUrl = HasPreviousPage(paginated) ? GetPageUrl(paginated, url, false) : null;
+        //paginated.NextPageUrl = HasNextPage(paginated) ? GetPageUrl(paginated, url, true) : null;
 
-        return paginated;
+        return new Paginated<ExemploGenericDTO>(pageNumber, pageSize, totalExemploGenerics, exemploGenerics);
     }
 
     public async Task<ExemploGenericDTO> GetByIdAsync(int? id)

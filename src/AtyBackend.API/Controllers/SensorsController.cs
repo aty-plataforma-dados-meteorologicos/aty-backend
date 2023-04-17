@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using AtyBackend.Application.ViewModels;
 using AtyBackend.Application.Services;
 using AtyBackend.Domain.Entities;
+using AtyBackend.API.Helpers;
 
 namespace AtyBackend.API.Controllers;
 
@@ -13,26 +14,23 @@ namespace AtyBackend.API.Controllers;
 [Authorize(Roles = "Admin,Manager")]
 [Route("api/[controller]")]
 [ApiController]
-public class SensorController : ControllerBase
+public class SensorsController : ControllerBase
 {
     private readonly ISensorService _exemploService;
 
-    public SensorController(ISensorService exemploService)
+    public SensorsController(ISensorService exemploService)
     {
         _exemploService = exemploService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<Paginated<SensorDTO>>> GetSensorAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    public async Task<ActionResult<ApiResponsePaginated<SensorDTO>>> GetSensorAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        var pageNumberNotNull = pageNumber is null ? 1 : pageNumber.Value;
-        var pageSizeNotNull = pageSize is null ? 10 : pageSize.Value;
-        var url = "https://" + Request.Host.ToString() + Request.Path.ToString();
-        url = Request.IsHttps ? url : url.Replace("https", "http");
+        var paginated = new ApiResponsePaginated<SensorDTO>(pageNumber, pageSize);
+        var exemplos = await _exemploService.GetAsync(paginated.PageNumber, paginated.PageSize);
+        paginated.AddData(exemplos, Request);
 
-        var exemplos = await _exemploService.GetAsync(pageNumberNotNull, pageSizeNotNull, url);
-
-        return exemplos is null ? NotFound("Sensors not found") : Ok(exemplos);
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
     }
 
     [HttpGet("{id:int}", Name = "GetSensorById")]

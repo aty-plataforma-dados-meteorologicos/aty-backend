@@ -27,27 +27,31 @@ public class ExemploService : IExemploService
         return _mapper.Map<ExemploDTO>(exemplo);
     }
     
-    public async Task<Paginated<ExemploDTO>> GetAsync(int pageNumber, int pageSize, string url)
+    public async Task<Paginated<ExemploDTO>> GetAsync(int pageNumber, int pageSize)
     {
         var totalItems = await _exemploRepository.CountAsync();
-        var totalPages = (totalItems > 0 && totalItems < pageSize) ? 1 : TotalPages(totalItems, pageSize);
-
         var exemploEntities = await _exemploRepository.GetAllAsync(pageSize, pageNumber);
-        var exemplosDTOs = _mapper.Map<IEnumerable<ExemploDTO>>(exemploEntities);
+        var exemplosDTOs = _mapper.Map<List<ExemploDTO>>(exemploEntities);
 
-        var paginatedResult = new Paginated<ExemploDTO>
-        {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalPages = totalPages,
-            TotalItems = totalItems,
-            Data = exemplosDTOs
-        };
+        #region old
+        //var paginatedResult = new Paginated<ExemploDTO>(pageNumber, pageSize, totalItems, exemplosDTOs);
 
-        paginatedResult.PreviousPageUrl = HasPreviousPage(paginatedResult) ? GetPageUrl(paginatedResult, url, false) : null;
-        paginatedResult.NextPageUrl = HasNextPage(paginatedResult) ? GetPageUrl(paginatedResult, url) : null;
 
-        return paginatedResult;
+        //var totalPages = (totalItems > 0 && totalItems < pageSize) ? 1 : TotalPages(totalItems, pageSize);
+
+        ////var paginatedResult = new Paginated<ExemploDTO>
+        ////{
+        ////    PageNumber = pageNumber,
+        ////    PageSize = pageSize,
+        ////    TotalPages = totalPages,
+        ////    TotalItems = totalItems,
+        ////    Data = exemplosDTOs
+        ////};
+
+        //paginatedResult.PreviousPageUrl = HasPreviousPage(paginatedResult) ? GetPageUrl(paginatedResult, url, false) : null;
+        //paginatedResult.NextPageUrl = HasNextPage(paginatedResult) ? GetPageUrl(paginatedResult, url) : null;
+        #endregion
+        return new Paginated<ExemploDTO>(pageNumber, pageSize, totalItems, exemplosDTOs); ;
     }
 
     public async Task<ExemploDTO> GetByIdAsync(int? id)

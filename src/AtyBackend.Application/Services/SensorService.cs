@@ -4,6 +4,7 @@ using AtyBackend.Application.Interfaces;
 using AtyBackend.Application.ViewModels;
 using AtyBackend.Domain.Entities;
 using AtyBackend.Domain.Interfaces;
+using AtyBackend.Infrastructure.Data.Repositories;
 
 
 namespace AtyBackend.Application.Services;
@@ -27,27 +28,32 @@ public class SensorService : ISensorService
         return _mapper.Map<SensorDTO>(sensor);
     }
     
-    public async Task<Paginated<SensorDTO>> GetAsync(int pageNumber, int pageSize, string url)
+    public async Task<Paginated<SensorDTO>> GetAsync(int pageNumber, int pageSize)
     {
-        var totalItems = await _sensorRepository.CountAsync();
-        var totalPages = (totalItems > 0 && totalItems < pageSize) ? 1 : TotalPages(totalItems, pageSize);
+        var total = await _sensorRepository.CountAsync();
+        var entities = await _sensorRepository.GetAllAsync(pageSize, pageNumber);
+        var dtos = _mapper.Map<List<SensorDTO>>(entities);
 
-        var sensorEntities = await _sensorRepository.GetAllAsync(pageSize, pageNumber);
-        var sensorsDTOs = _mapper.Map<IEnumerable<SensorDTO>>(sensorEntities);
+        return new Paginated<SensorDTO>(pageNumber, pageSize, total, dtos);
 
-        var paginatedResult = new Paginated<SensorDTO>
-        {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalPages = totalPages,
-            TotalItems = totalItems,
-            Data = sensorsDTOs
-        };
+        //var totalItems = await _sensorRepository.CountAsync();
+        //var totalPages = (totalItems > 0 && totalItems < pageSize) ? 1 : TotalPages(totalItems, pageSize);
 
-        paginatedResult.PreviousPageUrl = HasPreviousPage(paginatedResult) ? GetPageUrl(paginatedResult, url, false) : null;
-        paginatedResult.NextPageUrl = HasNextPage(paginatedResult) ? GetPageUrl(paginatedResult, url) : null;
+        //var sensorEntities = await _sensorRepository.GetAllAsync(pageSize, pageNumber);
+        //var sensorsDTOs = _mapper.Map<List<SensorDTO>>(sensorEntities);
 
-        return paginatedResult;
+        //var paginatedResult = new Paginated<SensorDTO>
+        //{
+        //    PageNumber = pageNumber,
+        //    PageSize = pageSize,
+        //    TotalPages = totalPages,
+        //    TotalItems = totalItems,
+        //    Data = sensorsDTOs
+        //};
+
+
+
+        //return paginatedResult;
     }
 
     public async Task<SensorDTO> GetByIdAsync(int? id)
@@ -77,23 +83,5 @@ public class SensorService : ISensorService
         return await _sensorRepository.DeleteAsync(sensor);
     }
     
-    private static int TotalPages(double totalItems, double pageSize) => (int)Math.Ceiling(totalItems / pageSize);
-
-    //condição em que não tem não tem previous
-    //-> pageNumber = 1
-    //-> pageNumber > TotalPages
-    //-> pageNumber < 1
-    private static bool HasNextPage(Paginated<SensorDTO> result) =>
-        !(result.PageNumber == result.TotalPages || result.PageNumber > result.TotalPages || result.PageNumber < 1);
-
-    //condição em que não tem next
-    //-> pageNumber = TotalPages
-    //-> pageNumber > TotalPages
-    //-> pageNumber < 1
-    private static bool HasPreviousPage(Paginated<SensorDTO> result) =>
-        !(result.PageNumber == 1 || result.PageNumber > result.TotalPages || result.PageNumber < 1);
-
-    private static string GetPageUrl(Paginated<SensorDTO> result, string url, bool isNextPage = true) => isNextPage ?
-        url + "?pageNumber=" + (result.PageNumber + 1) + "&pageSize=" + result.PageSize :
-        url + "?pageNumber=" + (result.PageNumber - 1) + "&pageSize=" + result.PageSize;
+    
 }

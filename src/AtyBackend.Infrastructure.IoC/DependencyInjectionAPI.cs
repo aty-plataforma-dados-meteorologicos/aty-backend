@@ -32,6 +32,9 @@ public static class DependencyInjectionAPI
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+        services.AddScoped<ISensorRepository, SensorRepository>();
+        services.AddScoped<ISensorService, SensorService>();
+
         services.AddScoped<IAuthenticate, AuthenticateService>();
 
         services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
