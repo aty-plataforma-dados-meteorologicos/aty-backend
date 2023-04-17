@@ -153,6 +153,7 @@ public class UsersController : ControllerBase
             return user is null ? NotFound("User not found") : Ok(new ApplicationUserDTO
                 {
                     Id = user.Id,
+                    Name = user.Name,
                     Email = user.Email,
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault(),
                     IsEnabled = user.IsEnabled
