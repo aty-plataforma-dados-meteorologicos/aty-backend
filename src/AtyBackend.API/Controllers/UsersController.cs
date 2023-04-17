@@ -40,6 +40,7 @@ public class UsersController : ControllerBase
             {
                 var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
+                user.Name = userInfo.Name;
                 user.IsEnabled = true;
                 user.IsDeleted = false;
                 user.Type = userInfo.Type;
