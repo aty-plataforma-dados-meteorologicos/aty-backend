@@ -51,7 +51,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"test.user@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test.admin@io.tec.br\",\r\n    \"password\": \"#1AdminquaCoisA\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -87,6 +87,10 @@
 									"    }\r",
 									"});\r",
 									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -103,14 +107,15 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "accept",
-								"value": "text/plain",
-								"type": "default"
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QuYWRtaW5AdGVjbm9teWwuY29tIiwianRpIjoiZGY3N2NkZmQtMDM1MS00ZDk1LWJmNmEtNmQ3OGVkMzQ3MTZkIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE2NjgwMjc1MzAsImlzcyI6InRlY25vbXlsLmNvbS5iciIsImF1ZCI6Imh0dHBzOi8vdGVjbm9teWwuY29tLmJyIn0.nn_c-uirn8te5NNxjE-Y0YpO2E-7rFI-kK6HBFBNirU",
+								"type": "default",
+								"disabled": true
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"accessToken\": \"{{token}}\",\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test.admin@io.tec.br\",\r\n    \"password\": \"#1AdminquaCoisA\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,15 +123,14 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{url}}/api/Authentication/TokenRefresh",
+							"raw": "https://{{url}}/api/Authentication",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"Authentication",
-								"TokenRefresh"
+								"Authentication"
 							]
 						}
 					},
@@ -1306,7 +1310,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{url}}/api/Users/{{userId}}",
+							"raw": "https://{{url}}/api/Users/03c3f377-15bf-4c9a-8d1b-9eb9b3728dfd",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
@@ -1314,7 +1318,7 @@
 							"path": [
 								"api",
 								"Users",
-								"{{userId}}"
+								"03c3f377-15bf-4c9a-8d1b-9eb9b3728dfd"
 							]
 						}
 					},
@@ -1416,7 +1420,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Name\": \"Usuario teste\",\r\n    \"email\": \"test.teste@io.tec.br\",\r\n    \"password\": \"#1Adngd4sfsdf@q\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"NOME MORUdMBA\",\r\n    \"email\": \"morumba.morumbda@io.tec.br\",\r\n    \"password\": \"#1Adngd4sfds2df@q\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1611,6 +1615,355 @@
 								"api",
 								"Users",
 								"Password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sensors",
+			"item": [
+				{
+					"name": "Sensors",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sensors Paginated",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sensor",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors/{{sensorId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors",
+								"{{sensorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"sensorId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"isEnabled\": true,\r\n  \"name\": \"Temperatura\",\r\n  \"measurementUnit\": \"Celcius\",\r\n  \"minimum\": -40,\r\n  \"maximum\": 80,\r\n  \"accuracy\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Sensors",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"sensorId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{sensorId}},\r\n  \"isEnabled\": false,\r\n  \"name\": \"Temperatura2\",\r\n  \"measurementUnit\": \"Celcius\",\r\n  \"minimum\": -41,\r\n  \"maximum\": 80,\r\n  \"accuracy\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Sensors/{{sensorId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors",
+								"{{sensorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors/{{sensorId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors",
+								"{{sensorId}}"
 							]
 						}
 					},
