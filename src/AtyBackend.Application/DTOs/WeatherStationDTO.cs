@@ -1,4 +1,5 @@
 ﻿using AtyBackend.Domain.Entities;
+using AtyBackend.Infrastructure.Data.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +22,8 @@ namespace AtyBackend.Application.DTOs
         // -> n
         public List<PartnerDTO>? Partners { get; set; }
         //n - n
-        public List<WeatherStationSensorDTO> WeatherStationSensors { get; set; }
+        public List<Sensor> Sensors { get; set; }
         // n - n
-        public List<WeatherStationUserDTO>? WeatherStationUsers { get; set; }
+        public List<ApplicationUser>? Users { get; set; }
     }
 }
