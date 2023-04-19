@@ -6,7 +6,7 @@ namespace AtyBackend.Domain.Entities
     public class WeatherStationUser
     {
         public int WeatherStationId { get; set; }
-        public WeatherStation WeatherStation { get; set; }
+        public WeatherStation? WeatherStation { get; set; }
 
         public string ApplicationUserId { get; set; }
 

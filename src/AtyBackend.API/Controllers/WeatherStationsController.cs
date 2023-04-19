@@ -7,6 +7,11 @@ using AtyBackend.Application.ViewModels;
 using AtyBackend.Application.Services;
 using AtyBackend.Domain.Entities;
 using AtyBackend.API.Helpers;
+using AutoMapper;
+using System.Security.Claims;
+using AtyBackend.Infrastructure.Data.Identity;
+using Microsoft.AspNetCore.Identity;
+using AtyBackend.API.Models;
 
 namespace AtyBackend.API.Controllers;
 
@@ -14,13 +19,20 @@ namespace AtyBackend.API.Controllers;
 [Authorize(Roles = "Admin,Manager")]
 [Route("api/[controller]")]
 [ApiController]
-public class WeatherStationController : ControllerBase
+public class WeatherStationsController : ControllerBase
 {
     private readonly IWeatherStationService _weatherStationService;
+    private readonly IMapper _mapper;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public WeatherStationController(IWeatherStationService weatherStationService)
+
+
+    public WeatherStationsController(IWeatherStationService weatherStationService,
+        IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         _weatherStationService = weatherStationService;
+        _mapper = mapper;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -41,16 +53,52 @@ public class WeatherStationController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddAsync(WeatherStationDTO weatherStationDto)
+    public async Task<ActionResult> AddAsync(WeatherStationCreate weatherStation)
     {
-        if (weatherStationDto == null)
+        try
         {
-            return BadRequest("WeatherStation is null");
-        }
+            if (weatherStation == null)
+            {
+                return BadRequest("WeatherStation is null");
+            }
 
-        weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
+            var weatherStationDto = _mapper.Map<WeatherStationDTO>(weatherStation);
 
-        return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
+            // add user em weatherStationDto.[]WeatherStationUsers o IsMaintainer, pegar o id com base no toekn da request
+            // get user from token jwt
+
+            // Obtém o valor do email do usuário a partir do token JWT
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            // Se o email não estiver presente no token, retorna um erro
+            if (userEmail is null)
+            {
+                return BadRequest("O token JWT não contém o email do usuário.");
+            }
+
+            // find user to get id
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+            if (role == UserRoles.User)
+            {
+                await _userManager.RemoveFromRolesAsync(user, roles);
+                _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+            }
+
+            weatherStationDto.WeatherStationUsers.Add(new WeatherStationUserDTO
+            {
+                ApplicationUserId = user.Id,
+                IsMaintainer = true,
+                IsDataAuthorized = true,
+                IsFavorite = false
+            });
+
+            weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
+
+            return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
+        } catch (Exception ex) { return  BadRequest(ex.Message); }
     }
 
     [HttpPut("{id:int}")]
@@ -60,7 +108,7 @@ public class WeatherStationController : ControllerBase
         {
             return BadRequest("Id is different from WeatherStation.Id");
         }
-        
+
         var result = await _weatherStationService.UpdateAsync(weatherStationDto);
         return (result is not null) ? Ok(result) : NotFound("WeatherStation not found");
     }
