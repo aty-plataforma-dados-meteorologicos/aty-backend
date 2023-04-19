@@ -10,6 +10,8 @@
         public string? Token { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
         // -> n
         public List<Partner>? Partners { get; set; }
