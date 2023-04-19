@@ -34,6 +34,8 @@ public static class DependencyInjectionAPI
 
         services.AddScoped<ISensorRepository, SensorRepository>();
         services.AddScoped<ISensorService, SensorService>();
+        services.AddScoped<IWeatherStationRepository, WeatherStationRepository>();
+        services.AddScoped<IWeatherStationService, WeatherStationService>();
 
         services.AddScoped<IAuthenticate, AuthenticateService>();
 

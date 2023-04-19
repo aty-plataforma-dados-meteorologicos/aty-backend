@@ -46,6 +46,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
 
             try
             {
+                // pegar os sensores e só salvar id
                 await _entitiesWeatherStation.AddAsync(entity);
                 //var result = _entities.Add(entity);
                 // System.Diagnostics.Trace.WriteLine(result.ToString());

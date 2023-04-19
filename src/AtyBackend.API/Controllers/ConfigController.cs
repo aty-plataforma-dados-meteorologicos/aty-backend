@@ -128,6 +128,7 @@ namespace AtyBackend.API.Controllers
                     return Created("User", new ApplicationUserDTO
                     {
                         Id = user.Id,
+                        Name = user.Name,
                         Email = user.Email,
                         Role = userInfo.Role,
                         Type = user.Type,

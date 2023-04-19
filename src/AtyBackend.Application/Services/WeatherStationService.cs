@@ -22,6 +22,8 @@ public class WeatherStationService : IWeatherStationService
     }
     public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
     {
+        dto.CreatedAt = DateTime.UtcNow;
+
         var weatherStationEntity = _mapper.Map<WeatherStation>(dto);
         var weatherStation = await _weatherStationRepository.CreateAsync(weatherStationEntity);
 

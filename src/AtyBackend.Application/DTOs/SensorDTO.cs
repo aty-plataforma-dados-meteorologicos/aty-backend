@@ -22,7 +22,7 @@ namespace AtyBackend.Application.DTOs
          */
         public double Accuracy { get; set; }
 
-        [JsonIgnore]
-        public List<WeatherStationSensorDTO>? WeatherStationSensors { get; set; }
+        //[JsonIgnore]
+        //public List<WeatherStationSensorDTO>? WeatherStationSensors { get; set; }
     }
 }

@@ -14,8 +14,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Exemplo> Exemplo { get; set; }
     public DbSet<ExemploGeneric> ExemploGeneric { get; set; }
-    public DbSet<WeatherStation> WeatherStation { get; set; }
+    public DbSet<Partner> Partners { get; set; }
     public DbSet<Sensor> Sensor { get; set; }
+    public DbSet<WeatherStation> WeatherStation { get; set; }
     public DbSet<WeatherStationSensor> WeatherStationSensor { get; set; }
     public DbSet<WeatherStationUser> WeatherStationUser { get; set; }
 
@@ -42,6 +43,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<WeatherStationSensor>()
            .HasKey(wsu => new { wsu.WeatherStationId, wsu.SensorId });
+
+        // Alternative
+        //builder.Entity<WeatherStationSensor>(
+        //wss =>
+        //{
+        //    wss.HasKey(wsu => new { wsu.WeatherStationId, wsu.SensorId });
+        //    wss.HasOne(wss => wss.WeatherStation)
+        //        .WithMany(ws => ws.WeatherStationSensors)
+        //        .HasForeignKey(w => new { w.WeatherStationId });
+        //    wss.HasOne(wss => wss.Sensor);
+        //});
 
         builder.Entity<WeatherStationUser>()
                .HasKey(wsu => new { wsu.WeatherStationId, wsu.ApplicationUserId });

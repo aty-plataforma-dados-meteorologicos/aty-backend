@@ -1,8 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using AtyBackend.Application.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AtyBackend.Application.DTOs
+namespace AtyBackend.Application.ViewModels
 {
-    public class WeatherStationDTO : EntityDTO
+    public class WeatherStationCreate
     {
         public string Name { get; set; }
         public string Latitude { get; set; }
@@ -19,8 +24,5 @@ namespace AtyBackend.Application.DTOs
         public List<PartnerDTO>? Partners { get; set; }
         //n - n
         public List<SensorDTO> Sensors { get; set; }
-        // n - n
-
-        public List<WeatherStationUserDTO>? WeatherStationUsers { get; set; }
     }
 }
