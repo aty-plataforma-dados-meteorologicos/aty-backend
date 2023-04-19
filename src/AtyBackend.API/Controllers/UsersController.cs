@@ -118,6 +118,7 @@ public class UsersController : ControllerBase
                     Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
+                    Type = user.Type,
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault(),
                     IsEnabled = user.IsEnabled
                 });
@@ -155,6 +156,7 @@ public class UsersController : ControllerBase
                     Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
+                    Type = user.Type,
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault(),
                     IsEnabled = user.IsEnabled
                 });
