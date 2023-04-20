@@ -21,6 +21,7 @@ namespace AtyBackend.Application.DTOs
         public List<SensorDTO> Sensors { get; set; }
         // n - n
 
+        [JsonIgnore]
         public List<WeatherStationUserDTO>? WeatherStationUsers { get; set; }
     }
 }

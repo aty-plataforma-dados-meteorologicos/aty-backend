@@ -27,6 +27,10 @@ public class WeatherStationService : IWeatherStationService
         var weatherStationEntity = _mapper.Map<WeatherStation>(dto);
         var weatherStation = await _weatherStationRepository.CreateAsync(weatherStationEntity);
 
+
+        // get with include
+        //weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStation.Id);
+
         return _mapper.Map<WeatherStationDTO>(weatherStation);
     }
     

@@ -29,6 +29,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
         private readonly DbSet<WeatherStation> _entitiesWeatherStation;
         private readonly DbSet<WeatherStationSensor> _entitiesWeatherStationSensor;
         private readonly DbSet<WeatherStationUser> _entitiesWeatherStationUser;
+        private readonly DbSet<Sensor> _entitiesSensor;
 
         public WeatherStationRepository(ApplicationDbContext context)
         {
@@ -37,6 +38,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             _entitiesWeatherStation = context.Set<WeatherStation>();
             _entitiesWeatherStationSensor = context.Set<WeatherStationSensor>();
             _entitiesWeatherStationUser = context.Set<WeatherStationUser>();
+            _entitiesSensor = context.Set<Sensor>();
         }
 
 
@@ -53,6 +55,14 @@ namespace AtyBackend.Infrastructure.Data.Repositories
 
                 await _context.SaveChangesAsync();
                 transaction.Commit();
+
+                // include sensors each senros of WeatherStationSensors
+                foreach (var weatherStationSensor in entity.WeatherStationSensors)
+                {
+                    weatherStationSensor.Sensor = await _entitiesSensor
+                        .SingleOrDefaultAsync(s => s.Id == weatherStationSensor.SensorId);
+                }
+
 
                 return entity;
             }
@@ -76,6 +86,10 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             .ToListAsync();
 
         public async Task<List<WeatherStation>> GetAllAsync(int pageSize, int pageNumber) => await _entitiesWeatherStation
+            .Include(i => i.WeatherStationSensors)
+            .ThenInclude(i => i.Sensor)
+            //.Include(p => p.Partners)
+
             .OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
@@ -93,6 +107,8 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             .ToListAsync();
 
         public async Task<WeatherStation> GetByIdAsync(int? id) => await _entitiesWeatherStation
+            .Include(i => i.WeatherStationSensors)
+            .ThenInclude(i => i.Sensor)
             .SingleOrDefaultAsync(s => s.Id == id);
 
         public async Task<WeatherStation> UpdateAsync(WeatherStation entity)
