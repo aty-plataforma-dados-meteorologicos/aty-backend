@@ -24,8 +24,16 @@ public class WeatherStationService : IWeatherStationService
     {
         dto.CreatedAt = DateTime.UtcNow;
 
+
+        // criar endpoint para gerar token 
+
+
         var weatherStationEntity = _mapper.Map<WeatherStation>(dto);
         var weatherStation = await _weatherStationRepository.CreateAsync(weatherStationEntity);
+
+
+        // get with include
+        //weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStation.Id);
 
         return _mapper.Map<WeatherStationDTO>(weatherStation);
     }
