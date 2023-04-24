@@ -257,6 +257,7 @@ public class UsersController : ControllerBase
 
             if (userDTO.IsEnabled != user.IsEnabled)
             {
+
                 user.IsEnabled = userDTO.IsEnabled;
                 user.RefreshToken = null;
                 user.RefreshTokenExpiration = null;

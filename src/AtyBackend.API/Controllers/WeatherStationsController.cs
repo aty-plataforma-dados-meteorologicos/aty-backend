@@ -87,18 +87,41 @@ public class WeatherStationsController : ControllerBase
                 _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
             }
 
-            weatherStationDto.WeatherStationUsers.Add(new WeatherStationUserDTO
+            // add weatherStationDto.WeatherStationUsers
+
+            weatherStationDto.WeatherStationUsers = new List<WeatherStationUserDTO>();
+
+            var userDto = new WeatherStationUserDTO
             {
                 ApplicationUserId = user.Id,
                 IsMaintainer = true,
                 IsDataAuthorized = true,
                 IsFavorite = false
-            });
+            };
 
+            weatherStationDto.WeatherStationUsers.Add(userDto);
+
+            //weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
             weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
+            //return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
+      
+
+            //weatherStationDto.WeatherStationUsers.Add(new WeatherStationUserDTO
+            //{
+            //    ApplicationUserId = user.Id,
+            //    IsMaintainer = true,
+            //    IsDataAuthorized = true,
+            //    IsFavorite = false
+            //});
+
 
             return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
-        } catch (Exception ex) { return  BadRequest(ex.Message); }
+        } catch (Exception ex) { 
+            
+            return  BadRequest(ex.Message); 
+        
+        
+        }
     }
 
     [HttpPut("{id:int}")]

@@ -22,7 +22,8 @@ public class DomainToDTOMappingProfile : Profile
         CreateMap<PartnerDTO, Partner>()
             .ReverseMap();
 
-        CreateMap<WeatherStationCreate, WeatherStationUserDTO>()
+        CreateMap<WeatherStationCreate, WeatherStationDTO>()
+            //.ForMember(dest => dest.We)
             .ReverseMap();
 
         CreateMap<WeatherStationUserDTO, WeatherStationUser>()
@@ -52,13 +53,19 @@ public class DomainToDTOMappingProfile : Profile
                     //    Maximum = c.Maximum,
                     //    Accuracy = c.Accuracy
                     //}
-                }).ToList()));
+                }).ToList()))
+            .ForMember(dest => dest.WeatherStationUsers, opt => opt.MapFrom(src =>
+                           src.WeatherStationUsers.Select(s => new WeatherStationUser
+                           {
+                               //WeatherStationId = s.WeatherStationId,
+                               ApplicationUserId = s.ApplicationUserId
+                           }).ToList()));
 
         CreateMap<WeatherStation, WeatherStationDTO>()
             .ForMember(dest => dest.Sensors, opt => opt.MapFrom(src =>
                 src.WeatherStationSensors.Select(c => new SensorDTO
                 {
-                    Id = c.SensorId,
+                    Id = c.Sensor.Id,
                     Name = c.Sensor.Name,
                     MeasurementUnit = c.Sensor.MeasurementUnit,
                     Minimum = c.Sensor.Minimum,
