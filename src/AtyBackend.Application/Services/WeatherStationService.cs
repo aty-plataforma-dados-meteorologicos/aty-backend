@@ -26,6 +26,7 @@ public class WeatherStationService : IWeatherStationService
 
 
         // criar endpoint para gerar token 
+        dto.Token = Guid.NewGuid().ToString("N");
 
 
         var weatherStationEntity = _mapper.Map<WeatherStation>(dto);
@@ -43,6 +44,12 @@ public class WeatherStationService : IWeatherStationService
         var total = await _weatherStationRepository.CountAsync();
         var entities = await _weatherStationRepository.GetAllAsync(pageSize, pageNumber);
         var dtos = _mapper.Map<List<WeatherStationDTO>>(entities);
+
+        // foreach dtos, dto.token = null
+        dtos.ForEach(d =>
+        {
+            d.Token = null;
+        });
 
         return new Paginated<WeatherStationDTO>(pageNumber, pageSize, total, dtos);
     }
