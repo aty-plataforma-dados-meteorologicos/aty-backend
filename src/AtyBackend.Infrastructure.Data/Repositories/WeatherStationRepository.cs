@@ -71,7 +71,8 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                 //}
 
                 entity = await GetByIdAsync(entity.Id);
-
+                entity.PublicId = "WS" + entity.Id.ToString();
+                await _context.SaveChangesAsync();
 
                 return entity;
             }
