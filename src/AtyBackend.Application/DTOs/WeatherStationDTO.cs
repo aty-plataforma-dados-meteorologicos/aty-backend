@@ -4,6 +4,7 @@ namespace AtyBackend.Application.DTOs
 {
     public class WeatherStationDTO : EntityDTO
     {
+        public string? PublicId { get; set; }
         public string Name { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
