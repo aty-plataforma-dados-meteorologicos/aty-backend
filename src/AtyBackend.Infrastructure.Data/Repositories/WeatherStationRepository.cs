@@ -129,12 +129,31 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            // remove all partners by weatherstationid
+            var partners = await _entitiesPartner.Where(i => i.WeatherStationId == entity.Id).ToListAsync();
+
             var transaction = _context.Database.BeginTransaction();
 
             try
             {
                 if (await _entitiesWeatherStation.AnyAsync(i => i.Id == entity.Id))
                 {
+                    //var oldEntity = await GetByIdAsync(entity.Id);
+
+                    //// remove range oldEntity.Partners
+                    //if(oldEntity.Partners is not null)
+                    //{
+                    //    _entitiesPartner.RemoveRange(oldEntity.Partners);
+                    //    await _context.SaveChangesAsync();
+                    //}
+
+                    //oldEntity = entity;
+
+                    foreach (var partner in entity.Partners)
+                    {
+                        await _entitiesPartner.AddAsync(partner);
+                    }
+
 
                     _entitiesWeatherStation.Update(entity);
                     await _context.SaveChangesAsync();
