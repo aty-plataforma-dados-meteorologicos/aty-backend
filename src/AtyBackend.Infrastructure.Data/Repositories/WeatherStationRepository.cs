@@ -129,8 +129,6 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            // remove all partners by weatherstationid
-            var partners = await _entitiesPartner.Where(i => i.WeatherStationId == entity.Id).ToListAsync();
 
             var transaction = _context.Database.BeginTransaction();
 
@@ -138,24 +136,27 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             {
                 if (await _entitiesWeatherStation.AnyAsync(i => i.Id == entity.Id))
                 {
-                    //var oldEntity = await GetByIdAsync(entity.Id);
+                    // remove all partners by weatherstationid
+                    var partners = await _entitiesPartner.Where(i => i.WeatherStationId == entity.Id).ToListAsync();
+                    _entitiesPartner.RemoveRange(partners);
+                    await _context.SaveChangesAsync();
 
-                    //// remove range oldEntity.Partners
-                    //if(oldEntity.Partners is not null)
-                    //{
-                    //    _entitiesPartner.RemoveRange(oldEntity.Partners);
-                    //    await _context.SaveChangesAsync();
-                    //}
+                    // pega a entity e altera somente os campos editáveis
+                    // em seguida dá um save changes
+                    var oldEntity = await _entitiesWeatherStation
+                        .Include(i => i.WeatherStationSensors)
+                        .ThenInclude(i => i.Sensor)
+                        .Include(i => i.Partners)
+                        .SingleOrDefaultAsync(s => s.Id == entity.Id);
 
-                    //oldEntity = entity;
+                    oldEntity.Partners = entity.Partners;
+                    oldEntity.Partners.AddRange(entity.Partners);
 
-                    foreach (var partner in entity.Partners)
-                    {
-                        await _entitiesPartner.AddAsync(partner);
-                    }
+                    oldEntity.Name = entity.Name;
 
 
                     _entitiesWeatherStation.Update(entity);
+
                     await _context.SaveChangesAsync();
                     transaction.Commit();
                 }
