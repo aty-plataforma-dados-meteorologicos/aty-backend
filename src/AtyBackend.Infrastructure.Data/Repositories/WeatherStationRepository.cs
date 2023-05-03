@@ -51,7 +51,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             try
             {
                 // insert entity.Partners
-                foreach(var partner in entity.Partners)
+                foreach (var partner in entity.Partners)
                 {
                     await _entitiesPartner.AddAsync(partner);
                 }
@@ -129,33 +129,29 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-
             var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                if (await _entitiesWeatherStation.AnyAsync(i => i.Id == entity.Id))
-                {
-                    // remove all partners by weatherstationid
-                    var partners = await _entitiesPartner.Where(i => i.WeatherStationId == entity.Id).ToListAsync();
-                    _entitiesPartner.RemoveRange(partners);
-                    await _context.SaveChangesAsync();
-
-                    // pega a entity e altera somente os campos editáveis
-                    // em seguida dá um save changes
-                    var oldEntity = await _entitiesWeatherStation
-                        .Include(i => i.WeatherStationSensors)
+                var existingEntity = await _entitiesWeatherStation
+                    .Include(i => i.WeatherStationSensors)
                         .ThenInclude(i => i.Sensor)
                         .Include(i => i.Partners)
                         .SingleOrDefaultAsync(s => s.Id == entity.Id);
+                        //.FindAsync(entity.Id);
+                if (existingEntity != null)
+                {
+                    // Remove all partners by weatherstationid
+                    _context.RemoveRange(existingEntity.Partners);
 
-                    oldEntity.Partners = entity.Partners;
-                    oldEntity.Partners.AddRange(entity.Partners);
+                    // Update the fields of the existing entity with the values from the updated entity
+                    existingEntity.Name = entity.Name;
+                    existingEntity.Partners = entity.Partners;
+                    existingEntity.WeatherStationSensors = entity.WeatherStationSensors;
 
-                    oldEntity.Name = entity.Name;
-
-
-                    _entitiesWeatherStation.Update(entity);
+                    // Attach the updated entity to the context and mark it as modified
+                    _context.Attach(existingEntity);
+                    _context.Entry(existingEntity).State = EntityState.Modified;
 
                     await _context.SaveChangesAsync();
                     transaction.Commit();
@@ -165,7 +161,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                     throw new Exception("Entity not found");
                 }
 
-                return entity;
+                return existingEntity;
             }
             catch (Exception ex)
             {
