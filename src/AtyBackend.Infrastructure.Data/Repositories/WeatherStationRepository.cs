@@ -147,7 +147,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                     // Update the fields of the existing entity with the values from the updated entity
                     existingEntity.Name = entity.Name;
                     existingEntity.Partners = entity.Partners;
-                    existingEntity.WeatherStationSensors = entity.WeatherStationSensors;
+                    //existingEntity.WeatherStationSensors = entity.WeatherStationSensors;
 
                     // Attach the updated entity to the context and mark it as modified
                     _context.Attach(existingEntity);
