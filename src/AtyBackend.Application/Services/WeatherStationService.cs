@@ -23,19 +23,15 @@ public class WeatherStationService : IWeatherStationService
     public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
     {
         dto.CreatedAt = DateTime.UtcNow;
-
-
         // criar endpoint para gerar token 
         dto.Token = Guid.NewGuid().ToString("N");
 
-
         var weatherStationEntity = _mapper.Map<WeatherStation>(dto);
         var weatherStation = await _weatherStationRepository.CreateAsync(weatherStationEntity);
-
+        weatherStation.Token = null;
 
         // get with include
         //weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStation.Id);
-
         return _mapper.Map<WeatherStationDTO>(weatherStation);
     }
     
@@ -64,6 +60,7 @@ public class WeatherStationService : IWeatherStationService
     
     public async Task<WeatherStationDTO> UpdateAsync(WeatherStationDTO weatherStation)
     {
+        weatherStation.UpdateAt = DateTime.UtcNow;
         var weatherStationEntity = _mapper.Map<WeatherStation>(weatherStation);
         var weatherStationUpdated = await _weatherStationRepository.UpdateAsync(weatherStationEntity);
 
@@ -80,6 +77,22 @@ public class WeatherStationService : IWeatherStationService
 
         return await _weatherStationRepository.DeleteAsync(weatherStation);
     }
-    
-    
+
+
+    public async Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int? id)
+    {
+        var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
+        if (weatherStation is null)
+        {
+            throw new ArgumentNullException(nameof(weatherStation));
+        }
+
+        return new WeatherStationAuthenticationDTO
+        {
+            PublicId = weatherStation.PublicId,
+            Token = weatherStation.Token
+        };
+    }
+
+
 }

@@ -52,6 +52,37 @@ public class WeatherStationsController : ControllerBase
         return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
     }
 
+    [Authorize(Roles = "Admin, Manager, Maintainer")]
+    [HttpGet("Authentication/{id:int}", Name = "GetWeatherStationAuthentication")]
+    public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int? id)
+    {
+        // através do bearer token, saber se o usuário pode ter acesso a isso
+        // Quem poderá acessar: mantenedor da estação ou manager/admin da plataforma;
+        //var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        //// Se o email não estiver presente no token, retorna um erro
+        //if (userEmail is null)
+        //{
+        //    return BadRequest("O token JWT não contém o email do usuário.");
+        //}
+
+        //// find user to get id
+        //var user = await _userManager.FindByEmailAsync(userEmail);
+        //var roles = await _userManager.GetRolesAsync(user);
+        //var role = roles.FirstOrDefault();
+
+        //if (role == UserRoles.User)
+        //{
+        //    await _userManager.RemoveFromRolesAsync(user, roles);
+        //    _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+        //}
+
+
+
+        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id);
+        return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
+    }
+
     [HttpPost]
     public async Task<ActionResult> AddAsync(WeatherStationCreate weatherStation)
     {
@@ -124,9 +155,11 @@ public class WeatherStationsController : ControllerBase
         }
     }
 
+        // add a role
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateAsync(int? id, [FromBody] WeatherStationDTO weatherStationDto)
     {
+        // validar se o usuário pode editar a estação (é mantenedor da estação ou admin/manager da plataforma)
         if (id != weatherStationDto.Id)
         {
             return BadRequest("Id is different from WeatherStation.Id");
@@ -138,4 +171,7 @@ public class WeatherStationsController : ControllerBase
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> RemoveAsync(int id) => await _weatherStationService.DeleteAsync(id) ? NoContent() : BadRequest("Not deleted");
+
+
+
 }

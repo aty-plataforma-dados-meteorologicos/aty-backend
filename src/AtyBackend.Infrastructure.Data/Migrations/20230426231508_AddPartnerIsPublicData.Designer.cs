@@ -4,6 +4,7 @@ using AtyBackend.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtyBackend.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426231508_AddPartnerIsPublicData")]
+    partial class AddPartnerIsPublicData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,7 +111,7 @@ namespace AtyBackend.Infrastructure.Data.Migrations
                     b.Property<string>("Site")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WeatherStationId")
+                    b.Property<int?>("WeatherStationId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -186,6 +188,9 @@ namespace AtyBackend.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -198,9 +203,6 @@ namespace AtyBackend.Infrastructure.Data.Migrations
 
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -466,9 +468,7 @@ namespace AtyBackend.Infrastructure.Data.Migrations
                 {
                     b.HasOne("AtyBackend.Domain.Entities.WeatherStation", null)
                         .WithMany("Partners")
-                        .HasForeignKey("WeatherStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WeatherStationId");
                 });
 
             modelBuilder.Entity("AtyBackend.Domain.Entities.WeatherStationSensor", b =>
