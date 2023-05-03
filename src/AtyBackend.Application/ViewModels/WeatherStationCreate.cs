@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AtyBackend.Application.ViewModels
@@ -13,8 +14,8 @@ namespace AtyBackend.Application.ViewModels
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         public double AltitudeMSL { get; set; }
+        [JsonIgnore]
         public bool IsPrivate { get; set; }
-        public string? Token { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
         public DateTime? CreatedAt { get; set; }

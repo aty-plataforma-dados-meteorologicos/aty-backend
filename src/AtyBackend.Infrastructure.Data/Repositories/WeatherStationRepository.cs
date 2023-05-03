@@ -51,7 +51,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             try
             {
                 // insert entity.Partners
-                foreach(var partner in entity.Partners)
+                foreach (var partner in entity.Partners)
                 {
                     await _entitiesPartner.AddAsync(partner);
                 }
@@ -133,10 +133,26 @@ namespace AtyBackend.Infrastructure.Data.Repositories
 
             try
             {
-                if (await _entitiesWeatherStation.AnyAsync(i => i.Id == entity.Id))
+                var existingEntity = await _entitiesWeatherStation
+                    .Include(i => i.WeatherStationSensors)
+                        .ThenInclude(i => i.Sensor)
+                        .Include(i => i.Partners)
+                        .SingleOrDefaultAsync(s => s.Id == entity.Id);
+                        //.FindAsync(entity.Id);
+                if (existingEntity != null)
                 {
+                    // Remove all partners by weatherstationid
+                    _context.RemoveRange(existingEntity.Partners);
 
-                    _entitiesWeatherStation.Update(entity);
+                    // Update the fields of the existing entity with the values from the updated entity
+                    existingEntity.Name = entity.Name;
+                    existingEntity.Partners = entity.Partners;
+                    //existingEntity.WeatherStationSensors = entity.WeatherStationSensors;
+
+                    // Attach the updated entity to the context and mark it as modified
+                    _context.Attach(existingEntity);
+                    _context.Entry(existingEntity).State = EntityState.Modified;
+
                     await _context.SaveChangesAsync();
                     transaction.Commit();
                 }
@@ -145,7 +161,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                     throw new Exception("Entity not found");
                 }
 
-                return entity;
+                return existingEntity;
             }
             catch (Exception ex)
             {

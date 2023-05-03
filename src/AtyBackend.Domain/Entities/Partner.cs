@@ -8,5 +8,7 @@
         public string Phone { get; set; }
         public string? Site { get; set; }
         public string? Notes { get; set; }
+        public bool IsPublicData { get; set; }
+        public int WeatherStationId { get; set; }
     }
 }

@@ -10,11 +10,13 @@ namespace AtyBackend.Application.DTOs
         public string Longitude { get; set; }
         public double AltitudeMSL { get; set; }
         public bool IsPrivate { get; set; }
+
+        [JsonIgnore]
         public string? Token { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public DateTime? ModifiedAt { get; set; }
+        public DateTime? UpdateAt { get; set; }
 
         // -> n
         public List<PartnerDTO>? Partners { get; set; }

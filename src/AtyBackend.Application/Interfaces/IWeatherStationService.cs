@@ -10,4 +10,6 @@ public interface IWeatherStationService
     Task<WeatherStationDTO> GetByIdAsync(int? id);
     Task<WeatherStationDTO> UpdateAsync(WeatherStationDTO exemploGeneric);
     Task<bool> DeleteAsync(int id);
+
+    Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int? id);
 }
