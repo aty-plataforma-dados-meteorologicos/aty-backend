@@ -16,7 +16,7 @@ using AtyBackend.API.Models;
 namespace AtyBackend.API.Controllers;
 
 //[EnableCors()]
-[Authorize(Roles = "Admin,Manager")]
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class WeatherStationsController : ControllerBase
@@ -52,36 +52,6 @@ public class WeatherStationsController : ControllerBase
         return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
     }
 
-    [Authorize(Roles = "Admin, Manager, Maintainer")]
-    [HttpGet("Authentication/{id:int}", Name = "GetWeatherStationAuthentication")]
-    public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int? id)
-    {
-        // através do bearer token, saber se o usuário pode ter acesso a isso
-        // Quem poderá acessar: mantenedor da estação ou manager/admin da plataforma;
-        //var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-        //// Se o email não estiver presente no token, retorna um erro
-        //if (userEmail is null)
-        //{
-        //    return BadRequest("O token JWT não contém o email do usuário.");
-        //}
-
-        //// find user to get id
-        //var user = await _userManager.FindByEmailAsync(userEmail);
-        //var roles = await _userManager.GetRolesAsync(user);
-        //var role = roles.FirstOrDefault();
-
-        //if (role == UserRoles.User)
-        //{
-        //    await _userManager.RemoveFromRolesAsync(user, roles);
-        //    _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
-        //}
-
-
-
-        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id);
-        return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
-    }
 
     [HttpPost]
     public async Task<ActionResult> AddAsync(WeatherStationCreate weatherStation)
@@ -172,6 +142,55 @@ public class WeatherStationsController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> RemoveAsync(int id) => await _weatherStationService.DeleteAsync(id) ? NoContent() : BadRequest("Not deleted");
 
+    // IMPLEMENTAR: ao criar estação, fazer vínuculo com usuário que a criou
+
+    // implementar endpoint que retorna usuários de uma estação bi weather station id
+    //  [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+
+    // endpoint POST "User/Maintainer" + json com e-mail do usuário e id da estação
+    // GET e-mail from JWT token e busca o usuário [e-mail] na lista de usuários da estação [id]
+    // verifica se o POST foi feito por um Maintainer da estação cujo id está no JSON:
+    //              -> vincula o novo usuário como maintener da estação meteorológica
+    // se não:
+    //              -> Return 401 Unauthorized
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpPost("User/Maintainer")]
+    public async Task<ActionResult> AddMaintainer([FromBody] WeatherStationIdUserId weatherStationUser)
+    {
+        t
+
+    }
 
 
+
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("Authentication/{id:int}", Name = "GetWeatherStationAuthentication")]
+    public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int? id)
+    {
+        //através do bearer token, saber se o usuário pode ter acesso a isso
+        //Quem poderá acessar: mantenedor da estação ou manager / admin da plataforma;
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        // Se o email não estiver presente no token, retorna um erro
+        if (userEmail is null)
+        {
+            return BadRequest("O token JWT não contém o email do usuário.");
+        }
+
+        //// find user to get id
+        //var user = await _userManager.FindByEmailAsync(userEmail);
+        //var roles = await _userManager.GetRolesAsync(user);
+        //var role = roles.FirstOrDefault();
+
+        //if (role == UserRoles.User)
+        //{
+        //    await _userManager.RemoveFromRolesAsync(user, roles);
+        //    _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+        //}
+
+
+
+        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id);
+        return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
+    }
 }

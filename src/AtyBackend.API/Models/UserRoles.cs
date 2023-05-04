@@ -17,6 +17,16 @@ public static class UserRoles
             Manager,
             Admin
         };
-    }   
+    }
+
+    public static string CommaSeparated()
+    {
+        return $"{User},{Maintainer},{Manager},{Admin}";
+    }
+
+    public static string MaintainerManagerAdmin()
+    {
+        return $"{Maintainer},{Manager},{Admin}";
+    }
 }
 
