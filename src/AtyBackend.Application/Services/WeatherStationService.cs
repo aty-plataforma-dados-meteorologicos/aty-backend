@@ -12,12 +12,15 @@ namespace AtyBackend.Application.Services;
 public class WeatherStationService : IWeatherStationService
 {
     private readonly IWeatherStationRepository _weatherStationRepository;
+    private readonly IGenericRepository<WeatherStationUser> _genericRepository;
     private readonly IMapper _mapper;
 
     public WeatherStationService(IWeatherStationRepository weatherStationRepository,
+        IGenericRepository<WeatherStationUser> repository,
         IMapper mapper)
     {
         _weatherStationRepository = weatherStationRepository;
+        _genericRepository = repository;
         _mapper = mapper;
     }
     public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
@@ -92,6 +95,28 @@ public class WeatherStationService : IWeatherStationService
             PublicId = weatherStation.PublicId,
             Token = weatherStation.Token
         };
+    }
+
+    public async Task<bool> AddMaintainer(WeatherStationUser weatherStationUser)
+    {
+        // a estação já existe
+        // o usuário já existe
+
+        // cria o wsu
+        var userDto = new WeatherStationUserDTO
+        {
+            WeatherStationId = weatherStationUser.WeatherStationId,
+            ApplicationUserId = weatherStationUser.ApplicationUserId,
+            IsMaintainer = true,
+            IsDataAuthorized = true,
+            IsFavorite = false
+        };
+
+        // converte para entity
+        var userEntity = _mapper.Map<WeatherStationUser>(userDto);
+
+        // persiste
+
     }
 
 

@@ -142,9 +142,9 @@ public class WeatherStationsController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> RemoveAsync(int id) => await _weatherStationService.DeleteAsync(id) ? NoContent() : BadRequest("Not deleted");
 
-    // IMPLEMENTAR: ao criar estação, fazer vínuculo com usuário que a criou
+    // IMPLEMENTAR: ao criar estação, fazer vínuculo com usuário que a criou [só testar se está funcionando o que fiz]
 
-    // implementar endpoint que retorna usuários de uma estação bi weather station id
+    // implementar endpoint que retorna usuários de uma estação by weatherStationId
     //  [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
 
     // endpoint POST "User/Maintainer" + json com e-mail do usuário e id da estação
@@ -157,7 +157,7 @@ public class WeatherStationsController : ControllerBase
     [HttpPost("User/Maintainer")]
     public async Task<ActionResult> AddMaintainer([FromBody] WeatherStationIdUserId weatherStationUser)
     {
-        t
+        
 
     }
 

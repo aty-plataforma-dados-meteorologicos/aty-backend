@@ -51,10 +51,13 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             try
             {
                 // insert entity.Partners
-                foreach (var partner in entity.Partners)
-                {
-                    await _entitiesPartner.AddAsync(partner);
-                }
+                //foreach (var partner in entity.Partners)
+                //{
+                //    await _entitiesPartner.AddAsync(partner);
+                //}
+                await _entitiesPartner.AddRangeAsync(entity.Partners);
+
+                await _entitiesWeatherStationUser.AddRangeAsync(entity.WeatherStationUsers);
                 // pegar os sensores e só salvar id
                 await _entitiesWeatherStation.AddAsync(entity);
                 //var result = _entities.Add(entity);
