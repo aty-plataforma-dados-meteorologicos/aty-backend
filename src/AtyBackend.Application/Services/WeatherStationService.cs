@@ -5,6 +5,7 @@ using AtyBackend.Application.ViewModels;
 using AtyBackend.Domain.Entities;
 using AtyBackend.Domain.Interfaces;
 using AtyBackend.Infrastructure.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace AtyBackend.Application.Services;
@@ -12,15 +13,15 @@ namespace AtyBackend.Application.Services;
 public class WeatherStationService : IWeatherStationService
 {
     private readonly IWeatherStationRepository _weatherStationRepository;
-    private readonly IGenericRepository<WeatherStationUser> _genericRepository;
+    private readonly IWeatherStationUserRepository _weatherStationUserRepository;
     private readonly IMapper _mapper;
 
     public WeatherStationService(IWeatherStationRepository weatherStationRepository,
-        IGenericRepository<WeatherStationUser> repository,
+        IWeatherStationUserRepository weatherStationUserRepository,
         IMapper mapper)
     {
         _weatherStationRepository = weatherStationRepository;
-        _genericRepository = repository;
+        _weatherStationUserRepository = weatherStationUserRepository;
         _mapper = mapper;
     }
     public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
@@ -81,7 +82,12 @@ public class WeatherStationService : IWeatherStationService
         return await _weatherStationRepository.DeleteAsync(weatherStation);
     }
 
-
+    /// <summary>
+    /// Testar
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public async Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int? id)
     {
         var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
@@ -97,7 +103,7 @@ public class WeatherStationService : IWeatherStationService
         };
     }
 
-    public async Task<bool> AddMaintainer(WeatherStationUser weatherStationUser)
+    public async Task<WeatherStationUserDTO> AddMaintainer(WeatherStationUserDTO weatherStationUser)
     {
         // a estação já existe
         // o usuário já existe
@@ -114,10 +120,17 @@ public class WeatherStationService : IWeatherStationService
 
         // converte para entity
         var userEntity = _mapper.Map<WeatherStationUser>(userDto);
+        userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
+        weatherStationUser = _mapper.Map<WeatherStationUserDTO>(userEntity);
 
-        // persiste
-
+        return weatherStationUser;
     }
+
+    // addFavorite
+    // get favorites by ApplicationUserId
+    // get Mantened by ApplicationUserId
+    // get dataAuth by ApplicationUserId [futuro, mas deixa implementado]
+    // Autoriza dados [futuro, mas deixa implementado]
 
 
 }

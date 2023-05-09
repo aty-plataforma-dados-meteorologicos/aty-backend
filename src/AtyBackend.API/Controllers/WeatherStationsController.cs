@@ -157,7 +157,9 @@ public class WeatherStationsController : ControllerBase
     [HttpPost("User/Maintainer")]
     public async Task<ActionResult> AddMaintainer([FromBody] WeatherStationIdUserId weatherStationUser)
     {
-        
+        // criar repository para WeatherStationUser
+
+        // chamar a service add 
 
     }
 
