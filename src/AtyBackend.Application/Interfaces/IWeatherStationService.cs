@@ -12,4 +12,7 @@ public interface IWeatherStationService
     Task<bool> DeleteAsync(int id);
 
     Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int? id);
+
+    Task<bool> AddMaintainer(WeatherStationIdUserId weatherStationUser);
+    Task<bool> IsMainteiner(int weatherStationId, string userEmail);
 }

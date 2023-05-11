@@ -12,7 +12,7 @@ public interface IWeatherStationUserRepository
     Task<List<WeatherStationUser>> GetAllAsync(int pageSize, int pageNumber);
     Task<List<WeatherStationUser>> FindByConditionAsync(Expression<Func<WeatherStationUser, bool>> expression);
     Task<List<WeatherStationUser>> FindByConditionAsync(Expression<Func<WeatherStationUser, bool>> expression, int pageSize, int pageNumber);
-    Task<WeatherStationUser> GetByIdAsync(int? id);
+    Task<WeatherStationUser> GetByIdAsync(int weatherStationId, string applicationUserId);
     Task<WeatherStationUser> UpdateAsync(WeatherStationUser entity);
     Task<bool> DeleteAsync(WeatherStationUser entity); 
 }

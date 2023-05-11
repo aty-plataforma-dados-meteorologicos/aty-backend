@@ -157,18 +157,17 @@ public class WeatherStationsController : ControllerBase
     [HttpPost("User/Maintainer")]
     public async Task<ActionResult> AddMaintainer([FromBody] WeatherStationIdUserId weatherStationUser)
     {
-        // criar repository para WeatherStationUser
+        // se o usuário é Maintainer, ver se o usuário que está fazendo a requisição é mantenedor da estação
 
-        // chamar a service add 
-
+        return await _weatherStationService.AddMaintainer(weatherStationUser) ? Ok() : BadRequest("Not added");
     }
-
-
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpGet("Authentication/{id:int}", Name = "GetWeatherStationAuthentication")]
     public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int? id)
     {
+        // se o usuário é Maintainer, ver se o usuário que está fazendo a requisição é mantenedor da estação
+        // implementar  
         //através do bearer token, saber se o usuário pode ter acesso a isso
         //Quem poderá acessar: mantenedor da estação ou manager / admin da plataforma;
         var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -192,7 +191,9 @@ public class WeatherStationsController : ControllerBase
 
 
 
-        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id);
+        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id, userEmail);
         return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
     }
+
+
 }

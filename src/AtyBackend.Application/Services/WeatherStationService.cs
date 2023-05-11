@@ -6,7 +6,9 @@ using AtyBackend.Domain.Entities;
 using AtyBackend.Domain.Interfaces;
 using AtyBackend.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-
+using AtyBackend.Infrastructure.Data.Identity;
+using Microsoft.AspNetCore.Identity;
+using AtyBackend.Domain.Model;
 
 namespace AtyBackend.Application.Services;
 
@@ -14,15 +16,18 @@ public class WeatherStationService : IWeatherStationService
 {
     private readonly IWeatherStationRepository _weatherStationRepository;
     private readonly IWeatherStationUserRepository _weatherStationUserRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public WeatherStationService(IWeatherStationRepository weatherStationRepository,
         IWeatherStationUserRepository weatherStationUserRepository,
+        UserManager<ApplicationUser> userManager,
         IMapper mapper)
     {
         _weatherStationRepository = weatherStationRepository;
         _weatherStationUserRepository = weatherStationUserRepository;
         _mapper = mapper;
+        _userManager = userManager;
     }
     public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
     {
@@ -38,7 +43,7 @@ public class WeatherStationService : IWeatherStationService
         //weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStation.Id);
         return _mapper.Map<WeatherStationDTO>(weatherStation);
     }
-    
+
     public async Task<Paginated<WeatherStationDTO>> GetAsync(int pageNumber, int pageSize)
     {
         var total = await _weatherStationRepository.CountAsync();
@@ -61,7 +66,7 @@ public class WeatherStationService : IWeatherStationService
 
         return weatherStation;
     }
-    
+
     public async Task<WeatherStationDTO> UpdateAsync(WeatherStationDTO weatherStation)
     {
         weatherStation.UpdateAt = DateTime.UtcNow;
@@ -70,7 +75,7 @@ public class WeatherStationService : IWeatherStationService
 
         return _mapper.Map<WeatherStationDTO>(weatherStationUpdated);
     }
-    
+
     public async Task<bool> DeleteAsync(int id)
     {
         var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
@@ -83,13 +88,18 @@ public class WeatherStationService : IWeatherStationService
     }
 
     /// <summary>
-    /// Testar
+    /// Testarxc 
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public async Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int? id)
+    public async Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int weatherStationId, string userEmail)
     {
+        if (await IsAdminManagerMainteiner(weatherStationId, userEmail))
+        {
+            // retorno token + id 
+        }
+
         var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
         if (weatherStation is null)
         {
@@ -103,12 +113,8 @@ public class WeatherStationService : IWeatherStationService
         };
     }
 
-    public async Task<WeatherStationUserDTO> AddMaintainer(WeatherStationUserDTO weatherStationUser)
+    public async Task<bool> AddMaintainer(WeatherStationIdUserId weatherStationUser)
     {
-        // a estação já existe
-        // o usuário já existe
-
-        // cria o wsu
         var userDto = new WeatherStationUserDTO
         {
             WeatherStationId = weatherStationUser.WeatherStationId,
@@ -118,7 +124,6 @@ public class WeatherStationService : IWeatherStationService
             IsFavorite = false
         };
 
-        // converte para entity
         var userEntity = _mapper.Map<WeatherStationUser>(userDto);
         userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
         weatherStationUser = _mapper.Map<WeatherStationUserDTO>(userEntity);
@@ -126,11 +131,37 @@ public class WeatherStationService : IWeatherStationService
         return weatherStationUser;
     }
 
+    // remove maintener
+    public async Task<bool> RemoveMaintainer(WeatherStationUserDTO weatherStationUser)
+    {
+        // get WeatherStationUserDTO to update
+        var userDto = await _weatherStationUserRepository.get
+    }
+
     // addFavorite
     // get favorites by ApplicationUserId
     // get Mantened by ApplicationUserId
     // get dataAuth by ApplicationUserId [futuro, mas deixa implementado]
     // Autoriza dados [futuro, mas deixa implementado]
+
+    public async Task<bool> IsAdminManagerMainteiner(int weatherStationId, string userEmail)
+    {
+        // get user
+        var user = await _userManager.FindByEmailAsync(userEmail);
+        // get user/roles
+        var roles = await _userManager.GetRolesAsync(user);
+
+        if (roles.FirstOrDefault() == UserRoles.Maintainer)
+        {
+            // if role == {UserRoles.Maintainer} -> verifica se é mantenedor daquela estação
+            // testar isso aqui ou mudar no GetByIdAsync para FirstOrDefaultAsync
+            var ws = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, user.Id);
+            return ws is not null;
+        }
+
+        return roles.FirstOrDefault() == UserRoles.Admin || roles.FirstOrDefault() == UserRoles.Manager;
+    }
+
 
 
 }

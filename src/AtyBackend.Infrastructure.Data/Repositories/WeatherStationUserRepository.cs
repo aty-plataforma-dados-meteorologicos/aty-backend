@@ -27,7 +27,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             try
             {
                 await _entitiesWeatherStationUser.AddAsync(entity);
-                //var result = _entities.Add(entity);
+                // var result = _entities.Add(entity);
                 // System.Diagnostics.Trace.WriteLine(result.ToString());
 
                 await _context.SaveChangesAsync();
@@ -71,7 +71,8 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             .Take(pageSize)
             .ToListAsync();
 
-        public async Task<WeatherStationUser> GetByIdAsync(int? id) => throw new NotImplementedException();
+        public async Task<WeatherStationUser> GetByIdAsync(int weatherStationId, string applicationUserId) => await _entitiesWeatherStationUser
+            .SingleOrDefaultAsync(wsu => wsu.WeatherStationId == weatherStationId && wsu.ApplicationUserId == applicationUserId);
         //await _entitiesWeatherStationUser.SingleOrDefaultAsync(s => s.Id == id);
 
         public async Task<WeatherStationUser> UpdateAsync(WeatherStationUser entity)
