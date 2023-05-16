@@ -44,25 +44,19 @@ public class WeatherStationService : IWeatherStationService
         return _mapper.Map<WeatherStationDTO>(weatherStation);
     }
 
-    public async Task<Paginated<WeatherStationDTO>> GetAsync(int pageNumber, int pageSize)
+    public async Task<Paginated<WeatherStationView>> GetAsync(int pageNumber, int pageSize)
     {
         var total = await _weatherStationRepository.CountAsync();
         var entities = await _weatherStationRepository.GetAllAsync(pageSize, pageNumber);
-        var dtos = _mapper.Map<List<WeatherStationDTO>>(entities);
+        var dtos = _mapper.Map<List<WeatherStationView>>(entities);
 
-        // foreach dtos, dto.token = null
-        dtos.ForEach(d =>
-        {
-            d.Token = null;
-        });
-
-        return new Paginated<WeatherStationDTO>(pageNumber, pageSize, total, dtos);
+        return new Paginated<WeatherStationView>(pageNumber, pageSize, total, dtos);
     }
 
-    public async Task<WeatherStationDTO> GetByIdAsync(int? id)
+    public async Task<WeatherStationView> GetByIdAsync(int? id)
     {
         var weatherStationEntity = await _weatherStationRepository.GetByIdAsync(id);
-        var weatherStation = _mapper.Map<WeatherStationDTO>(weatherStationEntity);
+        var weatherStation = _mapper.Map<WeatherStationView>(weatherStationEntity);
 
         return weatherStation;
     }
@@ -93,14 +87,10 @@ public class WeatherStationService : IWeatherStationService
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public async Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int weatherStationId, string userEmail)
+    public async Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int weatherStationId)
     {
-        if (await IsAdminManagerMainteiner(weatherStationId, userEmail))
-        {
-            // retorno token + id 
-        }
+        var weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStationId);
 
-        var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
         if (weatherStation is null)
         {
             throw new ArgumentNullException(nameof(weatherStation));
@@ -115,10 +105,12 @@ public class WeatherStationService : IWeatherStationService
 
     public async Task<bool> AddMaintainer(WeatherStationIdUserId weatherStationUser)
     {
+        var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
+
         var userDto = new WeatherStationUserDTO
         {
             WeatherStationId = weatherStationUser.WeatherStationId,
-            ApplicationUserId = weatherStationUser.ApplicationUserId,
+            ApplicationUserId = user.Id,
             IsMaintainer = true,
             IsDataAuthorized = true,
             IsFavorite = false
@@ -126,14 +118,14 @@ public class WeatherStationService : IWeatherStationService
 
         var userEntity = _mapper.Map<WeatherStationUser>(userDto);
         userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
-        weatherStationUser = _mapper.Map<WeatherStationUserDTO>(userEntity);
 
-        return weatherStationUser;
+        return userEntity.IsMaintainer;
     }
 
     // remove maintener
     public async Task<bool> RemoveMaintainer(WeatherStationUserDTO weatherStationUser)
     {
+        // OBS -> WSUser por padrão não tem e-mail ou nome do usuário, na DTO ou criar uma view, em que eu retorno o nome ou e-mail do user junto
         // get WeatherStationUserDTO to update
         var userDto = await _weatherStationUserRepository.get
     }
@@ -156,7 +148,7 @@ public class WeatherStationService : IWeatherStationService
             // if role == {UserRoles.Maintainer} -> verifica se é mantenedor daquela estação
             // testar isso aqui ou mudar no GetByIdAsync para FirstOrDefaultAsync
             var ws = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, user.Id);
-            return ws is not null;
+            return ws is not null && ws.IsMaintainer;
         }
 
         return roles.FirstOrDefault() == UserRoles.Admin || roles.FirstOrDefault() == UserRoles.Manager;

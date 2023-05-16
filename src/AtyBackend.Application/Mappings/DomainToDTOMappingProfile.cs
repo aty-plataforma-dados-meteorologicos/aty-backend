@@ -73,21 +73,35 @@ public class DomainToDTOMappingProfile : Profile
                     Accuracy = c.Sensor.Accuracy
                 }).ToList()));
 
-                //{
-                //    ContainerId = c.Container.ContainerId,
-                //    Type = c.Container.Type,
-                //    Volume = c.Container.Volume
-                //    //ImportId = src.ImportId,
-                //    //ProductId = src.ProductId,
-                //    //ContainerId = c.ContainerId,
-                //    ////BatchId = c.BatchId,
-                //    //Container = new ContainerDTO
-                //    //{
-                //    //    ContainerId = c.ContainerId,
-                //    //    Type = c.Type,
-                //    //    Volume = c.Volume
-                //    //}
-                //}).ToList()));
+        CreateMap<WeatherStation, WeatherStationView>()
+            .ForMember(dest => dest.Sensors, opt => opt.MapFrom(src =>
+                src.WeatherStationSensors.Select(c => new SensorDTO
+                {
+                    Id = c.Sensor.Id,
+                    Name = c.Sensor.Name,
+                    MeasurementUnit = c.Sensor.MeasurementUnit,
+                    Minimum = c.Sensor.Minimum,
+                    Maximum = c.Sensor.Maximum,
+                    Accuracy = c.Sensor.Accuracy
+                }).ToList()));
+
+        CreateMap<WeatherStationDTO, WeatherStationView>();
+
+        //{
+        //    ContainerId = c.Container.ContainerId,
+        //    Type = c.Container.Type,
+        //    Volume = c.Container.Volume
+        //    //ImportId = src.ImportId,
+        //    //ProductId = src.ProductId,
+        //    //ContainerId = c.ContainerId,
+        //    ////BatchId = c.BatchId,
+        //    //Container = new ContainerDTO
+        //    //{
+        //    //    ContainerId = c.ContainerId,
+        //    //    Type = c.Type,
+        //    //    Volume = c.Volume
+        //    //}
+        //}).ToList()));
 
 
 

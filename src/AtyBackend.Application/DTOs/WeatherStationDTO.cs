@@ -11,7 +11,6 @@ namespace AtyBackend.Application.DTOs
         public double AltitudeMSL { get; set; }
         public bool IsPrivate { get; set; }
 
-        [JsonIgnore]
         public string? Token { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
