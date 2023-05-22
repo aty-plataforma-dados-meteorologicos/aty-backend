@@ -142,6 +142,13 @@ public class WeatherStationService : IWeatherStationService
         var entitiesMaintainers = await _weatherStationUserRepository.FindByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer, pageNumber, pageSize);
         var dtos = _mapper.Map<List<WeatherStationUserDTO>>(entitiesMaintainers);
 
+        foreach(var dto in dtos)
+        {
+            var user = await _userManager.FindByIdAsync(dto.ApplicationUserId);
+            dto.ApplicationUserEmail = user.Email;
+            dto.ApplicationUserName = user.Name;
+        }
+
         return new Paginated<WeatherStationUserDTO>(pageNumber, pageSize, totalMaintainers, dtos);
     }
 

@@ -45,26 +45,26 @@ public class WeatherStationsController : ControllerBase
         return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
     }
 
-    [HttpGet("{id:int}", Name = "GetWeatherStationById")]
-    public async Task<ActionResult<WeatherStationView>> GetByIdAsync(int? id)
+    [HttpGet("{weatherStationId:int}", Name = "GetWeatherStationById")]
+    public async Task<ActionResult<WeatherStationView>> GetByIdAsync(int? weatherStationId)
     {
-        var weatherStationDto = await _weatherStationService.GetByIdAsync(id);
+        var weatherStationDto = await _weatherStationService.GetByIdAsync(weatherStationId);
         var weatherStation = _mapper.Map<WeatherStation>(weatherStationDto);
         return weatherStation is null ? NotFound("Weather Station not found") : Ok(weatherStation);
     }
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpGet("{id:int}/Admin", Name = "GetWeatherStationById")]
-    public async Task<ActionResult<WeatherStationDTO>> GetByIdAdminAsync(int id)
+    [HttpGet("{weatherStationId:int}/Admin", Name = "GetWeatherStationByIdMaintainer")]
+    public async Task<ActionResult<WeatherStationDTO>> GetByIdAdminAsync(int weatherStationId)
     {
         try
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-            if (await _weatherStationService.IsAdminManagerMainteiner(id, userEmail))
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
-                var weatherStationDto = await _weatherStationService.GetByIdAsync(id);
+                var weatherStationDto = await _weatherStationService.GetByIdAsync(weatherStationId);
                 return weatherStationDto is null ? NotFound("Weather Station not found") : Ok(weatherStationDto);
             }
 
@@ -111,7 +111,7 @@ public class WeatherStationsController : ControllerBase
             weatherStationDto.WeatherStationUsers.Add(userDto);
             weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
 
-            return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
+            return new CreatedAtRouteResult("GetWeatherStationByIdMaintainer", new { weatherStationId = weatherStationDto.Id }, weatherStationDto);
         }
         catch (Exception ex)
         {
@@ -120,17 +120,17 @@ public class WeatherStationsController : ControllerBase
     }
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateAsync(int id, [FromBody] WeatherStationDTO weatherStationDto)
+    [HttpPut("{weatherStationId:int}")]
+    public async Task<ActionResult> UpdateAsync(int weatherStationId, [FromBody] WeatherStationDTO weatherStationDto)
     {
-        if (id != weatherStationDto.Id) return BadRequest("Id is different from WeatherStation.Id");
+        if (weatherStationId != weatherStationDto.Id) return BadRequest("WeatherStationId is different from WeatherStation.Id");
 
         try
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-            if (await _weatherStationService.IsAdminManagerMainteiner(id, userEmail))
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
                 var result = await _weatherStationService.UpdateAsync(weatherStationDto);
                 return (result is not null) ? Ok(result) : NotFound("WeatherStation not found");
@@ -145,17 +145,17 @@ public class WeatherStationsController : ControllerBase
     }
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> RemoveAsync(int id)
+    [HttpDelete("{weatherStationId:int}")]
+    public async Task<ActionResult> RemoveAsync(int weatherStationId)
     {
         try
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-            if (await _weatherStationService.IsAdminManagerMainteiner(id, userEmail))
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
-                return await _weatherStationService.DeleteAsync(id) ? NoContent() : BadRequest("Not deleted");
+                return await _weatherStationService.DeleteAsync(weatherStationId) ? NoContent() : BadRequest("Not deleted");
             }
 
             return Unauthorized("Unauthorized");
@@ -232,15 +232,15 @@ public class WeatherStationsController : ControllerBase
 
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpGet("{id:int}/Authentication", Name = "GetWeatherStationAuthentication")]
-    public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int id)
+    [HttpGet("{weatherStationId:int}/Authentication", Name = "GetWeatherStationAuthentication")]
+    public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int weatherStationId)
     {
         try
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-            if (await _weatherStationService.IsAdminManagerMainteiner(id, userEmail))
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
                 // reset 
             }

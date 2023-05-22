@@ -30,14 +30,18 @@ public class DomainToDTOMappingProfile : Profile
             .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
             .ForMember(dest => dest.WeatherStation, opt => opt.Ignore())
             .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId))
-            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
+            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
+            .ForMember(dest => dest.IsMaintainer, opt => opt.MapFrom(src => src.IsMaintainer))
+            .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => src.IsFavorite))
+            .ForMember(dest => dest.IsDataAuthorized, opt => opt.MapFrom(src => src.IsDataAuthorized));
+
 
         CreateMap<WeatherStationUser, WeatherStationUserDTO>()
             .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
             .ForMember(dest => dest.WeatherStation, opt => opt.MapFrom(src => src.WeatherStation))
             .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId));
-            // esse terei que preencher na service usando um _userRepository
-            //.ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
+        // esse terei que preencher na service usando um _userRepository
+        //.ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
 
 
         // a estação
@@ -53,13 +57,17 @@ public class DomainToDTOMappingProfile : Profile
                     //    Maximum = c.Maximum,
                     //    Accuracy = c.Accuracy
                     //}
-                }).ToList()))
-            .ForMember(dest => dest.WeatherStationUsers, opt => opt.MapFrom(src =>
-                           src.WeatherStationUsers.Select(s => new WeatherStationUser
-                           {
-                               //WeatherStationId = s.WeatherStationId,
-                               ApplicationUserId = s.ApplicationUserId
-                           }).ToList()));
+                }).ToList()));
+            //.ForMember(dest => dest.WeatherStationUsers, opt => opt.MapFrom(src =>
+            //               src.WeatherStationUsers.Select(s => new WeatherStationUser
+            //               {
+            //                   //WeatherStationId = s.WeatherStationId,
+            //                   ApplicationUserId = s.ApplicationUserId,
+            //                   IsDataAuthorized = s.IsDataAuthorized,
+            //                   IsFavorite = s.IsFavorite,
+            //                   IsMaintainer = IsMaintainer
+
+            //               }).ToList()));
 
         CreateMap<WeatherStation, WeatherStationDTO>()
             .ForMember(dest => dest.Sensors, opt => opt.MapFrom(src =>
