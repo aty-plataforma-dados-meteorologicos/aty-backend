@@ -54,7 +54,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
         public async Task<List<WeatherStationUser>> GetAllAsync() => await _entitiesWeatherStationUser
             .ToListAsync();
 
-        public async Task<List<WeatherStationUser>> GetAllAsync(int pageSize, int pageNumber) => await _entitiesWeatherStationUser
+        public async Task<List<WeatherStationUser>> GetAllAsync(int pageNumber, int pageSize) => await _entitiesWeatherStationUser
             //.OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
@@ -64,7 +64,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             .Where(expression)
             .ToListAsync();
 
-        public async Task<List<WeatherStationUser>> FindByConditionAsync(Expression<Func<WeatherStationUser, bool>> expression, int pageSize, int pageNumber) => await _entitiesWeatherStationUser
+        public async Task<List<WeatherStationUser>> FindByConditionAsync(Expression<Func<WeatherStationUser, bool>> expression, int pageNumber, int pageSize) => await _entitiesWeatherStationUser
             .Where(expression)
             //.OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)

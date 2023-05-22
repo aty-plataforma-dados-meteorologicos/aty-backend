@@ -178,15 +178,15 @@ public class WeatherStationsController : ControllerBase
     // se não:
     //              -> Return 401 Unauthorized
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpPost("{id:int}/Maintainers")]
-    public async Task<ActionResult> AddMaintainer([FromBody] WeatherStationIdUserId weatherStationUser)
+    [HttpPost("{weatherStationId:int}/Maintainers")]
+    public async Task<ActionResult> AddMaintainer(int weatherStationId, [FromBody] WeatherStationIdUserId weatherStationUser)
     {
         try
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationUser.WeatherStationId, userEmail))
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
                 return await _weatherStationService.AddMaintainer(weatherStationUser) ? Ok() : BadRequest("Not added");
             }
@@ -199,13 +199,36 @@ public class WeatherStationsController : ControllerBase
         }
     }
 
-    // remove Maintainers
-    [HttpDelete("{id:int}/Maintainers/{maintainer:int}")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpDelete("{weatherStationId:int}/Maintainers/{maintainerId:int}")]
+    public async Task<ActionResult> RemoveMaintainer(int weatherStationId, string maintainerId)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationService.RemoveMaintainer(weatherStationId, maintainerId) ? NoContent() : BadRequest("Not deleted");
+            }
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-    // Get Maintainers
-    // [HttpGet("{id:int}/Maintainers")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("{weatherStationId:int}/Maintainers")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationUserDTO>>> GetWeatherStationMaintainers(int weatherStationId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    {
+        var paginated = new ApiResponsePaginated<WeatherStationUserDTO>(pageNumber, pageSize);
+        var maintainers = await _weatherStationService.GetWeatherStationMaintainers(weatherStationId, paginated.PageNumber, paginated.PageSize);
+        paginated.AddData(maintainers, Request);
 
-    // os mesmo 3 para favoritos, com exceçãoq ue o return favoritos vai ser por id de usuario
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
+    }
 
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
@@ -249,8 +272,8 @@ public class WeatherStationsController : ControllerBase
 
 
 
-        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id, userEmail);
-        return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
+        //var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id, userEmail);
+        //return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
     }
 
 

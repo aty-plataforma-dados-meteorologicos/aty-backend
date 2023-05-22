@@ -29,15 +29,15 @@ public class DomainToDTOMappingProfile : Profile
         CreateMap<WeatherStationUserDTO, WeatherStationUser>()
             .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
             .ForMember(dest => dest.WeatherStation, opt => opt.Ignore())
-            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUser.Id))
+            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId))
             .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
 
         CreateMap<WeatherStationUser, WeatherStationUserDTO>()
             .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
             .ForMember(dest => dest.WeatherStation, opt => opt.MapFrom(src => src.WeatherStation))
-            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId))
+            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId));
             // esse terei que preencher na service usando um _userRepository
-            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
+            //.ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
 
 
         // a estação

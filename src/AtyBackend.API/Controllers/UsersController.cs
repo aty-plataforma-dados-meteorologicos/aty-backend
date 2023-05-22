@@ -4,6 +4,7 @@ using AtyBackend.Application.DTOs;
 using AtyBackend.Application.ViewModels;
 using AtyBackend.Domain.Account;
 using AtyBackend.Domain.Entities;
+using AtyBackend.Domain.Model;
 using AtyBackend.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

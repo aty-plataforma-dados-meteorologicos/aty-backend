@@ -32,6 +32,7 @@ public class WeatherStationService : IWeatherStationService
     public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
     {
         dto.CreatedAt = DateTime.UtcNow;
+        dto.IsEnabled = true;
         // criar endpoint para gerar token 
         dto.Token = Guid.NewGuid().ToString("N");
 
@@ -53,10 +54,11 @@ public class WeatherStationService : IWeatherStationService
         return new Paginated<WeatherStationView>(pageNumber, pageSize, total, dtos);
     }
 
-    public async Task<WeatherStationView> GetByIdAsync(int? id)
+    public async Task<WeatherStationDTO> GetByIdAsync(int? id)
     {
         var weatherStationEntity = await _weatherStationRepository.GetByIdAsync(id);
-        var weatherStation = _mapper.Map<WeatherStationView>(weatherStationEntity);
+        var weatherStation = _mapper.Map<WeatherStationDTO>(weatherStationEntity);
+        //var weatherStation = _mapper.Map<WeatherStationView>(weatherStationEntity);
 
         return weatherStation;
     }
@@ -123,11 +125,24 @@ public class WeatherStationService : IWeatherStationService
     }
 
     // remove maintener
-    public async Task<bool> RemoveMaintainer(WeatherStationUserDTO weatherStationUser)
+    public async Task<bool> RemoveMaintainer(int weatherStationId, string maintainerId)
     {
-        // OBS -> WSUser por padrão não tem e-mail ou nome do usuário, na DTO ou criar uma view, em que eu retorno o nome ou e-mail do user junto
-        // get WeatherStationUserDTO to update
-        var userDto = await _weatherStationUserRepository.get
+        var weatherStationUserDto = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, maintainerId);
+        weatherStationUserDto.IsMaintainer = false;
+        // update
+        var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
+        weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
+        
+        return !weatherStationUserEntity.IsMaintainer;
+    }
+
+    public async Task<Paginated<WeatherStationUserDTO>> GetWeatherStationMaintainers(int weatherStationId, int pageNumber, int pageSize)
+    {
+        var totalMaintainers = await _weatherStationUserRepository.CountByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer);
+        var entitiesMaintainers = await _weatherStationUserRepository.FindByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer, pageNumber, pageSize);
+        var dtos = _mapper.Map<List<WeatherStationUserDTO>>(entitiesMaintainers);
+
+        return new Paginated<WeatherStationUserDTO>(pageNumber, pageSize, totalMaintainers, dtos);
     }
 
     // addFavorite
@@ -154,6 +169,6 @@ public class WeatherStationService : IWeatherStationService
         return roles.FirstOrDefault() == UserRoles.Admin || roles.FirstOrDefault() == UserRoles.Manager;
     }
 
-
+    //public async Task<bool> GetWeatherStationMaintainers(int weatherStationId)
 
 }
