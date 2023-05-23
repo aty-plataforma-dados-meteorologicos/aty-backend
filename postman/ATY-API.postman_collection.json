@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f3bbee7b-e6eb-4dda-aa97-36de3c1ca009",
+		"_postman_id": "6618ab1e-5f06-46e2-9bdd-177b02795860",
 		"name": "ATY-API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -345,7 +345,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Name\": \"Teste Admin\",\r\n    \"email\": \"test.user@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"Teste User\",\r\n    \"email\": \"test.useruser@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2015,6 +2015,54 @@
 					"response": []
 				},
 				{
+					"name": "Maintainers WeatherStations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/11689155-b7ac-4980-aa93-63f1a4d0ccdf",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"11689155-b7ac-4980-aa93-63f1a4d0ccdf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "WeatherStations Maintainers Paginated",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
@@ -2316,7 +2364,7 @@
 			]
 		},
 		{
-			"name": "WeatherStations Copy",
+			"name": "WeatherStations",
 			"item": [
 				{
 					"name": "WeatherStations",

@@ -17,4 +17,5 @@ public interface IWeatherStationService
     Task<bool> IsAdminManagerMainteiner(int weatherStationId, string userEmail);
     Task<bool> RemoveMaintainer(int weatherStationId, string maintainerId);
     Task<Paginated<WeatherStationUserDTO>> GetWeatherStationMaintainers(int weatherStationId, int pageNumber, int pageSize);
+    Task<Paginated<WeatherStationView>> GetMaintainerWeatherStation(string maintainer, int pageNumber, int pageSize);
 }

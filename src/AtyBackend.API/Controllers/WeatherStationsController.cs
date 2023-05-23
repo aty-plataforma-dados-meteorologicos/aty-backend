@@ -200,7 +200,7 @@ public class WeatherStationsController : ControllerBase
     }
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpDelete("{weatherStationId:int}/Maintainers/{maintainerId:int}")]
+    [HttpDelete("{weatherStationId:int}/Maintainers/{maintainerId}")]
     public async Task<ActionResult> RemoveMaintainer(int weatherStationId, string maintainerId)
     {
         try
@@ -229,6 +229,18 @@ public class WeatherStationsController : ControllerBase
 
         return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
     }
+
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("{maintainerId}")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationView>>> GetMaintainerWeatherStations(string maintainerId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    {
+        var paginated = new ApiResponsePaginated<WeatherStationView>(pageNumber, pageSize);
+        var maintainers = await _weatherStationService.GetMaintainerWeatherStation(maintainerId, paginated.PageNumber, paginated.PageSize);
+        paginated.AddData(maintainers, Request);
+
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
+    }
+
 
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]

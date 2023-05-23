@@ -152,6 +152,28 @@ public class WeatherStationService : IWeatherStationService
         return new Paginated<WeatherStationUserDTO>(pageNumber, pageSize, totalMaintainers, dtos);
     }
 
+    public async Task<Paginated<WeatherStationView>> GetMaintainerWeatherStation(string maintainer, int pageNumber, int pageSize)
+    {
+        var totalWeatherStations = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == maintainer && u.IsMaintainer);
+        var entitiesWeatherStations = await _weatherStationUserRepository.FindByConditionAsync(u => u.ApplicationUserId == maintainer && u.IsMaintainer, pageNumber, pageSize);
+        var weatherStations = _mapper.Map<List<WeatherStationUserDTO>>(entitiesWeatherStations);
+
+        List<WeatherStationView> weatherStationViews = new List<WeatherStationView>();
+
+        if (weatherStations is not null)
+        {
+            var weatherStationIds = weatherStations.Select(w => w.WeatherStationId).ToList();
+            // get all weather stations by weatherStationIds and add to weatherStationViews using _mapper.Map<WeatherStationView>
+
+            foreach(int id in weatherStationIds)
+            {
+                weatherStationViews.Add(_mapper.Map<WeatherStationView>(await _weatherStationRepository.GetByIdAsync(id)));
+            }
+        }
+
+        return new Paginated<WeatherStationView>(pageNumber, pageSize, totalWeatherStations, weatherStationViews);
+    }
+
     // addFavorite
     // get favorites by ApplicationUserId
     // get Mantened by ApplicationUserId
