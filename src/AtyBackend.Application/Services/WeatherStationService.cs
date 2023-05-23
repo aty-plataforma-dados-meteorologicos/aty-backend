@@ -121,6 +121,18 @@ public class WeatherStationService : IWeatherStationService
         var userEntity = _mapper.Map<WeatherStationUser>(userDto);
         userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
 
+        if (userEntity.IsMaintainer)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+            if (role == UserRoles.User)
+            {
+                await _userManager.RemoveFromRolesAsync(user, roles);
+                _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+            }
+        }
+
         return userEntity.IsMaintainer;
     }
 

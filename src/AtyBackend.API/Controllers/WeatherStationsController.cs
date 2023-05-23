@@ -188,29 +188,9 @@ public class WeatherStationsController : ControllerBase
 
             if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
-                return await _weatherStationService.AddMaintainer(weatherStationUser) ? Ok() : BadRequest("Not added");
+                return await _weatherStationService.AddMaintainer(weatherStationUser) ? Ok() : BadRequest("Maintainer not added");
             }
 
-            return Unauthorized("Unauthorized");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    [HttpDelete("{weatherStationId:int}/Maintainers/{maintainerId}")]
-    public async Task<ActionResult> RemoveMaintainer(int weatherStationId, string maintainerId)
-    {
-        try
-        {
-            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
-            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
-            {
-                return await _weatherStationService.RemoveMaintainer(weatherStationId, maintainerId) ? NoContent() : BadRequest("Not deleted");
-            }
             return Unauthorized("Unauthorized");
         }
         catch (Exception ex)
@@ -241,7 +221,28 @@ public class WeatherStationsController : ControllerBase
         return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
     }
 
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpDelete("{weatherStationId:int}/Maintainers/{maintainerId}")]
+    public async Task<ActionResult> RemoveMaintainer(int weatherStationId, string maintainerId)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationService.RemoveMaintainer(weatherStationId, maintainerId) ? NoContent() : BadRequest("Not deleted");
+            }
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
+
+    // esse aqui não sei se manteremos
 
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpGet("{weatherStationId:int}/Authentication", Name = "GetWeatherStationAuthentication")]
