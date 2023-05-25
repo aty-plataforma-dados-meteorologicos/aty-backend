@@ -27,7 +27,7 @@ public class DomainToDTOMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<WeatherStationUserDTO, WeatherStationUser>()
-            .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
+            .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStationId))
             .ForMember(dest => dest.WeatherStation, opt => opt.Ignore())
             .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId))
             .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())

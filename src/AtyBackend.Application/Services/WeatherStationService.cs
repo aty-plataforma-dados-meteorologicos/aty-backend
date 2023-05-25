@@ -109,6 +109,22 @@ public class WeatherStationService : IWeatherStationService
     {
         var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
 
+        var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+            u => u.WeatherStationId == weatherStationUser.WeatherStationId
+            && u.ApplicationUserId == user.Id);
+
+        if (userWeatherStation.Any())
+        {
+            var userWeatherStationEntity = _mapper.Map<WeatherStationUser>(userWeatherStation.FirstOrDefault());
+
+            userWeatherStationEntity.IsMaintainer = true;
+            userWeatherStationEntity.IsDataAuthorized = true;
+            userWeatherStationEntity.IsFavorite = false;
+            userWeatherStationEntity = await _weatherStationUserRepository.UpdateAsync(userWeatherStationEntity);
+
+            return userWeatherStationEntity.IsMaintainer;
+        }
+
         var userDto = new WeatherStationUserDTO
         {
             WeatherStationId = weatherStationUser.WeatherStationId,
@@ -168,22 +184,26 @@ public class WeatherStationService : IWeatherStationService
     {
         var totalWeatherStations = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == maintainer && u.IsMaintainer);
         var entitiesWeatherStations = await _weatherStationUserRepository.FindByConditionAsync(u => u.ApplicationUserId == maintainer && u.IsMaintainer, pageNumber, pageSize);
-        var weatherStations = _mapper.Map<List<WeatherStationUserDTO>>(entitiesWeatherStations);
+        //var weatherStations = _mapper.Map<List<WeatherStationUserDTO>>(entitiesWeatherStations);
 
         List<WeatherStationView> weatherStationViews = new List<WeatherStationView>();
 
-        if (weatherStations is not null)
+        if (entitiesWeatherStations is not null)
         {
-            var weatherStationIds = weatherStations.Select(w => w.WeatherStationId).ToList();
+            var weatherStationIds = entitiesWeatherStations.Select(w => w.WeatherStationId).ToList();
             // get all weather stations by weatherStationIds and add to weatherStationViews using _mapper.Map<WeatherStationView>
 
             foreach(int id in weatherStationIds)
             {
-                weatherStationViews.Add(_mapper.Map<WeatherStationView>(await _weatherStationRepository.GetByIdAsync(id)));
+                var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
+                var weatherStationView = _mapper.Map<WeatherStationView>(weatherStation);
+                weatherStationViews.Add(weatherStationView);
             }
         }
 
-        return new Paginated<WeatherStationView>(pageNumber, pageSize, totalWeatherStations, weatherStationViews);
+        var result = new Paginated<WeatherStationView>(pageNumber, pageSize, totalWeatherStations, weatherStationViews);
+
+        return result;
     }
 
     // addFavorite

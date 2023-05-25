@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2c6a4173-c19f-410b-8db5-214a7763bdc3",
+		"_postman_id": "90fc1dce-9f90-40bb-8519-de016f19f524",
 		"name": "ATY-API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2397,7 +2397,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{url}}/api/WeatherStations/11689155-b7ac-4980-aa93-63f1a4d0ccdf",
+							"raw": "https://{{url}}/api/WeatherStations/{{maintainerId}}",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
@@ -2405,7 +2405,7 @@
 							"path": [
 								"api",
 								"WeatherStations",
-								"11689155-b7ac-4980-aa93-63f1a4d0ccdf"
+								"{{maintainerId}}"
 							]
 						}
 					},
@@ -2566,7 +2566,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userEmail\": {{userEmail}},\r\n    \"weatherStationId\": {{weatherStationsId}}\r\n}",
+							"raw": "{\r\n    \"userEmail\": \"{{userEmail}}\",\r\n    \"weatherStationId\": {{weatherStationsId}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
