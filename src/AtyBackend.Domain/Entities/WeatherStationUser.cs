@@ -6,6 +6,8 @@ namespace AtyBackend.Domain.Entities
     public class WeatherStationUser
     {
         public int WeatherStationId { get; set; }
+
+        [NotMapped]
         public WeatherStation? WeatherStation { get; set; }
 
         public string ApplicationUserId { get; set; }
@@ -16,5 +18,7 @@ namespace AtyBackend.Domain.Entities
         public bool IsDataAuthorized { get; set; }
         public bool IsFavorite { get; set; }
         public bool IsMaintainer { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

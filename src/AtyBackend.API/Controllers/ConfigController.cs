@@ -1,5 +1,6 @@
 ﻿using AtyBackend.API.Models;
 using AtyBackend.Domain.Account;
+using AtyBackend.Domain.Model;
 using AtyBackend.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

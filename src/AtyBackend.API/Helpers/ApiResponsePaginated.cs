@@ -20,7 +20,7 @@ namespace AtyBackend.API.Helpers
             int pageSizeMaxLength = 1000;
 
             pageNumber = pageNumber is null ? 1 : pageNumber.Value;
-            pageSize = pageSize is null ? 20 : pageSize <= pageSizeMaxLength ? pageSize : pageSizeMaxLength;
+            pageSize = pageSize is null ? 10 : pageSize <= pageSizeMaxLength ? pageSize : pageSizeMaxLength;
 
             PageNumber = pageNumber.Value;
             PageSize = pageSize.Value;

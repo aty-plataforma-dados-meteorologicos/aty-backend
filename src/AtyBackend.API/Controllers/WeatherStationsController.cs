@@ -12,11 +12,13 @@ using System.Security.Claims;
 using AtyBackend.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity;
 using AtyBackend.API.Models;
+using AtyBackend.Domain.Model;
+using System.Net;
 
 namespace AtyBackend.API.Controllers;
 
 //[EnableCors()]
-[Authorize(Roles = "Admin,Manager")]
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class WeatherStationsController : ControllerBase
@@ -24,8 +26,6 @@ public class WeatherStationsController : ControllerBase
     private readonly IWeatherStationService _weatherStationService;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
-
-
 
     public WeatherStationsController(IWeatherStationService weatherStationService,
         IMapper mapper, UserManager<ApplicationUser> userManager)
@@ -36,51 +36,44 @@ public class WeatherStationsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponsePaginated<WeatherStationDTO>>> GetWeatherStationAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationView>>> GetWeatherStationAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        var paginated = new ApiResponsePaginated<WeatherStationDTO>(pageNumber, pageSize);
+        var paginated = new ApiResponsePaginated<WeatherStationView>(pageNumber, pageSize);
         var weatherStations = await _weatherStationService.GetAsync(paginated.PageNumber, paginated.PageSize);
         paginated.AddData(weatherStations, Request);
 
-        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
     }
 
-    [HttpGet("{id:int}", Name = "GetWeatherStationById")]
-    public async Task<ActionResult<WeatherStationDTO>> GetByIdAsync(int? id)
+    [HttpGet("{weatherStationId:int}", Name = "GetWeatherStationById")]
+    public async Task<ActionResult<WeatherStationView>> GetByIdAsync(int? weatherStationId)
     {
-        var weatherStation = await _weatherStationService.GetByIdAsync(id);
-        return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
+        var weatherStationDto = await _weatherStationService.GetByIdAsync(weatherStationId);
+        var weatherStation = _mapper.Map<WeatherStation>(weatherStationDto);
+        return weatherStation is null ? NotFound("Weather Station not found") : Ok(weatherStation);
     }
 
-    [Authorize(Roles = "Admin, Manager, Maintainer")]
-    [HttpGet("Authentication/{id:int}", Name = "GetWeatherStationAuthentication")]
-    public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int? id)
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("{weatherStationId:int}/Admin", Name = "GetWeatherStationByIdMaintainer")]
+    public async Task<ActionResult<WeatherStationDTO>> GetByIdAdminAsync(int weatherStationId)
     {
-        // através do bearer token, saber se o usuário pode ter acesso a isso
-        // Quem poderá acessar: mantenedor da estação ou manager/admin da plataforma;
-        //var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-        //// Se o email não estiver presente no token, retorna um erro
-        //if (userEmail is null)
-        //{
-        //    return BadRequest("O token JWT não contém o email do usuário.");
-        //}
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                var weatherStationDto = await _weatherStationService.GetByIdAsync(weatherStationId);
+                return weatherStationDto is null ? NotFound("Weather Station not found") : Ok(weatherStationDto);
+            }
 
-        //// find user to get id
-        //var user = await _userManager.FindByEmailAsync(userEmail);
-        //var roles = await _userManager.GetRolesAsync(user);
-        //var role = roles.FirstOrDefault();
-
-        //if (role == UserRoles.User)
-        //{
-        //    await _userManager.RemoveFromRolesAsync(user, roles);
-        //    _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
-        //}
-
-
-
-        var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id);
-        return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost]
@@ -88,26 +81,13 @@ public class WeatherStationsController : ControllerBase
     {
         try
         {
-            if (weatherStation == null)
-            {
-                return BadRequest("WeatherStation is null");
-            }
+            if (weatherStation == null) return BadRequest("WeatherStation is null");
 
             var weatherStationDto = _mapper.Map<WeatherStationDTO>(weatherStation);
 
-            // add user em weatherStationDto.[]WeatherStationUsers o IsMaintainer, pegar o id com base no toekn da request
-            // get user from token jwt
-
-            // Obtém o valor do email do usuário a partir do token JWT
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-            // Se o email não estiver presente no token, retorna um erro
-            if (userEmail is null)
-            {
-                return BadRequest("O token JWT não contém o email do usuário.");
-            }
-
-            // find user to get id
             var user = await _userManager.FindByEmailAsync(userEmail);
             var roles = await _userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault();
@@ -117,8 +97,6 @@ public class WeatherStationsController : ControllerBase
                 await _userManager.RemoveFromRolesAsync(user, roles);
                 _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
             }
-
-            // add weatherStationDto.WeatherStationUsers
 
             weatherStationDto.WeatherStationUsers = new List<WeatherStationUserDTO>();
 
@@ -131,47 +109,226 @@ public class WeatherStationsController : ControllerBase
             };
 
             weatherStationDto.WeatherStationUsers.Add(userDto);
-
-            //weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
             weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
-            //return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
-      
 
-            //weatherStationDto.WeatherStationUsers.Add(new WeatherStationUserDTO
-            //{
-            //    ApplicationUserId = user.Id,
-            //    IsMaintainer = true,
-            //    IsDataAuthorized = true,
-            //    IsFavorite = false
-            //});
-
-
-            return new CreatedAtRouteResult("GetWeatherStationById", new { id = weatherStationDto.Id }, weatherStationDto);
-        } catch (Exception ex) { 
-            
-            return  BadRequest(ex.Message); 
-        
-        
+            return new CreatedAtRouteResult("GetWeatherStationByIdMaintainer", new { weatherStationId = weatherStationDto.Id }, weatherStationDto);
         }
-    }
-
-        // add a role
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateAsync(int? id, [FromBody] WeatherStationDTO weatherStationDto)
-    {
-        // validar se o usuário pode editar a estação (é mantenedor da estação ou admin/manager da plataforma)
-        if (id != weatherStationDto.Id)
+        catch (Exception ex)
         {
-            return BadRequest("Id is different from WeatherStation.Id");
+            return BadRequest(ex.Message);
         }
-
-        var result = await _weatherStationService.UpdateAsync(weatherStationDto);
-        return (result is not null) ? Ok(result) : NotFound("WeatherStation not found");
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> RemoveAsync(int id) => await _weatherStationService.DeleteAsync(id) ? NoContent() : BadRequest("Not deleted");
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpPut("{weatherStationId:int}")]
+    public async Task<ActionResult> UpdateAsync(int weatherStationId, [FromBody] WeatherStationDTO weatherStationDto)
+    {
+        if (weatherStationId != weatherStationDto.Id) return BadRequest("WeatherStationId is different from WeatherStation.Id");
+
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                var result = await _weatherStationService.UpdateAsync(weatherStationDto);
+                return (result is not null) ? Ok(result) : NotFound("WeatherStation not found");
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpDelete("{weatherStationId:int}")]
+    public async Task<ActionResult> RemoveAsync(int weatherStationId)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationService.DeleteAsync(weatherStationId) ? NoContent() : BadRequest("Not deleted");
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
 
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpPost("{weatherStationId:int}/Maintainers")]
+    public async Task<ActionResult> AddMaintainer(int weatherStationId, [FromBody] WeatherStationIdUserId weatherStationUser)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationService.AddMaintainer(weatherStationUser) ? Ok() : BadRequest("Maintainer not added");
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("{weatherStationId:int}/Maintainers")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationUserDTO>>> GetWeatherStationMaintainers(int weatherStationId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    {
+        var paginated = new ApiResponsePaginated<WeatherStationUserDTO>(pageNumber, pageSize);
+        var maintainers = await _weatherStationService.GetWeatherStationMaintainers(weatherStationId, paginated.PageNumber, paginated.PageSize);
+        paginated.AddData(maintainers, Request);
+
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
+    }
+
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("Maintainers")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationView>>> GetMaintainerWeatherStations([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+        var paginated = new ApiResponsePaginated<WeatherStationView>(pageNumber, pageSize);
+        var maintainers = await _weatherStationService.GetMaintainerWeatherStation(userEmail, paginated.PageNumber, paginated.PageSize);
+        paginated.AddData(maintainers, Request);
+
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
+    }
+
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpDelete("{weatherStationId:int}/Maintainers/{maintainerId}")]
+    public async Task<ActionResult> RemoveMaintainer(int weatherStationId, string maintainerId)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationService.RemoveMaintainer(weatherStationId, maintainerId) ? NoContent() : BadRequest("Not deleted");
+            }
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpGet("{weatherStationId:int}/Favorites")]
+    public async Task<ActionResult> Favorite(int weatherStationId)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            return await _weatherStationService.Favorite(
+                new WeatherStationIdUserId { UserEmail = userEmail, WeatherStationId = weatherStationId }
+                ) ? Ok() : BadRequest("Maintainer not added");
+        }
+        catch (Exception ex) { return BadRequest(ex.Message); }
+    }
+
+    [Authorize]
+    [HttpGet("Favorites")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationView>>> GetFavorites([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            var paginated = new ApiResponsePaginated<WeatherStationView>(pageNumber, pageSize);
+            var weatherStations = await _weatherStationService.GetFavorites(userEmail, paginated.PageNumber, paginated.PageSize);
+            paginated.AddData(weatherStations, Request);
+
+            return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("The user does not have any favorite weather stations.") : Ok(paginated);
+        }
+        catch (Exception ex) { return BadRequest(ex.Message); }
+    }
+
+    [Authorize]
+    [HttpDelete("{weatherStationId:int}/Favorites")]
+    public async Task<ActionResult> RemoveFavorite(int weatherStationId)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            return await _weatherStationService.RemoveFavorite(
+                new WeatherStationIdUserId { UserEmail = userEmail, WeatherStationId = weatherStationId }
+                ) ? NoContent() : BadRequest("Not deleted");
+        }
+        catch (Exception ex) { return BadRequest(ex.Message); }
+    }
+
+    // esse aqui não sei se manteremos [acho que acaba e removemos token com a ideia de o post ser vinculado ao usuario]
+
+    //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    //[HttpGet("{weatherStationId:int}/Authentication", Name = "GetWeatherStationAuthentication")]
+    //public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int weatherStationId)
+    //{
+    //    try
+    //    {
+    //        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+    //        if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+    //        if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+    //        {
+    //            // reset 
+    //        }
+
+    //        return Unauthorized("User Unauthorized");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //    // se o usuário é Maintainer, ver se o usuário que está fazendo a requisição é mantenedor da estação
+    //    // implementar  
+    //    //através do bearer token, saber se o usuário pode ter acesso a isso
+    //    //Quem poderá acessar: mantenedor da estação ou manager / admin da plataforma;
+
+    //    // Se o email não estiver presente no token, retorna um erro
+
+
+    //    //// find user to get id
+    //    //var user = await _userManager.FindByEmailAsync(userEmail);
+    //    //var roles = await _userManager.GetRolesAsync(user);
+    //    //var role = roles.FirstOrDefault();
+
+    //    //if (role == UserRoles.User)
+    //    //{
+    //    //    await _userManager.RemoveFromRolesAsync(user, roles);
+    //    //    _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
+    //    //}
+
+
+
+    //    //var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id, userEmail);
+    //    //return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
+    //}
 
 }

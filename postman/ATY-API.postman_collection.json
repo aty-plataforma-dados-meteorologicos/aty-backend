@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fe1c1516-aca9-43bf-95ca-753b35b0f7c7",
+		"_postman_id": "a04daa4c-9773-4f78-8ae6-f8f9d861954c",
 		"name": "ATY-API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -345,7 +345,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Name\": \"Teste Admin\",\r\n    \"email\": \"test.user@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"Teste User\",\r\n    \"email\": \"test.useruser@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2304,6 +2304,435 @@
 								"api",
 								"WeatherStations",
 								"{{weatherStationsId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Maintainers",
+			"item": [
+				{
+					"name": "WeatherStations by Maintainer",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/Maintainers?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"Maintainers"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherStations Maintainers",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Maintainer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"weatherStationsId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userEmail\": \"{{userEmail}}\",\r\n    \"weatherStationId\": {{weatherStationsId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete WeatherStation Maintainer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers/{{maintainerId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers",
+								"{{maintainerId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Favorite WeatherStation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false,
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Favorites",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Favorites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Favorites WeatherStations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/Favorites?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"Favorites"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove WeatherStation From Favorite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Favorites",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Favorites"
 							]
 						}
 					},
