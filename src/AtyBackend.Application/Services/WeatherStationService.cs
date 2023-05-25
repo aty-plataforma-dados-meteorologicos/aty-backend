@@ -118,8 +118,6 @@ public class WeatherStationService : IWeatherStationService
             var userWeatherStationEntity = _mapper.Map<WeatherStationUser>(userWeatherStation.FirstOrDefault());
 
             userWeatherStationEntity.IsMaintainer = true;
-            userWeatherStationEntity.IsDataAuthorized = true;
-            userWeatherStationEntity.IsFavorite = false;
             userWeatherStationEntity = await _weatherStationUserRepository.UpdateAsync(userWeatherStationEntity);
 
             return userWeatherStationEntity.IsMaintainer;
@@ -130,7 +128,7 @@ public class WeatherStationService : IWeatherStationService
             WeatherStationId = weatherStationUser.WeatherStationId,
             ApplicationUserId = user.Id,
             IsMaintainer = true,
-            IsDataAuthorized = true,
+            IsDataAuthorized = false,
             IsFavorite = false
         };
 
@@ -155,9 +153,14 @@ public class WeatherStationService : IWeatherStationService
     // remove maintener
     public async Task<bool> RemoveMaintainer(int weatherStationId, string maintainerId)
     {
+        // tem que ter mais de 1 mantenedor para poder deletar esse
+        var totalMaintainers = await _weatherStationUserRepository.CountByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer);
+        if (totalMaintainers <= 1 ) throw new Exception("It is not possible to remove the maintainer as the station does not have another maintainer.");
+
         var weatherStationUserDto = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, maintainerId);
         weatherStationUserDto.IsMaintainer = false;
-        // update
+
+
         var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
         weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
         
