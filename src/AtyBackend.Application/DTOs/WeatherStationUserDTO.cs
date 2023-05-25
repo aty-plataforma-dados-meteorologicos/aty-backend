@@ -11,9 +11,8 @@ namespace AtyBackend.Application.DTOs
 
         public string ApplicationUserId { get; set; }
 
-        // aqui era a interface
-        [JsonIgnore]
-        public ApplicationUser? ApplicationUser { get; set; }
+        public string? ApplicationUserName { get; set; }
+        public string? ApplicationUserEmail { get; set; }
 
         public bool? IsDataAuthorized { get; set; }
         public bool? IsFavorite { get; set; }

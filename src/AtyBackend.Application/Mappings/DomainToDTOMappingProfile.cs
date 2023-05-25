@@ -27,17 +27,21 @@ public class DomainToDTOMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<WeatherStationUserDTO, WeatherStationUser>()
-            .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
+            .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStationId))
             .ForMember(dest => dest.WeatherStation, opt => opt.Ignore())
-            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUser.Id))
-            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
+            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId))
+            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
+            .ForMember(dest => dest.IsMaintainer, opt => opt.MapFrom(src => src.IsMaintainer))
+            .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => src.IsFavorite))
+            .ForMember(dest => dest.IsDataAuthorized, opt => opt.MapFrom(src => src.IsDataAuthorized));
+
 
         CreateMap<WeatherStationUser, WeatherStationUserDTO>()
-            .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStation.Id))
+            .ForPath(dest => dest.WeatherStationId, opt => opt.MapFrom(src => src.WeatherStationId))
             .ForMember(dest => dest.WeatherStation, opt => opt.MapFrom(src => src.WeatherStation))
-            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId))
-            // esse terei que preencher na service usando um _userRepository
-            .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
+            .ForPath(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId));
+        // esse terei que preencher na service usando um _userRepository
+        //.ForMember(dest => dest.ApplicationUser, opt => opt.Ignore());
 
 
         // a estação
@@ -53,13 +57,17 @@ public class DomainToDTOMappingProfile : Profile
                     //    Maximum = c.Maximum,
                     //    Accuracy = c.Accuracy
                     //}
-                }).ToList()))
-            .ForMember(dest => dest.WeatherStationUsers, opt => opt.MapFrom(src =>
-                           src.WeatherStationUsers.Select(s => new WeatherStationUser
-                           {
-                               //WeatherStationId = s.WeatherStationId,
-                               ApplicationUserId = s.ApplicationUserId
-                           }).ToList()));
+                }).ToList()));
+            //.ForMember(dest => dest.WeatherStationUsers, opt => opt.MapFrom(src =>
+            //               src.WeatherStationUsers.Select(s => new WeatherStationUser
+            //               {
+            //                   //WeatherStationId = s.WeatherStationId,
+            //                   ApplicationUserId = s.ApplicationUserId,
+            //                   IsDataAuthorized = s.IsDataAuthorized,
+            //                   IsFavorite = s.IsFavorite,
+            //                   IsMaintainer = IsMaintainer
+
+            //               }).ToList()));
 
         CreateMap<WeatherStation, WeatherStationDTO>()
             .ForMember(dest => dest.Sensors, opt => opt.MapFrom(src =>
@@ -73,21 +81,35 @@ public class DomainToDTOMappingProfile : Profile
                     Accuracy = c.Sensor.Accuracy
                 }).ToList()));
 
-                //{
-                //    ContainerId = c.Container.ContainerId,
-                //    Type = c.Container.Type,
-                //    Volume = c.Container.Volume
-                //    //ImportId = src.ImportId,
-                //    //ProductId = src.ProductId,
-                //    //ContainerId = c.ContainerId,
-                //    ////BatchId = c.BatchId,
-                //    //Container = new ContainerDTO
-                //    //{
-                //    //    ContainerId = c.ContainerId,
-                //    //    Type = c.Type,
-                //    //    Volume = c.Volume
-                //    //}
-                //}).ToList()));
+        CreateMap<WeatherStation, WeatherStationView>()
+            .ForMember(dest => dest.Sensors, opt => opt.MapFrom(src =>
+                src.WeatherStationSensors.Select(c => new SensorDTO
+                {
+                    Id = c.Sensor.Id,
+                    Name = c.Sensor.Name,
+                    MeasurementUnit = c.Sensor.MeasurementUnit,
+                    Minimum = c.Sensor.Minimum,
+                    Maximum = c.Sensor.Maximum,
+                    Accuracy = c.Sensor.Accuracy
+                }).ToList()));
+
+        CreateMap<WeatherStationDTO, WeatherStationView>();
+
+        //{
+        //    ContainerId = c.Container.ContainerId,
+        //    Type = c.Container.Type,
+        //    Volume = c.Container.Volume
+        //    //ImportId = src.ImportId,
+        //    //ProductId = src.ProductId,
+        //    //ContainerId = c.ContainerId,
+        //    ////BatchId = c.BatchId,
+        //    //Container = new ContainerDTO
+        //    //{
+        //    //    ContainerId = c.ContainerId,
+        //    //    Type = c.Type,
+        //    //    Volume = c.Volume
+        //    //}
+        //}).ToList()));
 
 
 

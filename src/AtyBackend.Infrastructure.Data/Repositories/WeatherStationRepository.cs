@@ -51,10 +51,13 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             try
             {
                 // insert entity.Partners
-                foreach (var partner in entity.Partners)
-                {
-                    await _entitiesPartner.AddAsync(partner);
-                }
+                //foreach (var partner in entity.Partners)
+                //{
+                //    await _entitiesPartner.AddAsync(partner);
+                //}
+                await _entitiesPartner.AddRangeAsync(entity.Partners);
+
+                await _entitiesWeatherStationUser.AddRangeAsync(entity.WeatherStationUsers);
                 // pegar os sensores e só salvar id
                 await _entitiesWeatherStation.AddAsync(entity);
                 //var result = _entities.Add(entity);
@@ -147,6 +150,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                     // Update the fields of the existing entity with the values from the updated entity
                     existingEntity.Name = entity.Name;
                     existingEntity.Partners = entity.Partners;
+                    existingEntity.IsEnabled = entity.IsEnabled;
                     //existingEntity.WeatherStationSensors = entity.WeatherStationSensors;
 
                     // Attach the updated entity to the context and mark it as modified
