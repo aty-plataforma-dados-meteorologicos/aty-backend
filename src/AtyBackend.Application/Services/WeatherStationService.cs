@@ -161,9 +161,13 @@ public class WeatherStationService : IWeatherStationService
         weatherStationUserDto.IsMaintainer = false;
 
 
+
         var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
         weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
         
+        // se era mantenedor só dessa estação, preciso voltar o tipo dele para User
+
+
         return !weatherStationUserEntity.IsMaintainer;
     }
 
