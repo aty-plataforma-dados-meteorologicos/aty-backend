@@ -150,23 +150,30 @@ public class WeatherStationService : IWeatherStationService
         return userEntity.IsMaintainer;
     }
 
-    // remove maintener
     public async Task<bool> RemoveMaintainer(int weatherStationId, string maintainerId)
     {
-        // tem que ter mais de 1 mantenedor para poder deletar esse
         var totalMaintainers = await _weatherStationUserRepository.CountByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer);
         if (totalMaintainers <= 1 ) throw new Exception("It is not possible to remove the maintainer as the station does not have another maintainer.");
 
         var weatherStationUserDto = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, maintainerId);
         weatherStationUserDto.IsMaintainer = false;
 
-
-
         var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
         weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
-        
-        // se era mantenedor só dessa estação, preciso voltar o tipo dele para User
 
+        var totalWeatherStations = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == maintainerId && u.IsMaintainer);
+
+        if (totalWeatherStations == 0)
+        {
+            var user = await _userManager.FindByIdAsync(maintainerId);
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+            if (role == UserRoles.Maintainer)
+            {
+                await _userManager.RemoveFromRolesAsync(user, roles);
+                _userManager.AddToRoleAsync(user, UserRoles.User).Wait();
+            }
+        }
 
         return !weatherStationUserEntity.IsMaintainer;
     }
@@ -187,11 +194,12 @@ public class WeatherStationService : IWeatherStationService
         return new Paginated<WeatherStationUserDTO>(pageNumber, pageSize, totalMaintainers, dtos);
     }
 
-    public async Task<Paginated<WeatherStationView>> GetMaintainerWeatherStation(string maintainer, int pageNumber, int pageSize)
+    public async Task<Paginated<WeatherStationView>> GetMaintainerWeatherStation(string userEmail, int pageNumber, int pageSize)
     {
-        var totalWeatherStations = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == maintainer && u.IsMaintainer);
-        var entitiesWeatherStations = await _weatherStationUserRepository.FindByConditionAsync(u => u.ApplicationUserId == maintainer && u.IsMaintainer, pageNumber, pageSize);
-        //var weatherStations = _mapper.Map<List<WeatherStationUserDTO>>(entitiesWeatherStations);
+        var user = await _userManager.FindByEmailAsync(userEmail);
+
+        var totalWeatherStations = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == user.Id && u.IsMaintainer);
+        var entitiesWeatherStations = await _weatherStationUserRepository.FindByConditionAsync(u => u.ApplicationUserId == user.Id && u.IsMaintainer, pageNumber, pageSize);
 
         List<WeatherStationView> weatherStationViews = new List<WeatherStationView>();
 
@@ -213,11 +221,75 @@ public class WeatherStationService : IWeatherStationService
         return result;
     }
 
-    // addFavorite
-    // get favorites by ApplicationUserId
-    // get Mantened by ApplicationUserId
-    // get dataAuth by ApplicationUserId [futuro, mas deixa implementado]
-    // Autoriza dados [futuro, mas deixa implementado]
+    public async Task<bool> Favorite(WeatherStationIdUserId weatherStationUser)
+    {
+        var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
+
+        var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+            u => u.WeatherStationId == weatherStationUser.WeatherStationId
+            && u.ApplicationUserId == user.Id);
+
+        if (userWeatherStation.Any())
+        {
+            var userWeatherStationEntity = _mapper.Map<WeatherStationUser>(userWeatherStation.FirstOrDefault());
+
+            userWeatherStationEntity.IsFavorite = true;
+            userWeatherStationEntity = await _weatherStationUserRepository.UpdateAsync(userWeatherStationEntity);
+
+            return userWeatherStationEntity.IsFavorite;
+        }
+
+        var userDto = new WeatherStationUserDTO
+        {
+            WeatherStationId = weatherStationUser.WeatherStationId,
+            ApplicationUserId = user.Id,
+            IsMaintainer = false,
+            IsDataAuthorized = false,
+            IsFavorite = true
+        };
+
+        var userEntity = _mapper.Map<WeatherStationUser>(userDto);
+        userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
+
+        return userEntity.IsFavorite;
+    }
+    public async Task<Paginated<WeatherStationView>> GetFavorites(string userEmail, int pageNumber, int pageSize)
+    {
+        var user = await _userManager.FindByEmailAsync(userEmail);
+
+        var totalWeatherStations = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == user.Id && u.IsFavorite);
+        var entitiesWeatherStations = await _weatherStationUserRepository.FindByConditionAsync(u => u.ApplicationUserId == user.Id && u.IsFavorite, pageNumber, pageSize);
+
+        List<WeatherStationView> weatherStationViews = new();
+
+        if (entitiesWeatherStations is not null)
+        {
+            var weatherStationIds = entitiesWeatherStations.Select(w => w.WeatherStationId).ToList();
+
+            foreach (int id in weatherStationIds)
+            {
+                var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
+                var weatherStationView = _mapper.Map<WeatherStationView>(weatherStation);
+                weatherStationViews.Add(weatherStationView);
+            }
+        }
+
+        var result = new Paginated<WeatherStationView>(pageNumber, pageSize, totalWeatherStations, weatherStationViews);
+
+        return result;
+    }
+    public async Task<bool> RemoveFavorite(WeatherStationIdUserId weatherStationUser)
+    {
+        var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
+
+        var weatherStationUserDto = await _weatherStationUserRepository.GetByIdAsync(weatherStationUser.WeatherStationId, user.Id) ?? throw new Exception("Favorite not found.");
+        weatherStationUserDto.IsFavorite = false;
+
+        var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
+        weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
+
+        return !weatherStationUserEntity.IsFavorite;
+    }
 
     public async Task<bool> IsAdminManagerMainteiner(int weatherStationId, string userEmail)
     {

@@ -17,5 +17,9 @@ public interface IWeatherStationService
     Task<bool> IsAdminManagerMainteiner(int weatherStationId, string userEmail);
     Task<bool> RemoveMaintainer(int weatherStationId, string maintainerId);
     Task<Paginated<WeatherStationUserDTO>> GetWeatherStationMaintainers(int weatherStationId, int pageNumber, int pageSize);
-    Task<Paginated<WeatherStationView>> GetMaintainerWeatherStation(string maintainer, int pageNumber, int pageSize);
+    Task<Paginated<WeatherStationView>> GetMaintainerWeatherStation(string userEmail, int pageNumber, int pageSize);
+
+    Task<bool> Favorite(WeatherStationIdUserId weatherStationUser);
+    Task<bool> RemoveFavorite(WeatherStationIdUserId weatherStationUser);
+    Task<Paginated<WeatherStationView>> GetFavorites(string userEmail, int pageNumber, int pageSize);
 }
