@@ -10,7 +10,8 @@ namespace AtyBackend.Application.DTOs
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         public double AltitudeMSL { get; set; }
-        public bool IsPrivate { get; set; }
+        //public bool IsPrivate { get; set; }
+        public bool IsEnabled { get; set; }
 
         public bool? Status { get; set; }
         public DateTime? CreatedAt { get; set; }
