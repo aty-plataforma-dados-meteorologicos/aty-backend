@@ -78,7 +78,8 @@ public class DomainToDTOMappingProfile : Profile
                     MeasurementUnit = c.Sensor.MeasurementUnit,
                     Minimum = c.Sensor.Minimum,
                     Maximum = c.Sensor.Maximum,
-                    Accuracy = c.Sensor.Accuracy
+                    Accuracy = c.Sensor.Accuracy,
+                    IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
 
         CreateMap<WeatherStation, WeatherStationView>()
@@ -90,7 +91,8 @@ public class DomainToDTOMappingProfile : Profile
                     MeasurementUnit = c.Sensor.MeasurementUnit,
                     Minimum = c.Sensor.Minimum,
                     Maximum = c.Sensor.Maximum,
-                    Accuracy = c.Sensor.Accuracy
+                    Accuracy = c.Sensor.Accuracy,
+                    IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
 
         CreateMap<WeatherStationDTO, WeatherStationView>();
