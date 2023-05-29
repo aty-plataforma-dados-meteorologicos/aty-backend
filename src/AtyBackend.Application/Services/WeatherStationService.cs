@@ -29,7 +29,7 @@ public class WeatherStationService : IWeatherStationService
         _mapper = mapper;
         _userManager = userManager;
     }
-    public async Task<WeatherStationDTO> CreateAsync(WeatherStationDTO dto)
+    public async Task<WeatherStationView> CreateAsync(WeatherStationDTO dto)
     {
         dto.CreatedAt = DateTime.UtcNow;
         dto.IsEnabled = true;
@@ -42,7 +42,7 @@ public class WeatherStationService : IWeatherStationService
 
         // get with include
         //weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStation.Id);
-        return _mapper.Map<WeatherStationDTO>(weatherStation);
+        return _mapper.Map<WeatherStationView>(weatherStation);
     }
 
     public async Task<Paginated<WeatherStationView>> GetAsync(int pageNumber, int pageSize)
@@ -54,22 +54,22 @@ public class WeatherStationService : IWeatherStationService
         return new Paginated<WeatherStationView>(pageNumber, pageSize, total, dtos);
     }
 
-    public async Task<WeatherStationDTO> GetByIdAsync(int? id)
+    public async Task<WeatherStationView> GetByIdAsync(int? id)
     {
         var weatherStationEntity = await _weatherStationRepository.GetByIdAsync(id);
-        var weatherStation = _mapper.Map<WeatherStationDTO>(weatherStationEntity);
+        var weatherStation = _mapper.Map<WeatherStationView>(weatherStationEntity);
         //var weatherStation = _mapper.Map<WeatherStationView>(weatherStationEntity);
 
         return weatherStation;
     }
 
-    public async Task<WeatherStationDTO> UpdateAsync(WeatherStationDTO weatherStation)
+    public async Task<WeatherStationView> UpdateAsync(WeatherStationDTO weatherStation)
     {
         weatherStation.UpdateAt = DateTime.UtcNow;
         var weatherStationEntity = _mapper.Map<WeatherStation>(weatherStation);
         var weatherStationUpdated = await _weatherStationRepository.UpdateAsync(weatherStationEntity);
 
-        return _mapper.Map<WeatherStationDTO>(weatherStationUpdated);
+        return _mapper.Map<WeatherStationView>(weatherStationUpdated);
     }
 
     public async Task<bool> DeleteAsync(int id)
