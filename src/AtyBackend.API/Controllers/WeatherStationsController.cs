@@ -234,7 +234,7 @@ public class WeatherStationsController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("{weatherStationId:int}/Favorites")]
+    [HttpGet("{weatherStationId:int}/Favorites")]
     public async Task<ActionResult> Favorite(int weatherStationId)
     {
         try
