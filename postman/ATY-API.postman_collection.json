@@ -2679,8 +2679,7 @@
 						"disabledSystemHeaders": {
 							"accept": true
 						},
-						"strictSSL": false,
-						"disableBodyPruning": true
+						"strictSSL": false
 					},
 					"request": {
 						"auth": {
@@ -2693,7 +2692,7 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Accept",
