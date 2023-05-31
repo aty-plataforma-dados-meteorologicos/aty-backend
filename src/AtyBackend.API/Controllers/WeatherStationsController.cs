@@ -48,8 +48,7 @@ public class WeatherStationsController : ControllerBase
     [HttpGet("{weatherStationId:int}", Name = "GetWeatherStationById")]
     public async Task<ActionResult<WeatherStationView>> GetByIdAsync(int? weatherStationId)
     {
-        var weatherStationDto = await _weatherStationService.GetByIdAsync(weatherStationId);
-        var weatherStation = _mapper.Map<WeatherStation>(weatherStationDto);
+        var weatherStation= await _weatherStationService.GetByIdAsync(weatherStationId);
         return weatherStation is null ? NotFound("Weather Station not found") : Ok(weatherStation);
     }
 
@@ -109,9 +108,9 @@ public class WeatherStationsController : ControllerBase
             };
 
             weatherStationDto.WeatherStationUsers.Add(userDto);
-            weatherStationDto = await _weatherStationService.CreateAsync(weatherStationDto);
+            var ws = await _weatherStationService.CreateAsync(weatherStationDto);
 
-            return new CreatedAtRouteResult("GetWeatherStationByIdMaintainer", new { weatherStationId = weatherStationDto.Id }, weatherStationDto);
+            return new CreatedAtRouteResult("GetWeatherStationByIdMaintainer", new { weatherStationId = ws.Id }, ws);
         }
         catch (Exception ex)
         {
@@ -235,7 +234,7 @@ public class WeatherStationsController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{weatherStationId:int}/Favorites")]
+    [HttpPost("{weatherStationId:int}/Favorites")]
     public async Task<ActionResult> Favorite(int weatherStationId)
     {
         try

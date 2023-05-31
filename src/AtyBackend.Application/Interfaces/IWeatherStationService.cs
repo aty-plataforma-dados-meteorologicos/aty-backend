@@ -5,10 +5,10 @@ namespace AtyBackend.Application.Interfaces;
 
 public interface IWeatherStationService
 {
-    Task<WeatherStationDTO> CreateAsync(WeatherStationDTO exemploGeneric);
+    Task<WeatherStationView> CreateAsync(WeatherStationDTO exemploGeneric);
     Task<Paginated<WeatherStationView>> GetAsync(int pageSize, int pageNumber);
-    Task<WeatherStationDTO> GetByIdAsync(int? id);
-    Task<WeatherStationDTO> UpdateAsync(WeatherStationDTO exemploGeneric);
+    Task<WeatherStationView> GetByIdAsync(int? id);
+    Task<WeatherStationView> UpdateAsync(WeatherStationDTO exemploGeneric);
     Task<bool> DeleteAsync(int id);
 
     Task<WeatherStationAuthenticationDTO> GetWeatherStationAuthentication(int weatherStationId);

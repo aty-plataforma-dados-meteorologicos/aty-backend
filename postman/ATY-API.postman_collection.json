@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a04daa4c-9773-4f78-8ae6-f8f9d861954c",
+		"_postman_id": "90fc1dce-9f90-40bb-8519-de016f19f524",
 		"name": "ATY-API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1301,7 +1301,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{url}}/api/Users/03c3f377-15bf-4c9a-8d1b-9eb9b3728dfd",
+							"raw": "https://{{url}}/api/Users/{{userId}}",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
@@ -1309,7 +1309,7 @@
 							"path": [
 								"api",
 								"Users",
-								"03c3f377-15bf-4c9a-8d1b-9eb9b3728dfd"
+								"{{userId}}"
 							]
 						}
 					},
@@ -2119,30 +2119,12 @@
 				},
 				{
 					"name": "Create WeatherStation",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"    if (pm.response.to.have.status(201)) {\r",
-									"        var response = JSON.parse(responseBody);\r",
-									"        pm.environment.set(\"weatherStationsId\", response.id);\r",
-									"    }\r",
-									"});\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
 							"accept": true
 						},
-						"strictSSL": false
+						"strictSSL": false,
+						"disableBodyPruning": true
 					},
 					"request": {
 						"auth": {
@@ -2155,8 +2137,14 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
 							{
 								"key": "Accept",
 								"value": "text/plain",
@@ -2165,15 +2153,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Estação Metereológica da Praia\",\r\n  \"latitude\": \"-23.5505\",\r\n  \"longitude\": \"-46.6333\",\r\n  \"altitudeMSL\": 5,\r\n  \"isPrivate\": false,\r\n  \"status\": true,\r\n  \"partners\": [\r\n    {\r\n      \"id\": 0,\r\n      \"isEnabled\": true,\r\n      \"name\": \"Parque Estadual da Praia\",\r\n      \"cnpjOrCPF\": \"12.345.678/0001-90\",\r\n      \"email\": \"contato@parquepraia.com.br\",\r\n      \"phone\": \"+55 11 98765-4321\",\r\n      \"site\": \"https://www.parquepraia.com.br\",\r\n      \"notes\": \"Parceria para monitoramento do clima na área do parque.\"\r\n    }\r\n  ],\r\n  \"sensors\": [\r\n    {\r\n      \"name\": \"Temperatura\",\r\n      \"measurementUnit\": \"Celsius\",\r\n      \"minimum\": -40,\r\n      \"maximum\": 80,\r\n      \"accuracy\": 1,\r\n      \"id\": 2002,\r\n      \"isEnabled\": true\r\n    }\r\n  ]\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\r\n  \"name\": \"Estação Metereológica PMFI Morumbi\",\r\n  \"latitude\": \"-23.5505\",\r\n  \"longitude\": \"-46.6333\",\r\n  \"altitudeMSL\": 5,\r\n  \"isPrivate\": false,\r\n  \"status\": true,\r\n  \"partners\": [\r\n    {\r\n      \"id\": 0,\r\n      \"isEnabled\": true,\r\n      \"name\": \"PMFI\",\r\n      \"cnpjOrCPF\": \"12.345.678/0001-90\",\r\n      \"email\": \"contato@parquepraia.com.br\",\r\n      \"phone\": \"+55 45 98765-4321\",\r\n      \"site\": \"https://pmfi.br\",\r\n      \"notes\": \"Parceria para monitoramento do clima na área do bairro.\"\r\n    }\r\n  ],\r\n  \"sensors\": [\r\n    {\r\n      \"name\": \"Temperatura\",\r\n      \"measurementUnit\": \"Celsius\",\r\n      \"minimum\": -40,\r\n      \"maximum\": 80,\r\n      \"accuracy\": 1,\r\n      \"id\": 2002,\r\n      \"isEnabled\": true\r\n    }\r\n  ]\r\n}\r\n"
 						},
 						"url": {
-							"raw": "https://{{url}}/api/WeatherStations",
+							"raw": "https://{{url}}/api/WeatherStations?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
@@ -2181,6 +2164,16 @@
 							"path": [
 								"api",
 								"WeatherStations"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
 							]
 						}
 					},
@@ -2315,6 +2308,55 @@
 			"name": "Maintainers",
 			"item": [
 				{
+					"name": "WeatherStations Maintainers",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "WeatherStations by Maintainer",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
@@ -2348,7 +2390,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{url}}/api/WeatherStations/Maintainers?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"raw": "https://{{url}}/api/WeatherStations/{{maintainerId}}?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
@@ -2356,7 +2398,7 @@
 							"path": [
 								"api",
 								"WeatherStations",
-								"Maintainers"
+								"{{maintainerId}}"
 							],
 							"query": [
 								{
@@ -2563,70 +2605,6 @@
 			"name": "Favorites",
 			"item": [
 				{
-					"name": "Favorite WeatherStation",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						},
-						"strictSSL": false,
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "text/plain",
-								"type": "default"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Favorites",
-							"protocol": "https",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"WeatherStations",
-								"{{weatherStationsId}}",
-								"Favorites"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Favorites WeatherStations",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
@@ -2679,6 +2657,69 @@
 									"key": "pageSize",
 									"value": "{{PageSize}}"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Favorite WeatherStation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Favorites",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Favorites"
 							]
 						}
 					},
