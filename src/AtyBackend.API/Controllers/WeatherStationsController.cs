@@ -35,6 +35,7 @@ public class WeatherStationsController : ControllerBase
         _userManager = userManager;
     }
 
+    #region CRUD Weather Station
     [HttpGet]
     public async Task<ActionResult<ApiResponsePaginated<WeatherStationView>>> GetWeatherStationAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
@@ -164,8 +165,9 @@ public class WeatherStationsController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    #endregion
 
-
+    #region Maintainers
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpPost("{weatherStationId:int}/Maintainers")]
     public async Task<ActionResult> AddMaintainer(int weatherStationId, [FromBody] WeatherStationIdUserId weatherStationUser)
@@ -232,7 +234,9 @@ public class WeatherStationsController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    #endregion
 
+    #region Favorites
     [Authorize]
     [HttpPost("{weatherStationId:int}/Favorites")]
     public async Task<ActionResult> Favorite(int weatherStationId)
@@ -282,7 +286,47 @@ public class WeatherStationsController : ControllerBase
         }
         catch (Exception ex) { return BadRequest(ex.Message); }
     }
+    #endregion
 
+    #region Data
+    // Aqui devo implementar a recepção [post] e busca por dados [get]
+    //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpPost("{weatherStationId:int}/Data")]
+    public async Task<ActionResult> AddData(int weatherStationId, [FromBody] List<WeatherDataDto> data)
+    {
+        try
+        {
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationService.AddData(data) ? Ok() : BadRequest("Maintainer not added");
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    //[Authorize]
+    //[HttpGet("{weatherStationId:int}/Data")]
+    //public async Task<ActionResult<ApiResponsePaginated<WeatherStationUserDTO>>> GetData(int weatherStationId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    //{
+    //    var paginated = new ApiResponsePaginated<WeatherStationUserDTO>(pageNumber, pageSize);
+    //    var maintainers = await _weatherStationService.GetData(weatherStationId, paginated.PageNumber, paginated.PageSize);
+    //    paginated.AddData(maintainers, Request);
+
+    //    return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
+    //}
+
+    #endregion
+
+
+    #region old codes
     // esse aqui não sei se manteremos [acho que acaba e removemos token com a ideia de o post ser vinculado ao usuario]
 
     //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
@@ -329,5 +373,6 @@ public class WeatherStationsController : ControllerBase
     //    //var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id, userEmail);
     //    //return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
     //}
+    #endregion
 
 }
