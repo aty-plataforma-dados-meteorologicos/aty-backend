@@ -1,6 +1,6 @@
 ﻿namespace AtyBackend.Application.DTOs
 {
-    public class WeatherDataDto
+    public class WeatherDataDTO
     {
         public int WeatherStationId { get; set; }
         public DateTime Timestamp { get; set; }

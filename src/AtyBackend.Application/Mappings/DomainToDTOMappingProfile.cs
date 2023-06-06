@@ -97,6 +97,12 @@ public class DomainToDTOMappingProfile : Profile
 
         CreateMap<WeatherStationDTO, WeatherStationView>();
 
+        CreateMap<Measurement, MeasurementDTO>()
+            .ReverseMap();
+
+        CreateMap<WeatherData, WeatherDataDTO>()
+            .ReverseMap();
+
         //{
         //    ContainerId = c.Container.ContainerId,
         //    Type = c.Container.Type,

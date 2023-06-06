@@ -11,6 +11,6 @@ namespace AtyBackend.Application.ViewModels
     {
 
         public List<SensorDTO> Sensors { get; set; }
-        public List<WeatherDataDto> Data { get; set; }
+        public List<WeatherDataDTO> Data { get; set; }
     }
 }

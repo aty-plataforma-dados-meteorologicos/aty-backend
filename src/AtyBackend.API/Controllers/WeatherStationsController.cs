@@ -24,15 +24,20 @@ namespace AtyBackend.API.Controllers;
 public class WeatherStationsController : ControllerBase
 {
     private readonly IWeatherStationService _weatherStationService;
-    private readonly IMapper _mapper;
+    private readonly WeatherDataService _weatherStationDataService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _mapper;
 
-    public WeatherStationsController(IWeatherStationService weatherStationService,
-        IMapper mapper, UserManager<ApplicationUser> userManager)
+    public WeatherStationsController(
+        IWeatherStationService weatherStationService,
+        WeatherDataService weatherStationDataService,
+        IMapper mapper, UserManager<ApplicationUser> userManager
+        )
     {
         _weatherStationService = weatherStationService;
-        _mapper = mapper;
+        _weatherStationDataService = weatherStationDataService;
         _userManager = userManager;
+        _mapper = mapper;
     }
 
     #region CRUD Weather Station
@@ -49,7 +54,7 @@ public class WeatherStationsController : ControllerBase
     [HttpGet("{weatherStationId:int}", Name = "GetWeatherStationById")]
     public async Task<ActionResult<WeatherStationView>> GetByIdAsync(int? weatherStationId)
     {
-        var weatherStation= await _weatherStationService.GetByIdAsync(weatherStationId);
+        var weatherStation = await _weatherStationService.GetByIdAsync(weatherStationId);
         return weatherStation is null ? NotFound("Weather Station not found") : Ok(weatherStation);
     }
 
@@ -292,7 +297,7 @@ public class WeatherStationsController : ControllerBase
     // Aqui devo implementar a recepção [post] e busca por dados [get]
     //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpPost("{weatherStationId:int}/Data")]
-    public async Task<ActionResult> AddData(int weatherStationId, [FromBody] List<WeatherDataDto> data)
+    public async Task<ActionResult> AddData(int weatherStationId, [FromBody] List<WeatherDataDTO> data)
     {
         try
         {
@@ -301,7 +306,7 @@ public class WeatherStationsController : ControllerBase
 
             if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
             {
-                return await _weatherStationService.AddData(data) ? Ok() : BadRequest("Maintainer not added");
+                return await _weatherStationDataService.SaveWeatherDataAsync(data) ? Ok() : BadRequest("Data not added");
             }
 
             return Unauthorized("Unauthorized");
@@ -312,9 +317,20 @@ public class WeatherStationsController : ControllerBase
         }
     }
 
-    //[Authorize]
-    //[HttpGet("{weatherStationId:int}/Data")]
-    //public async Task<ActionResult<ApiResponsePaginated<WeatherStationUserDTO>>> GetData(int weatherStationId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    [Authorize]
+    [HttpGet("{weatherStationId:int}/Data")]
+    public async Task<IActionResult> GetWeatherData(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId)
+    {
+        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, startDate, endDate, sensorId);
+
+        if (weatherData == null || weatherData.Count == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(weatherData);
+    }
+    //public async Task<ActionResult<List<WeatherDataDto>>> GetData(int weatherStationId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     //{
     //    var paginated = new ApiResponsePaginated<WeatherStationUserDTO>(pageNumber, pageSize);
     //    var maintainers = await _weatherStationService.GetData(weatherStationId, paginated.PageNumber, paginated.PageSize);
@@ -322,6 +338,11 @@ public class WeatherStationsController : ControllerBase
 
     //    return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
     //}
+
+    // by sensor id, {weatherStationId:int}/Data/Sensors/{sensorId:int}
+
+    //[Authorize]
+
 
     #endregion
 
