@@ -24,13 +24,13 @@ namespace AtyBackend.API.Controllers;
 public class WeatherStationsController : ControllerBase
 {
     private readonly IWeatherStationService _weatherStationService;
-    private readonly WeatherDataService _weatherStationDataService;
+    private readonly IWeatherDataService _weatherStationDataService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public WeatherStationsController(
         IWeatherStationService weatherStationService,
-        WeatherDataService weatherStationDataService,
+        IWeatherDataService weatherStationDataService,
         IMapper mapper, UserManager<ApplicationUser> userManager
         )
     {
@@ -319,9 +319,9 @@ public class WeatherStationsController : ControllerBase
 
     [Authorize]
     [HttpGet("{weatherStationId:int}/Data")]
-    public async Task<IActionResult> GetWeatherData(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId)
+    public async Task<IActionResult> GetWeatherData(int weatherStationId, [FromBody] WeatherStationDataQuery dataQuery)
     {
-        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, startDate, endDate, sensorId);
+        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, dataQuery.StartDateTime, dataQuery.EndDateDateTime, null);
 
         if (weatherData == null || weatherData.Count == 0)
         {
