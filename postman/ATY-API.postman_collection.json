@@ -1816,7 +1816,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 0,\r\n    \"name\": \"Temperatura\",\r\n    \"measurementUnit\": \"Celsius\",\r\n    \"minimum\": -40,\r\n    \"maximum\": 80,\r\n    \"accuracy\": 1,\r\n    \"isEnabled\": true\r\n}",
+							"raw": "{\r\n    \"id\": 0,\r\n    \"name\": \"Temperatura\",\r\n    \"measurementUnit\": \"Celsius\",\r\n    \"minimum\": -40,\r\n    \"maximum\": 80,\r\n    \"accuracy\": 1,\r\n    \"measurementType\": 1,\r\n    \"isEnabled\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1885,7 +1885,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": {{sensorId}},\r\n  \"isEnabled\": false,\r\n  \"name\": \"Temperatura2\",\r\n  \"measurementUnit\": \"Celcius\",\r\n  \"minimum\": -41,\r\n  \"maximum\": 80,\r\n  \"accuracy\": 4\r\n}",
+							"raw": "{\r\n    \"id\": {{sensorId}},\r\n    \"name\": \"Temperatura\",\r\n    \"measurementUnit\": \"Celsius\",\r\n    \"minimum\": -40,\r\n    \"maximum\": 80,\r\n    \"measurementType\": 2,\r\n    \"accuracy\": 1,\r\n    \"isEnabled\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

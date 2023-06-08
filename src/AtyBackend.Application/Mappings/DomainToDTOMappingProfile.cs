@@ -79,6 +79,7 @@ public class DomainToDTOMappingProfile : Profile
                     Minimum = c.Sensor.Minimum,
                     Maximum = c.Sensor.Maximum,
                     Accuracy = c.Sensor.Accuracy,
+                    MeasurementType = c.Sensor.MeasurementType,
                     IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
 
@@ -92,6 +93,7 @@ public class DomainToDTOMappingProfile : Profile
                     Minimum = c.Sensor.Minimum,
                     Maximum = c.Sensor.Maximum,
                     Accuracy = c.Sensor.Accuracy,
+                    MeasurementType = c.Sensor.MeasurementType,
                     IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
 
