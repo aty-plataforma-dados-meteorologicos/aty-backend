@@ -18,11 +18,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AtyBackend.Infrastructure.Data.Repositories
 {
-    internal class InfluxDbWeatherDataRepository : IWeatherDataRepository
+    public class InfluxDbWeatherDataRepository : IWeatherDataRepository
     {
         private readonly InfluxDBClient _influxDbClient;
         private const string DatabaseName = "weather_data";
-        private readonly string Token = "";
+        private readonly string Token = "5VPrX6lStbpFdZNMVDRH_LKPeAyIPqJrLx9t_su03d-BCJsY_6JECIyDmrEk-lujUSEGThJhrXItv5KD1OG7Sw==";
         private readonly string InfluxUrl = "http://localhost:8086";
 
         public InfluxDbWeatherDataRepository()
