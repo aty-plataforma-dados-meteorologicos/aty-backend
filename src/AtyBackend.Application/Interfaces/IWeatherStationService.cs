@@ -23,8 +23,8 @@ public interface IWeatherStationService
     Task<bool> RemoveFavorite(WeatherStationIdUserId weatherStationUser);
     Task<Paginated<WeatherStationView>> GetFavorites(string userEmail, int pageNumber, int pageSize);
 
-    Task<bool> AddData(List<WeatherDataDTO> data);
-    Task<WeatherDataView> GetData();
+    //Task<bool> AddData(List<WeatherDataDTO> data);
+    //Task<WeatherDataView> GetData();
 
 
 }

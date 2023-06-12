@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AtyBackend.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace AtyBackend.Domain.Entities
     public class Measurement
     {
         public int SensorId { get; set; }
+        public string? TypeTag { get; set; }
         public double MeasurementValue { get; set; }
     }
 }

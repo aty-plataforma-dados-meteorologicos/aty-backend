@@ -40,12 +40,10 @@ public static class DependencyInjectionAPI
 
         services.AddScoped<IAuthenticate, AuthenticateService>();
 
-        services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
+        services.AddAutoMapper(typeof(MappingProfiles));
 
         var myhandlers = AppDomain.CurrentDomain.Load("AtyBackend.Application");
         services.AddMediatR(myhandlers);
-
-        // add seedUsers
 
         return services;
     }

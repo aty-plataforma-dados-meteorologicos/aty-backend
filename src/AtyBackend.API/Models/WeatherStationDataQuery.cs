@@ -2,6 +2,7 @@
 {
     public class WeatherStationDataQuery
     {
+        // se isso for null, retorna ultimas 24h
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateDateTime { get; set; }
 

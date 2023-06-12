@@ -1,7 +1,9 @@
 ﻿using AtyBackend.Application.DTOs;
 using AtyBackend.Application.Interfaces;
 using AtyBackend.Domain.Entities;
+using AtyBackend.Domain.Enums;
 using AtyBackend.Domain.Interfaces;
+using AtyBackend.Infrastructure.Data.Repositories;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -14,38 +16,82 @@ namespace AtyBackend.Application.Services
     public class WeatherDataService : IWeatherDataService
     {
         private readonly IWeatherDataRepository _weatherDataRepository;
+        private readonly IWeatherStationRepository _weatherStationRepository;
         private readonly IMapper _mapper;
 
         public WeatherDataService(
             IWeatherDataRepository weatherDataRepository,
+            IWeatherStationRepository weatherStationRepository,
             IMapper mapper
             )
         {
             _weatherDataRepository = weatherDataRepository;
+            _weatherStationRepository = weatherStationRepository;
             _mapper = mapper;
 
         }
 
         // alterar para addd por lista List<WeatherDataDto> weatherData
-        public async Task<bool> SaveWeatherDataAsync(List<WeatherDataDTO> weatherData)
+        public async Task<bool> SaveWeatherDataAsync(WeatherDataDTO weatherData)
         {
-            // falta auto mapper here   e retornar bool
-            var weatherDataToInsert = _mapper.Map<List<WeatherData>>(weatherData);
+            try
+            {
+                var weatherStationEntity = await _weatherStationRepository.GetByIdAsync(weatherData.WeatherStationId);
+                var weatherStation = _mapper.Map<WeatherStationView>(weatherStationEntity);
+                var sensors = weatherStation.Sensors;
 
-            // após validar o isnert em test, organizar para fazer isso com um insert apenas que já isnere tudo 
-            await _weatherDataRepository.SaveWeatherDataAsync(weatherDataToInsert.First());
-            //foreach (var item in weatherDataToInsert)
-            //{
-            //}
-            
+                // validar se a quantidade de sensores é igual a quantidade de medidas
+                if (sensors.Count != weatherData.Measurements.Count) throw new Exception ("The number of measurements cannot be different from the number of sensors");
 
-            return true;
+                // validar se os ids dos sensores são iguais aos ids das medidas
+                foreach (var m in weatherData.Measurements)
+                {
+                    //if (!sensors.Exists(s => s.Id == m.SensorId)) throw new Exception("Invalid Measurement. Measurement.SensorId not in WeatherStation.Sensors");
+
+                    var sensor = sensors.Find(s => s.Id == m.SensorId);
+                    m.MeasurementTypeTag = sensor is not null ? sensor.MeasurementType : throw new Exception("Invalid Measurement. Measurement.SensorId not in WeatherStation.Sensors");
+                }
+
+                #region futuramente refatorar para um automapping
+                List<Measurement> measurements = new();
+                foreach (var item in weatherData.Measurements)
+                {
+                    Measurement measurement = new()
+                    {
+                        SensorId = item.SensorId,
+                        MeasurementValue = item.MeasurementValue,
+                        TypeTag = WeatherMeasurementsExtensions.GetMeasurementName(item.MeasurementTypeTag)
+                    };
+
+                    measurements.Add(measurement);
+                }
+
+                WeatherData weatherDataToInsert = new()
+                {
+                    WeatherStationId = weatherData.WeatherStationId,
+                    Timestamp = DateTime.Now,
+                    Measurements = measurements
+                };
+                #endregion
+
+                await _weatherDataRepository.SaveWeatherDataAsync(weatherDataToInsert);
+                //foreach (var item in weatherDataToInsert)
+                //{
+                //}
+
+
+                return true;
+            }
+            catch (Exception ex) { throw; }
         }
 
         public Task<List<WeatherDataDTO>> GetWeatherDataAsync(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId)
         {
             throw new NotImplementedException();
         }
+
+        //public async Task<bool> SaveWeatherDataAsync(List<WeatherDataDTO> weatherData)
+
 
     }
 }

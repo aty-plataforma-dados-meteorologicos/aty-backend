@@ -295,9 +295,10 @@ public class WeatherStationsController : ControllerBase
 
     #region Data
     // Aqui devo implementar a recepção [post] e busca por dados [get]
+
     //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpPost("{weatherStationId:int}/Data")]
-    public async Task<ActionResult> AddData(int weatherStationId, [FromBody] List<WeatherDataDTO> data)
+    public async Task<ActionResult> AddData(int weatherStationId, [FromBody] WeatherDataDTO data)
     {
         try
         {
@@ -342,6 +343,8 @@ public class WeatherStationsController : ControllerBase
     // by sensor id, {weatherStationId:int}/Data/Sensors/{sensorId:int}
 
     //[Authorize]
+
+    //public async Task<ActionResult> AddData(int weatherStationId, [FromBody] List<WeatherDataDTO> data)
 
 
     #endregion

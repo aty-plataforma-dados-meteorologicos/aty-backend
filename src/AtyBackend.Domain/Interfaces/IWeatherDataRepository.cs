@@ -9,7 +9,7 @@ namespace AtyBackend.Domain.Interfaces
 {
     public interface IWeatherDataRepository
     {
-        Task SaveWeatherDataAsync(WeatherData weatherData);
+        Task<bool> SaveWeatherDataAsync(WeatherData weatherData);
         Task<List<WeatherData>> GetWeatherDataAsync(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId);
     }
 }

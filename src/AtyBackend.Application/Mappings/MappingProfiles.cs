@@ -6,9 +6,9 @@ using AtyBackend.Application.ViewModels;
 
 namespace AtyBackend.Application.Mappings;
 
-public class DomainToDTOMappingProfile : Profile
+public class MappingProfiles : Profile
 {
-    public DomainToDTOMappingProfile()
+    public MappingProfiles()
     {
         CreateMap<EntityDTO, Entity>()
             //.ForMember(dest => dest.IsDeleted, opt => opt.Ignore())

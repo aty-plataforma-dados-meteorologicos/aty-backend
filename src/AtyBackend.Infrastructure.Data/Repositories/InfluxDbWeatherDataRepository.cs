@@ -30,30 +30,49 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             // Configure a conexão com o InfluxDB
             var options = new InfluxDBClientOptions.Builder()
                 .Url("http://localhost:8086") // substitua pelo endereço do seu banco de dados InfluxDB
-                .AuthenticateToken("your-token") // substitua pelo seu token de autenticação
+                .AuthenticateToken("5VPrX6lStbpFdZNMVDRH_LKPeAyIPqJrLx9t_su03d-BCJsY_6JECIyDmrEk-lujUSEGThJhrXItv5KD1OG7Sw==") // substitua pelo seu token de autenticação
                 .Build();
 
             _influxDbClient = InfluxDBClientFactory.Create(options);
         }
 
-        public async Task SaveWeatherDataAsync(WeatherData weatherData)
+        public async Task<bool> SaveWeatherDataAsync(WeatherData weatherData)
         {
-            using var client = new InfluxDBClient(InfluxUrl, Token);
-
-            //
-            // Write Data
-            //
-            using (var writeApi = client.GetWriteApi())
+            try
             {
+
+                using var client = new InfluxDBClient(InfluxUrl, Token);
+
                 //
-                // Write by Data Point
+                // Write Data
+                //
+                using (var writeApi = client.GetWriteApi())
+                {
+                    List<PointData> points = new();
 
-                var point = PointData.Measurement("temperature")
-                    .Tag("location", "west")
-                    .Field("value", 55D)
-                    .Timestamp(DateTime.UtcNow.AddSeconds(-10), WritePrecision.Ns);
+                    foreach (var measurement in weatherData.Measurements)
+                    {
+                        // write
+                        var point = PointData.Measurement(measurement.TypeTag)
+                            .Tag("WeatherStationId", weatherData.WeatherStationId.ToString())
+                            .Field("value", measurement.MeasurementValue)
+                            .Timestamp(weatherData.Timestamp, WritePrecision.Ms);
 
-                writeApi.WritePoint(point, "bucket_name", "org_id");
+                        points.Add(point);
+
+                        //writeApi.WritePoint(point, "bucket_name", "org_id");
+
+                    }
+
+                    writeApi.WritePoints(points, "test-bucket", "aty");
+
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
 
             #region by gpt
@@ -74,20 +93,22 @@ namespace AtyBackend.Infrastructure.Data.Repositories
 
         public async Task<List<WeatherData>> GetWeatherDataAsync(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId)
         {
-            var queryApi = _influxDbClient.GetQueryApiAsync();
+            //var queryApi = _influxDbClient.GetQueryApiAsync();
 
-            var query = from weather in _influxDbClient.GetQueryable<WeatherData>("weather")
-                        where weather.WeatherStationId == weatherStationId &&
-                              weather.Timestamp >= startDate &&
-                              weather.Timestamp <= endDate &&
-                              (sensorId == null || weather.Measurements.Any(m => m.SensorId == sensorId))
-                        select weather;
+            //var query = from weather in _influxDbClient.GetQueryable<WeatherData>("weather")
+            //            where weather.WeatherStationId == weatherStationId &&
+            //                  weather.Timestamp >= startDate &&
+            //                  weather.Timestamp <= endDate &&
+            //                  (sensorId == null || weather.Measurements.Any(m => m.SensorId == sensorId))
+            //            select weather;
 
-            var result = await queryApi.QueryAsync(query.ToQueryString(), DatabaseName);
+            //var result = await queryApi.QueryAsync(query.ToQueryString(), DatabaseName);
 
-            var weatherDataList = result.Select(r => r.ToObject<WeatherDataDto>()).ToList();
+            //var weatherDataList = result.Select(r => r.ToObject<WeatherDataDto>()).ToList();
 
-            return weatherDataList;
+            //return weatherDataList;
+
+            throw new NotImplementedException();
         }
 
 
