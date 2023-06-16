@@ -6,9 +6,9 @@ using AtyBackend.Application.ViewModels;
 
 namespace AtyBackend.Application.Mappings;
 
-public class DomainToDTOMappingProfile : Profile
+public class MappingProfiles : Profile
 {
-    public DomainToDTOMappingProfile()
+    public MappingProfiles()
     {
         CreateMap<EntityDTO, Entity>()
             //.ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
@@ -99,6 +99,18 @@ public class DomainToDTOMappingProfile : Profile
 
         CreateMap<WeatherStationDTO, WeatherStationView>();
 
+        CreateMap<Measurement, MeasurementDTO>()
+            .ReverseMap();
+
+        CreateMap<WeatherData, WeatherDataDTO>()
+            .ReverseMap();
+
+        CreateMap<WeatherDataFlux, WeatherDataFluxDTO>()
+            .ReverseMap();
+
+        CreateMap<MeasurementFlux, MeasurementFluxDTO>()
+            .ReverseMap();
+
         //{
         //    ContainerId = c.Container.ContainerId,
         //    Type = c.Container.Type,
@@ -114,13 +126,5 @@ public class DomainToDTOMappingProfile : Profile
         //    //    Volume = c.Volume
         //    //}
         //}).ToList()));
-
-
-
-        CreateMap<ExemploDTO, Exemplo>()
-            .ReverseMap();
-
-        CreateMap<ExemploGenericDTO, ExemploGeneric>()
-            .ReverseMap();
     }
 }

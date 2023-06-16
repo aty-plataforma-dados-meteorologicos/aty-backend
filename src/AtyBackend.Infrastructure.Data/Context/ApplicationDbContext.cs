@@ -12,8 +12,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         : base(options)
     { }
 
-    public DbSet<Exemplo> Exemplo { get; set; }
-    public DbSet<ExemploGeneric> ExemploGeneric { get; set; }
     public DbSet<Partner> Partners { get; set; }
     public DbSet<Sensor> Sensor { get; set; }
     public DbSet<WeatherStation> WeatherStation { get; set; }
