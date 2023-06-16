@@ -36,5 +36,28 @@
         {
             return Enum.GetName(typeof(WeatherMeasurementsEnum), measurement);
         }
+
+        public static int GetMeasurementEnumValue(string measurementType)
+        {
+            if (Enum.TryParse(typeof(WeatherMeasurementsEnum), measurementType, out object enumValue))
+            {
+                return (int)enumValue;
+            }
+
+            throw new ArgumentException("Invalid measurement type.");
+        }
+
+        public static WeatherMeasurementsEnum GetMeasurementEnum(string measurementType)
+        {
+            if (Enum.TryParse(typeof(WeatherMeasurementsEnum), measurementType, out object enumValue))
+            {
+                return (WeatherMeasurementsEnum)enumValue;
+            }
+
+            return WeatherMeasurementsEnum.Others;
+
+            throw new ArgumentException("Invalid measurement type.");
+        }
     }
+
 }

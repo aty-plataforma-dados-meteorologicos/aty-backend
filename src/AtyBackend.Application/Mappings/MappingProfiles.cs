@@ -105,6 +105,12 @@ public class MappingProfiles : Profile
         CreateMap<WeatherData, WeatherDataDTO>()
             .ReverseMap();
 
+        CreateMap<WeatherDataFlux, WeatherDataFluxDTO>()
+            .ReverseMap();
+
+        CreateMap<MeasurementFlux, MeasurementFluxDTO>()
+            .ReverseMap();
+
         //{
         //    ContainerId = c.Container.ContainerId,
         //    Type = c.Container.Type,
@@ -120,13 +126,5 @@ public class MappingProfiles : Profile
         //    //    Volume = c.Volume
         //    //}
         //}).ToList()));
-
-
-
-        CreateMap<ExemploDTO, Exemplo>()
-            .ReverseMap();
-
-        CreateMap<ExemploGenericDTO, ExemploGeneric>()
-            .ReverseMap();
     }
 }

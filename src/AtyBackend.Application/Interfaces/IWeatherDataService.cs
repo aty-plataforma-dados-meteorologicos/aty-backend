@@ -11,7 +11,8 @@ namespace AtyBackend.Application.Interfaces
     public interface IWeatherDataService
     {
         Task<bool> SaveWeatherDataAsync(WeatherDataDTO data);
-        Task<List<WeatherDataDTO>> GetWeatherDataAsync(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId);
+        Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime stop);
+        //Task<List<WeatherDataDTO>> GetWeatherDataAsync(int weatherStationId, DateTime start, DateTime stop, int? sensorId);
         //Task<bool> SaveWeatherDataAsync(List<WeatherDataDTO> data);
         // posso separar GetWeatherDataAsync em dois métodos se for melhor para implementar 
     }

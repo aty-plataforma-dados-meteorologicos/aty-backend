@@ -3,13 +3,7 @@ using AtyBackend.Application.Interfaces;
 using AtyBackend.Domain.Entities;
 using AtyBackend.Domain.Enums;
 using AtyBackend.Domain.Interfaces;
-using AtyBackend.Infrastructure.Data.Repositories;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AtyBackend.Application.Services
 {
@@ -41,7 +35,7 @@ namespace AtyBackend.Application.Services
                 var sensors = weatherStation.Sensors;
 
                 // validar se a quantidade de sensores é igual a quantidade de medidas
-                if (sensors.Count != weatherData.Measurements.Count) throw new Exception ("The number of measurements cannot be different from the number of sensors");
+                if (sensors.Count != weatherData.Measurements.Count) throw new Exception("The number of measurements cannot be different from the number of sensors");
 
                 // validar se os ids dos sensores são iguais aos ids das medidas
                 foreach (var m in weatherData.Measurements)
@@ -85,13 +79,13 @@ namespace AtyBackend.Application.Services
             catch (Exception ex) { throw; }
         }
 
-        public Task<List<WeatherDataDTO>> GetWeatherDataAsync(int weatherStationId, DateTime startDate, DateTime endDate, int? sensorId)
+        public async Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime end)
         {
-            throw new NotImplementedException();
+            var weatherData = await _weatherDataRepository.GetWeatherDataAsync(weatherStationId, sensorId, start, end);
+
+            WeatherDataFluxDTO weatherDataFluxDTO = _mapper.Map<WeatherDataFluxDTO>(weatherData);
+
+            return weatherDataFluxDTO;
         }
-
-        //public async Task<bool> SaveWeatherDataAsync(List<WeatherDataDTO> weatherData)
-
-
     }
 }

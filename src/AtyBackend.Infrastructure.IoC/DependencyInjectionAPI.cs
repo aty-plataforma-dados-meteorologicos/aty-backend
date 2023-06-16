@@ -23,11 +23,7 @@ public static class DependencyInjectionAPI
          options.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"], b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
         
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddScoped<IExemploRepository, ExemploRepository>();
         
-        services.AddScoped<IExemploService, ExemploService>();
-        services.AddScoped<IExemploGenericService, ExemploGenericService>();
-
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();

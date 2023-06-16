@@ -12,7 +12,9 @@ namespace AtyBackend.Domain.Entities
     public class Measurement
     {
         public int SensorId { get; set; }
-        public string? TypeTag { get; set; }
+        public int? WeatherStationId { get; set; }
         public double MeasurementValue { get; set; }
+        public string? TypeTag { get; set; }
+        public DateTime? TimeStamp { get; set; }
     }
 }
