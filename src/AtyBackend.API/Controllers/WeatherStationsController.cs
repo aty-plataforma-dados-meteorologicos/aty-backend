@@ -319,9 +319,10 @@ public class WeatherStationsController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{weatherStationId:int}/Data/{sensorId:int}")]
-    public async Task<IActionResult> GetWeatherData(int weatherStationId, int sensorId, [FromBody] WeatherStationDataQuery dataQuery)
+    [HttpGet("{weatherStationId:int}/Data")]
+    public async Task<IActionResult> GetWeatherData(int weatherStationId, [FromQuery] int sensor, [FromQuery] DateTime? start, [FromQuery] DateTime? stop)
     {
+        //[FromBody] WeatherStationDataQuery dataQuery
         #region ideia para um WeatherDataPaginated
         // da para criar um WeatherDataPaginated
         // onde teremos intervalo de tempo
@@ -333,7 +334,10 @@ public class WeatherStationsController : ControllerBase
 
         // limitar o get paginado para um detemrinado tamanho ou quantidade de parametros?
 
-        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, sensorId, dataQuery.StartDateTime, dataQuery.StopDateDateTime);
+        start ??= DateTime.UtcNow.AddHours(-24);
+        stop ??= DateTime.UtcNow;
+
+        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, sensor, start.Value, stop.Value);
 
         if (weatherData == null || weatherData.Measurements.Count == 0)
         {

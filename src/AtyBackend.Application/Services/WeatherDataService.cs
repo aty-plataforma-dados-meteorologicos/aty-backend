@@ -63,7 +63,7 @@ namespace AtyBackend.Application.Services
                 WeatherData weatherDataToInsert = new()
                 {
                     WeatherStationId = weatherData.WeatherStationId,
-                    Timestamp = DateTime.Now,
+                    Timestamp = weatherData.Timestamp,
                     Measurements = measurements
                 };
                 #endregion
