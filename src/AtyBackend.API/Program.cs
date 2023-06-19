@@ -11,13 +11,10 @@ builder.Services.AddInfrastructureAPI(builder.Configuration);
 builder.Services.AddInfrastructureJWT(builder.Configuration);
 builder.Services.AddInfrastructureSwagger();
 
-
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 //builder.Services.AddHttpsRedirection(options =>
 //{
@@ -55,7 +52,6 @@ if (app.Environment.IsDevelopment())
         .AllowAnyHeader();
     });
 }
-
 
 app.UseHttpsRedirection();
 

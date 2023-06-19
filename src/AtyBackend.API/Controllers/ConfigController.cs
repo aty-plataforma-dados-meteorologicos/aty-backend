@@ -54,36 +54,6 @@ namespace AtyBackend.API.Controllers
                 });
         }
 
-        #region RemoveRoles
-        //[HttpGet("RemoveRoles")]
-        //public async Task<ActionResult> RemoveRoles()
-        //{
-        //    if (!_configController)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    List<string> rolesToRemove = UserRoles.ToList();
-        //    List<string> rolesRemoved = new List<string>();
-
-        //    foreach (var role in rolesToRemove)
-        //    {
-        //        var r = await RemoveRoles(role);
-
-        //        if (r)
-        //        {
-        //            rolesRemoved.Add(role);
-        //        }
-        //    }
-
-        //    return Ok(
-        //        new object[]
-        //        {
-        //            new { RolesRemoved = rolesRemoved }
-        //        });
-        //}
-        #endregion
-
         [HttpPost("RegisterUser")]
         public async Task<ActionResult> CreateUsers([FromBody] RegisterModel userInfo)
         {
@@ -101,8 +71,8 @@ namespace AtyBackend.API.Controllers
                 {
                     var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
-                    user.Name = 
-                        userInfo.Name ?? 
+                    user.Name =
+                        userInfo.Name ??
                         userInfo.Email.Substring(0, userInfo.Email.IndexOf('@'));
                     user.IsEnabled = true;
                     user.Type = userInfo.Type;

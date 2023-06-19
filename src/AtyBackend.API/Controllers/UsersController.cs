@@ -145,8 +145,6 @@ public class UsersController : ControllerBase
     {
         try
         {
-            //var user = await _userManager.FindByIdAsync(id);
-
             var user = await _userManager.Users
                 .Where(i => i.Id == id)
                 .Where(i => i.IsDeleted == false)
