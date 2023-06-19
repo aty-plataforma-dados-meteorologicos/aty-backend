@@ -189,7 +189,6 @@ public class AuthenticationController : ControllerBase
         var claims = new List<Claim>
         {
             new Claim("email", userInfo.Email),
-            //new Claim("meuvalor", "o que voce quiser"),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

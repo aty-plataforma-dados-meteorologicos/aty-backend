@@ -1,19 +1,15 @@
 ﻿
+using AtyBackend.API.Helpers;
 using AtyBackend.Application.DTOs;
 using AtyBackend.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using AtyBackend.Application.ViewModels;
-using AtyBackend.Application.Services;
-using AtyBackend.Domain.Entities;
-using AtyBackend.API.Helpers;
-using AutoMapper;
-using System.Security.Claims;
-using AtyBackend.Infrastructure.Data.Identity;
-using Microsoft.AspNetCore.Identity;
-using AtyBackend.API.Models;
 using AtyBackend.Domain.Model;
-using System.Net;
+using AtyBackend.Infrastructure.Data.Identity;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AtyBackend.API.Controllers;
 
@@ -294,9 +290,7 @@ public class WeatherStationsController : ControllerBase
     #endregion
 
     #region Data
-    // Aqui devo implementar a recepção [post] e busca por dados [get]
-
-    //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpPost("{weatherStationId:int}/Data")]
     public async Task<ActionResult> AddData(int weatherStationId, [FromBody] WeatherDataDTO data)
     {
@@ -318,96 +312,40 @@ public class WeatherStationsController : ControllerBase
         }
     }
 
-    [Authorize]
-    [HttpGet("{weatherStationId:int}/Data/{sensorId:int}")]
-    public async Task<IActionResult> GetWeatherData(int weatherStationId, int sensorId, [FromBody] WeatherStationDataQuery dataQuery)
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpPost("{weatherStationId:int}/Data/TimeSeries")]
+    public async Task<ActionResult> AddDataTS(int weatherStationId, [FromBody] List<WeatherDataDTO> data)
     {
-        #region ideia para um WeatherDataPaginated
-        // da para criar um WeatherDataPaginated
-        // onde teremos intervalo de tempo
-        // dados naquele intervalo
-        // URL para o próximo
-        // URL para o anterior
-        // URL para o primeiro e último
-        #endregion
-
-        // limitar o get paginado para um detemrinado tamanho ou quantidade de parametros?
-
-        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, sensorId, dataQuery.StartDateTime, dataQuery.StopDateDateTime);
-
-        if (weatherData == null || weatherData.Measurements.Count == 0)
+        try
         {
-            return NotFound();
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+            if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+            {
+                return await _weatherStationDataService.SaveWeatherTimeSeriesDataAsync(data) ? Ok() : BadRequest("Data not added");
+            }
+
+            return Unauthorized("Unauthorized");
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpGet("{weatherStationId:int}/Data")]
+    public async Task<IActionResult> GetWeatherData(int weatherStationId, [FromQuery] int sensor, [FromQuery] DateTime? start, [FromQuery] DateTime? stop)
+    {
+        start ??= DateTime.UtcNow.AddHours(-24);
+        stop ??= DateTime.UtcNow;
+
+        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, sensor, start.Value, stop.Value);
+
+        if (weatherData == null || weatherData.Measurements.Count == 0) { return NotFound(); }
 
         return Ok(weatherData);
     }
-    //public async Task<ActionResult<List<WeatherDataDto>>> GetData(int weatherStationId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    //{
-    //    var paginated = new ApiResponsePaginated<WeatherStationUserDTO>(pageNumber, pageSize);
-    //    var maintainers = await _weatherStationService.GetData(weatherStationId, paginated.PageNumber, paginated.PageSize);
-    //    paginated.AddData(maintainers, Request);
-
-    //    return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Maintainers not found") : Ok(paginated);
-    //}
-
-    // by sensor id, {weatherStationId:int}/Data/Sensors/{sensorId:int}
-
-    //[Authorize]
-
-    //public async Task<ActionResult> AddData(int weatherStationId, [FromBody] List<WeatherDataDTO> data)
-
-
     #endregion
-
-
-    #region old codes
-    // esse aqui não sei se manteremos [acho que acaba e removemos token com a ideia de o post ser vinculado ao usuario]
-
-    //[Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
-    //[HttpGet("{weatherStationId:int}/Authentication", Name = "GetWeatherStationAuthentication")]
-    //public async Task<ActionResult<WeatherStationAuthenticationDTO>> GetWeatherStationAuthentication(int weatherStationId)
-    //{
-    //    try
-    //    {
-    //        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-    //        if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
-
-    //        if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
-    //        {
-    //            // reset 
-    //        }
-
-    //        return Unauthorized("User Unauthorized");
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest(ex.Message);
-    //    }
-    //    // se o usuário é Maintainer, ver se o usuário que está fazendo a requisição é mantenedor da estação
-    //    // implementar  
-    //    //através do bearer token, saber se o usuário pode ter acesso a isso
-    //    //Quem poderá acessar: mantenedor da estação ou manager / admin da plataforma;
-
-    //    // Se o email não estiver presente no token, retorna um erro
-
-
-    //    //// find user to get id
-    //    //var user = await _userManager.FindByEmailAsync(userEmail);
-    //    //var roles = await _userManager.GetRolesAsync(user);
-    //    //var role = roles.FirstOrDefault();
-
-    //    //if (role == UserRoles.User)
-    //    //{
-    //    //    await _userManager.RemoveFromRolesAsync(user, roles);
-    //    //    _userManager.AddToRoleAsync(user, UserRoles.Maintainer).Wait();
-    //    //}
-
-
-
-    //    //var weatherStation = await _weatherStationService.GetWeatherStationAuthentication(id, userEmail);
-    //    //return weatherStation is null ? NotFound("WeatherStation not found") : Ok(weatherStation);
-    //}
-    #endregion
-
 }
