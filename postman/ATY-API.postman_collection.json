@@ -1,0 +1,2979 @@
+{
+	"info": {
+		"_postman_id": "90fc1dce-9f90-40bb-8519-de016f19f524",
+		"name": "ATY-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"token\", response.token);\r",
+									"        pm.environment.set(\"refreshToken\", response.refreshToken);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QuYWRtaW5AdGVjbm9teWwuY29tIiwianRpIjoiZGY3N2NkZmQtMDM1MS00ZDk1LWJmNmEtNmQ3OGVkMzQ3MTZkIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE2NjgwMjc1MzAsImlzcyI6InRlY25vbXlsLmNvbS5iciIsImF1ZCI6Imh0dHBzOi8vdGVjbm9teWwuY29tLmJyIn0.nn_c-uirn8te5NNxjE-Y0YpO2E-7rFI-kK6HBFBNirU",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test.admin@io.tec.br\",\r\n    \"password\": \"#1AdminquaCoisA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Authentication",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Authentication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token Refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"token\", response.token);\r",
+									"        pm.environment.set(\"refreshToken\", response.refreshToken);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"accessToken\": \"{{token}}\",\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Authentication/TokenRefresh",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Authentication",
+								"TokenRefresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Revoke Token",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"accessToken\": \"{{token}}\",\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Authentication/RevokeToken",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Authentication",
+								"RevokeToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Revoke All Tokens",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Authentication/RevokeAllTokens",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Authentication",
+								"RevokeAllTokens"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Config",
+			"item": [
+				{
+					"name": "Check if confir is enable",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{url}}/api/Config",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Seed Roles",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{url}}/api/Config/SeedRoles",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Config",
+								"SeedRoles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Roles",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{url}}/api/Config/RemoveRoles",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Config",
+								"RemoveRoles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Teste User\",\r\n    \"email\": \"test.useruser@io.tec.br\",\r\n    \"password\": \"#1qualquer3Coisa\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Config/RegisterUser",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Config",
+								"RegisterUser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CRUD-Exemplo",
+			"item": [
+				{
+					"name": "Exemplos",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Exemplo",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Exemplo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exemplo Paginated",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Exemplo?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Exemplo"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exemplo",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Exemplo/{{exemploId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Exemplo",
+								"{{exemploId}}"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "103",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Exemplo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"exemploId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"isEnable\": true,\r\n  \"name\": \"Test\",\r\n  \"exemploType\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Exemplo",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Exemplo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Exemplo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"exemploId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test 2\",\r\n    \"exemploType\": 1,\r\n    \"id\": {{exemploId}},\r\n    \"isEnable\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Exemplo/{{exemploId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Exemplo",
+								"{{exemploId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Exemplo",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Exemplo/{{exemploId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Exemplo",
+								"{{exemploId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "CRUD-ExemploGeneric",
+			"item": [
+				{
+					"name": "ExemploGenerics",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/ExemploGeneric",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ExemploGeneric"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ExemploGeneric Paginated",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/ExemploGeneric?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ExemploGeneric"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ExemploGeneric",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/ExemploGeneric/{{exemploId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ExemploGeneric",
+								"{{exemploId}}"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "103",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ExemploGeneric",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"exemploId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"isEnable\": true,\r\n  \"name\": \"Teste\",\r\n  \"exemploType\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/ExemploGeneric",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ExemploGeneric"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update ExemploGeneric",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"exemploId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test 2\",\r\n    \"exemploType\": 1,\r\n    \"id\": {{exemploId}},\r\n    \"isEnable\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/ExemploGeneric/{{exemploId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ExemploGeneric",
+								"{{exemploId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ExemploGeneric",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Users/{{userId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Users",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users Paginated",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Users?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Users/{{userId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Roles",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Users/Roles",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users",
+								"Roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"userId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"NOME MORUdMBA\",\r\n    \"email\": \"morumba.morumbda@io.tec.br\",\r\n    \"password\": \"#1Adngd4sfds2df@q\",\r\n    \"type\": 10,\r\n    \"role\": \"User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Users",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"userId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"e46cca03-6150-471c-9464-4b9774bdb58c\",\r\n    \"email\": \"test.teste@io.tec.br\",\r\n    \"role\": \"User\",\r\n    \"type\": 10,\r\n    \"isEnabled\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Users",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Users/{{userId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Password",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test.teste@io.tec.br\",\r\n    \"password\": \"#1Adngd4sf3@q\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Users/Password",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Users",
+								"Password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sensors",
+			"item": [
+				{
+					"name": "Sensors",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sensors Paginated",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sensor",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors/{{sensorId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors",
+								"{{sensorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"sensorId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 0,\r\n    \"name\": \"WindVane - Sensor de Direção do Vento\",\r\n    \"measurementUnit\": \"Graus\",\r\n    \"minimum\": 0,\r\n    \"maximum\": 360,\r\n    \"accuracy\": 0.125,\r\n    \"measurementType\": 5,\r\n    \"isEnabled\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Sensors",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"sensorId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{sensorId}},\r\n    \"name\": \"Temperatura\",\r\n    \"measurementUnit\": \"Celsius\",\r\n    \"minimum\": -40,\r\n    \"maximum\": 80,\r\n    \"measurementType\": 2,\r\n    \"accuracy\": 1,\r\n    \"isEnabled\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/Sensors/{{sensorId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors",
+								"{{sensorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/Sensors/{{sensorId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"Sensors",
+								"{{sensorId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WeatherStations",
+			"item": [
+				{
+					"name": "WeatherStations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherStations Paginated",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherStation",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create WeatherStation",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Morumbi 2\",\r\n    \"latitude\": \"-25.5134\",\r\n    \"longitude\": \"-54.5436\",\r\n    \"altitudeMSL\": 225,\r\n    \"isPrivate\": false,\r\n    \"status\": true,\r\n    \"partners\": [\r\n        {\r\n            \"id\": 0,\r\n            \"isEnabled\": true,\r\n            \"name\": \"IFPR\",\r\n            \"cnpjOrCPF\": null,\r\n            \"email\": null,\r\n            \"phone\": \"+55 45 3422-5300\",\r\n            \"site\": \"https://ifpr.edu.br/foz-do-iguacu/\",\r\n            \"notes\": \"Parceria para monitoramento do clima\"\r\n        }\r\n    ],\r\n    \"sensors\": [\r\n        {\r\n            \"name\": \"WindVane - Sensor de Direção do Vento\",\r\n            \"measurementUnit\": \"Graus\",\r\n            \"minimum\": 0,\r\n            \"maximum\": 360,\r\n            \"measurementType\": 5,\r\n            \"accuracy\": 0.125,\r\n            \"id\": 5002,\r\n            \"isEnabled\": true\r\n        },\r\n        {\r\n            \"name\": \"Temperatura\",\r\n            \"measurementUnit\": \"Celsius\",\r\n            \"minimum\": -40,\r\n            \"maximum\": 80,\r\n            \"measurementType\": 1,\r\n            \"accuracy\": 0.5,\r\n            \"id\": 4002,\r\n            \"isEnabled\": true\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update WeatherStation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    if (pm.response.to.have.status(200)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"weatherStationsId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{weatherStationsId}},\r\n  \"isEnabled\": false,\r\n  \"name\": \"Temperatura2\",\r\n  \"measurementUnit\": \"Celcius\",\r\n  \"minimum\": -41,\r\n  \"maximum\": 80,\r\n  \"accuracy\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete WeatherStation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WeatherData",
+			"item": [
+				{
+					"name": "WeatherData",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"weatherStationId\": 7004,\r\n    \"timestamp\": \"2023-06-13T15:55:40.279Z\",\r\n    \"measurements\": [\r\n        {\r\n            \"sensorId\": 5002,\r\n            \"measurementValue\": 180\r\n        },\r\n        {\r\n            \"sensorId\": 4002,\r\n            \"measurementValue\": 15\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Data",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherData TimeSeries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"weatherStationId\": 7004,\r\n        \"timestamp\": \"2023-06-13T18:57:40.279Z\",\r\n        \"measurements\": [\r\n            {\r\n                \"sensorId\": 5002,\r\n                \"measurementValue\": 183\r\n            },\r\n            {\r\n                \"sensorId\": 4002,\r\n                \"measurementValue\": 15\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"weatherStationId\": 7004,\r\n        \"timestamp\": \"2023-06-13T18:58:40.279Z\",\r\n        \"measurements\": [\r\n            {\r\n                \"sensorId\": 5002,\r\n                \"measurementValue\": 184\r\n            },\r\n            {\r\n                \"sensorId\": 4002,\r\n                \"measurementValue\": 14\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"weatherStationId\": 7004,\r\n        \"timestamp\": \"2023-06-13T18:59:40.279Z\",\r\n        \"measurements\": [\r\n            {\r\n                \"sensorId\": 5002,\r\n                \"measurementValue\": 185\r\n            },\r\n            {\r\n                \"sensorId\": 4002,\r\n                \"measurementValue\": 17\r\n            }\r\n        ]\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Data/TimeSeries",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Data",
+								"TimeSeries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherData",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Data?sensor={{sensorId}}&start={{startDateTime}}&stop={{stopDateTime}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Data"
+							],
+							"query": [
+								{
+									"key": "sensor",
+									"value": "{{sensorId}}"
+								},
+								{
+									"key": "start",
+									"value": "{{startDateTime}}"
+								},
+								{
+									"key": "stop",
+									"value": "{{stopDateTime}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Maintainers",
+			"item": [
+				{
+					"name": "WeatherStations Maintainers",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherStations by Maintainer",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{maintainerId}}?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{maintainerId}}"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeatherStations Maintainers",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Maintainer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    if (pm.response.to.have.status(201)) {\r",
+									"        var response = JSON.parse(responseBody);\r",
+									"        pm.environment.set(\"weatherStationsId\", response.id);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userEmail\": \"{{userEmail}}\",\r\n    \"weatherStationId\": {{weatherStationsId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete WeatherStation Maintainer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Maintainers/{{maintainerId}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Maintainers",
+								"{{maintainerId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Favorites WeatherStations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWNvbWV4QHRlY25vbXlsLmNvbSIsImp0aSI6IjhjODk0YTE4LThhZGItNDI5NC04NmJjLWY3MjU2NmE0ZTEyZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjY4MDk0MTk5LCJpc3MiOiJ0ZWNub215bC5jb20uYnIiLCJhdWQiOiJodHRwczovL3RlY25vbXlsLmNvbS5iciJ9.qzw3nCH_Q_Aqnnu5mrAkqIno00VQtBhV4kK4d3zJci4",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/Favorites?pageNumber={{PageNumber}}&pageSize={{PageSize}}",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"Favorites"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "{{PageNumber}}"
+								},
+								{
+									"key": "pageSize",
+									"value": "{{PageSize}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Favorite WeatherStation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Favorites",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Favorites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove WeatherStation From Favorite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"strictSSL": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Favorites",
+							"protocol": "https",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"WeatherStations",
+								"{{weatherStationsId}}",
+								"Favorites"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
