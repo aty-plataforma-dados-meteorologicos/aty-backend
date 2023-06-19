@@ -23,11 +23,7 @@ public static class DependencyInjectionAPI
          options.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"], b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
         
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddScoped<IExemploRepository, ExemploRepository>();
         
-        services.AddScoped<IExemploService, ExemploService>();
-        services.AddScoped<IExemploGenericService, ExemploGenericService>();
-
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
@@ -35,17 +31,17 @@ public static class DependencyInjectionAPI
         services.AddScoped<ISensorRepository, SensorRepository>();
         services.AddScoped<ISensorService, SensorService>();
         services.AddScoped<IWeatherStationRepository, WeatherStationRepository>();
+        services.AddScoped<IWeatherDataRepository, InfluxDbWeatherDataRepository>();
         services.AddScoped<IWeatherStationUserRepository, WeatherStationUserRepository>();
         services.AddScoped<IWeatherStationService, WeatherStationService>();
+        services.AddScoped<IWeatherDataService, WeatherDataService>();
 
         services.AddScoped<IAuthenticate, AuthenticateService>();
 
-        services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
+        services.AddAutoMapper(typeof(MappingProfiles));
 
         var myhandlers = AppDomain.CurrentDomain.Load("AtyBackend.Application");
         services.AddMediatR(myhandlers);
-
-        // add seedUsers
 
         return services;
     }

@@ -6,9 +6,9 @@ using AtyBackend.Application.ViewModels;
 
 namespace AtyBackend.Application.Mappings;
 
-public class DomainToDTOMappingProfile : Profile
+public class MappingProfiles : Profile
 {
-    public DomainToDTOMappingProfile()
+    public MappingProfiles()
     {
         CreateMap<EntityDTO, Entity>()
             //.ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
@@ -78,7 +78,9 @@ public class DomainToDTOMappingProfile : Profile
                     MeasurementUnit = c.Sensor.MeasurementUnit,
                     Minimum = c.Sensor.Minimum,
                     Maximum = c.Sensor.Maximum,
-                    Accuracy = c.Sensor.Accuracy
+                    Accuracy = c.Sensor.Accuracy,
+                    MeasurementType = c.Sensor.MeasurementType,
+                    IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
 
         CreateMap<WeatherStation, WeatherStationView>()
@@ -90,10 +92,24 @@ public class DomainToDTOMappingProfile : Profile
                     MeasurementUnit = c.Sensor.MeasurementUnit,
                     Minimum = c.Sensor.Minimum,
                     Maximum = c.Sensor.Maximum,
-                    Accuracy = c.Sensor.Accuracy
+                    Accuracy = c.Sensor.Accuracy,
+                    MeasurementType = c.Sensor.MeasurementType,
+                    IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
 
         CreateMap<WeatherStationDTO, WeatherStationView>();
+
+        CreateMap<Measurement, MeasurementDTO>()
+            .ReverseMap();
+
+        CreateMap<WeatherData, WeatherDataDTO>()
+            .ReverseMap();
+
+        CreateMap<WeatherDataFlux, WeatherDataFluxDTO>()
+            .ReverseMap();
+
+        CreateMap<MeasurementFlux, MeasurementFluxDTO>()
+            .ReverseMap();
 
         //{
         //    ContainerId = c.Container.ContainerId,
@@ -110,13 +126,5 @@ public class DomainToDTOMappingProfile : Profile
         //    //    Volume = c.Volume
         //    //}
         //}).ToList()));
-
-
-
-        CreateMap<ExemploDTO, Exemplo>()
-            .ReverseMap();
-
-        CreateMap<ExemploGenericDTO, ExemploGeneric>()
-            .ReverseMap();
     }
 }

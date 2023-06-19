@@ -12,8 +12,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         : base(options)
     { }
 
-    public DbSet<Exemplo> Exemplo { get; set; }
-    public DbSet<ExemploGeneric> ExemploGeneric { get; set; }
     public DbSet<Partner> Partners { get; set; }
     public DbSet<Sensor> Sensor { get; set; }
     public DbSet<WeatherStation> WeatherStation { get; set; }
@@ -22,7 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        // soft delete 
+        // Soft delete 
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             if (entityType.ClrType.GetProperty("IsDeleted") != null)
@@ -44,41 +42,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<WeatherStationSensor>()
            .HasKey(wsu => new { wsu.WeatherStationId, wsu.SensorId });
 
-        // Alternative
-        //builder.Entity<WeatherStationSensor>(
-        //wss =>
-        //{
-        //    wss.HasKey(wsu => new { wsu.WeatherStationId, wsu.SensorId });
-        //    wss.HasOne(wss => wss.WeatherStation)
-        //        .WithMany(ws => ws.WeatherStationSensors)
-        //        .HasForeignKey(w => new { w.WeatherStationId });
-        //    wss.HasOne(wss => wss.Sensor);
-        //});
-
         builder.Entity<WeatherStationUser>()
                .HasKey(wsu => new { wsu.WeatherStationId, wsu.ApplicationUserId });
-
-        #region notes
-        //builder.Entity<WeatherStationUser>()
-
-        //builder.Entity<WeatherStationUser>()
-        //    .HasKey(wsu => new { wsu.WeatherStationId, wsu.ApplicationUserId })
-        //    .HasOne(wsu => wsu.ApplicationUser)
-        //    .WithMany()
-        //    .HasForeignKey(wsu => wsu.ApplicationUserId);
-
-
-        //builder.Entity<WeatherStationUser>()
-        //    .HasOne(wsu => wsu.ApplicationUser)
-        //    .WithMany()
-        //    .HasForeignKey(wsu => wsu.ApplicationUserId);
-
-        //builder.Entity<WeatherStationUser>()
-        //    .HasOne(wsu => wsu.WeatherStation)
-        //    .WithMany(ws => ws.WeatherStationUsers)
-        //    .HasForeignKey(wsu => wsu.WeatherStationId);
-
-        // Configure a chave composta como a chave primária da entidade
-        #endregion
     }
 }
