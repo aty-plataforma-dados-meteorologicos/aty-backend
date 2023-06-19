@@ -12,15 +12,18 @@ namespace AtyBackend.Application.Services
         private readonly IWeatherDataRepository _weatherDataRepository;
         private readonly IWeatherStationRepository _weatherStationRepository;
         private readonly IMapper _mapper;
+        private readonly ISensorService _sensorService;
 
         public WeatherDataService(
             IWeatherDataRepository weatherDataRepository,
             IWeatherStationRepository weatherStationRepository,
+            ISensorService sensorService,
             IMapper mapper
             )
         {
             _weatherDataRepository = weatherDataRepository;
             _weatherStationRepository = weatherStationRepository;
+            _sensorService = sensorService;
             _mapper = mapper;
 
         }
@@ -54,9 +57,8 @@ namespace AtyBackend.Application.Services
         public async Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime end)
         {
             var weatherData = await _weatherDataRepository.GetWeatherDataAsync(weatherStationId, sensorId, start, end);
-
             WeatherDataFluxDTO weatherDataFluxDTO = _mapper.Map<WeatherDataFluxDTO>(weatherData);
-
+            weatherDataFluxDTO.Sensor = await _sensorService.GetByIdAsync(weatherDataFluxDTO.SensorId);
             return weatherDataFluxDTO;
         }
 

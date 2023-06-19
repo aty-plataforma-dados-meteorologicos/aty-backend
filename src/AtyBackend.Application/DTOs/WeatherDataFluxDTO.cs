@@ -11,6 +11,7 @@ namespace AtyBackend.Application.DTOs
     {
         public int WeatherStationId { get; set; }
         public int SensorId { get; set; }
+        public SensorDTO Sensor { get; set; }
         public string TypeTag { get; set; }
         public DateTime Start { get; set; }
         public DateTime Stop { get; set; }
