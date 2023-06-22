@@ -12,7 +12,7 @@ namespace AtyBackend.Application.Interfaces
     {
         Task<bool> SaveWeatherDataAsync(WeatherDataDTO data);
         Task<bool> SaveWeatherTimeSeriesDataAsync(List<WeatherDataDTO> weatherData);
-        Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime stop);
+        Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime stop, string? window);
         //Task<List<WeatherDataDTO>> GetWeatherDataAsync(int weatherStationId, DateTime start, DateTime stop, int? sensorId);
         //Task<bool> SaveWeatherDataAsync(List<WeatherDataDTO> data);
         // posso separar GetWeatherDataAsync em dois métodos se for melhor para implementar 
