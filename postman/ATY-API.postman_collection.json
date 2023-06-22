@@ -2437,7 +2437,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Data?sensor={{sensorId}}&start={{startDateTime}}&stop={{stopDateTime}}",
+							"raw": "https://{{url}}/api/WeatherStations/{{weatherStationsId}}/Data?sensor={{sensorId}}&start={{startDateTime}}&stop={{stopDateTime}}&window={{window}}",
 							"protocol": "https",
 							"host": [
 								"{{url}}"
@@ -2460,6 +2460,10 @@
 								{
 									"key": "stop",
 									"value": "{{stopDateTime}}"
+								},
+								{
+									"key": "window",
+									"value": "{{window}}"
 								}
 							]
 						}
