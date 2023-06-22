@@ -336,12 +336,17 @@ public class WeatherStationsController : ControllerBase
 
     [Authorize]
     [HttpGet("{weatherStationId:int}/Data")]
-    public async Task<IActionResult> GetWeatherData(int weatherStationId, [FromQuery] int sensor, [FromQuery] DateTime? start, [FromQuery] DateTime? stop)
+    public async Task<IActionResult> GetWeatherData(int weatherStationId,
+        [FromQuery] int sensor,
+        [FromQuery] DateTime? start,
+        [FromQuery] DateTime? stop,
+        [FromQuery] string? window
+        )
     {
         start ??= DateTime.UtcNow.AddHours(-24);
         stop ??= DateTime.UtcNow;
 
-        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, sensor, start.Value, stop.Value);
+        var weatherData = await _weatherStationDataService.GetWeatherDataAsync(weatherStationId, sensor, start.Value, stop.Value, window);
 
         if (weatherData == null || weatherData.Measurements.Count == 0) { return NotFound(); }
 

@@ -54,9 +54,9 @@ namespace AtyBackend.Application.Services
             catch (Exception) { throw; }
         }
 
-        public async Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime end)
+        public async Task<WeatherDataFluxDTO> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime end, string? window)
         {
-            var weatherData = await _weatherDataRepository.GetWeatherDataAsync(weatherStationId, sensorId, start, end);
+            var weatherData = await _weatherDataRepository.GetWeatherDataAsync(weatherStationId, sensorId, start, end, window);
             WeatherDataFluxDTO weatherDataFluxDTO = _mapper.Map<WeatherDataFluxDTO>(weatherData);
             weatherDataFluxDTO.Sensor = await _sensorService.GetByIdAsync(weatherDataFluxDTO.SensorId);
             return weatherDataFluxDTO;

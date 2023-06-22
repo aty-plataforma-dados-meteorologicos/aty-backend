@@ -3,6 +3,7 @@ using AtyBackend.Domain.Interfaces;
 using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
+using System.Runtime.Intrinsics.X86;
 
 namespace AtyBackend.Infrastructure.Data.Repositories
 {
@@ -55,7 +56,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<WeatherDataFlux> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime stop)
+        public async Task<WeatherDataFlux> GetWeatherDataAsync(int weatherStationId, int sensorId, DateTime start, DateTime stop, string? window)
         {
             try
             {
@@ -65,6 +66,14 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                                 $"|> filter(fn: (r) => " +
                                 $"r.WeatherStationId == \"{weatherStationId}\" and " +
                                 $"r.SensorId == \"{sensorId}\")";
+                    
+                if (window is not null && IsValidWindow(window))
+                {
+                    flux = flux +
+                                $"|> aggregateWindow(every: {window}, fn: mean, createEmpty: false)" +
+                                $"|> yield(name: \"mean\")";
+                }
+
                 var queryApi = _influxDBClient.GetQueryApi();
                 var fluxTables = await _influxDBClient.GetQueryApi().QueryAsync(flux, _org);
 
@@ -100,6 +109,39 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                 Console.WriteLine(e.ToString());
                 throw;
             }
+        }
+
+        private static bool IsValidWindow(string? window)
+        {
+            if (string.IsNullOrEmpty(window))
+                return false;
+
+            // Verificar o tamanho mínimo e máximo
+            if (window.Length < 2 || window.Length > 5)
+                return false;
+
+            // Verificar se começa com dígitos numéricos
+            if (!char.IsDigit(window[0]))
+                return false;
+
+            // Verificar se termina com uma letra válida (m, h ou d)
+            char lastChar = window[window.Length - 1];
+            if (lastChar != 'm' && lastChar != 'h' && lastChar != 'd')
+                return false;
+
+            // Verificar se os caracteres intermediários são dígitos numéricos
+            for (int i = 1; i < window.Length - 1; i++)
+            {
+                if (!char.IsDigit(window[i]))
+                    return false;
+            }
+
+            // Verificar o valor numérico dentro do intervalo permitido
+            int numericValue = int.Parse(window.Substring(0, window.Length - 1));
+            if (numericValue < 1 || numericValue > 9999)
+                return false;
+
+            return true;
         }
 
         private string ToInfluxDateTime(DateTime dateTime)
