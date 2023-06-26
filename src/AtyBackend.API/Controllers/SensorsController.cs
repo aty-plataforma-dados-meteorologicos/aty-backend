@@ -11,7 +11,7 @@ using AtyBackend.API.Helpers;
 namespace AtyBackend.API.Controllers;
 
 //[EnableCors()]
-[Authorize(Roles = "Admin,Manager")]
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class SensorsController : ControllerBase
@@ -23,6 +23,7 @@ public class SensorsController : ControllerBase
         _exemploService = exemploService;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<ApiResponsePaginated<SensorDTO>>> GetSensorAsync([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
@@ -33,6 +34,7 @@ public class SensorsController : ControllerBase
         return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Sensors not found") : Ok(paginated);
     }
 
+    [Authorize]
     [HttpGet("{id:int}", Name = "GetSensorById")]
     public async Task<ActionResult<SensorDTO>> GetByIdAsync(int? id)
     {
@@ -40,6 +42,7 @@ public class SensorsController : ControllerBase
         return exemplo is null ? NotFound("Sensor not found") : Ok(exemplo);
     }
 
+    [Authorize(Roles = "Admin,Manager")]
     [HttpPost]
     public async Task<ActionResult> AddAsync(SensorDTO exemploDto)
     {
@@ -53,6 +56,7 @@ public class SensorsController : ControllerBase
         return new CreatedAtRouteResult("GetSensorById", new { id = exemploDto.Id }, exemploDto);
     }
 
+    [Authorize(Roles = "Admin,Manager")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateAsync(int? id, [FromBody] SensorDTO exemploDto)
     {
@@ -65,6 +69,7 @@ public class SensorsController : ControllerBase
         return (result is not null) ? Ok(result) : NotFound("Sensor not found");
     }
 
+    [Authorize(Roles = "Admin,Manager")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> RemoveAsync(int id) => await _exemploService.DeleteAsync(id) ? NoContent() : BadRequest("Not deleted");
 }
