@@ -5,7 +5,6 @@ on:
     branches:
       - vgff-ci-cd  # O nome da branch que dispara o CI/CD
 
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-22.04
@@ -22,7 +21,7 @@ jobs:
     - name: SSH into remote server
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan ${{ secrets.HOST }} >> /home/aty/.ssh/known_hosts
+        ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
         echo "${{ secrets.PRIVATE_KEY }}" > private_key
         chmod 600 private_key
         ssh -i private_key ${{ secrets.USER }}@${{ secrets.HOST }} << 'ENDSSH'
