@@ -27,19 +27,19 @@ jobs:
         chmod 600 private_key
         ssh -i private_key ${{ secrets.USER }}@${{ secrets.HOST }} << 'ENDSSH'
         
-          # [ALTERAR] Navigate to the project folder and pull the latest changes
-          cd /home/aty/aty-backend  # Altere isso para o caminho do seu projeto
+        
+          cd /home/aty/aty-backend  
           git pull origin staging
           
-          # Stop existing running application on port 5121
+          
           fuser -k 5121/tcp || echo "No process running on port 5121"
           
-          # [ALTERAR] Navigate to data migration folder and update database
-          cd /home/aty/aty-backend/src/AtyBackend.Infrastructure.Data  # Altere isso para o caminho do diretório de migração do banco de dados
+          
+          cd /home/aty/aty-backend/src/AtyBackend.Infrastructure.Data  
           dotnet ef database update
           
-          # [ALTERAR] Navigate to API folder and run the project
-          cd /home/aty/aty-backend/src/AtyBackend.API  # Altere isso para o caminho do diretório da API
-          nohup dotnet run &
+          
+          cd /home/aty/aty-backend/src/AtyBackend.API  
+          nohup dotnet run > run.log 2> run.err < /dev/null &
 
         ENDSSH
