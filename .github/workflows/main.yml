@@ -1,0 +1,43 @@
+name: CI/CD Pipeline for AtyBackend on Ubuntu 22.04
+
+on:
+  push:
+    branches:
+      - staging  # O nome da branch que dispara o CI/CD
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.x'
+        
+    - name: SSH into remote server
+      run: |
+        ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.PRIVATE_KEY }}" > private_key
+        chmod 600 private_key
+        ssh -i private_key ${{ secrets.USER }}@${{ secrets.HOST }} << 'ENDSSH'
+        
+          # [ALTERAR] Navigate to the project folder and pull the latest changes
+          cd /home/aty/aty-backend  # Altere isso para o caminho do seu projeto
+          git pull origin staging
+          
+          # Stop existing running application on port 5121
+          fuser -k 5121/tcp || echo "No process running on port 5121"
+          
+          # [ALTERAR] Navigate to data migration folder and update database
+          cd /home/aty/aty-backend/src/AtyBackend.Infrastructure.Data  # Altere isso para o caminho do diretório de migração do banco de dados
+          dotnet ef database update
+          
+          # [ALTERAR] Navigate to API folder and run the project
+          cd /home/aty/aty-backend/src/AtyBackend.API  # Altere isso para o caminho do diretório da API
+          nohup dotnet run &
+
+        ENDSSH
