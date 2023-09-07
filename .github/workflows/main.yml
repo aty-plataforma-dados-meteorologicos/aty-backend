@@ -5,6 +5,7 @@ on:
     branches:
       - vgff-ci-cd  # O nome da branch que dispara o CI/CD
 
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-22.04
