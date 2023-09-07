@@ -3,7 +3,7 @@ name: CI/CD Pipeline for AtyBackend on Ubuntu 22.04
 on:
   push:
     branches:
-      - staging  # O nome da branch que dispara o CI/CD
+      - vgff-ci-cd  # O nome da branch que dispara o CI/CD
 
 jobs:
   build-and-deploy:
@@ -20,6 +20,7 @@ jobs:
         
     - name: SSH into remote server
       run: |
+        mkdir -p ~/.ssh
         ssh-keyscan ${{ secrets.HOST }} >> /home/aty/.ssh/known_hosts
         echo "${{ secrets.PRIVATE_KEY }}" > private_key
         chmod 600 private_key
