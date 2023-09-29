@@ -9,8 +9,8 @@ using System.Reflection;
 namespace AtyBackend.API.Controllers
 {
 
-    [Route("api/[controller]")]
-    [ApiController]
+   // [Route("api/[controller]")]
+   // [ApiController]
     public class ConfigController : ControllerBase
     {
         private readonly IAuthenticate _authentication;
@@ -32,13 +32,13 @@ namespace AtyBackend.API.Controllers
             _configController = Configuration.GetValue<bool>("API:ConfigController");
         }
 
-        [HttpGet]
+       // [HttpGet]
         public async Task<ActionResult> Test()
         {
             return _configController ? Ok("Permitido criar roles e usuários iniciais") : NotFound();
         }
 
-        [HttpGet("SeedRoles")]
+        // [HttpGet("SeedRoles")]
         public async Task<ActionResult> CreateRoles()
         {
             if (!_configController)
@@ -54,7 +54,7 @@ namespace AtyBackend.API.Controllers
                 });
         }
 
-        [HttpPost("RegisterUser")]
+        // [HttpPost("RegisterUser")]
         public async Task<ActionResult> CreateUsers([FromBody] RegisterModel userInfo)
         {
             if (!_configController)

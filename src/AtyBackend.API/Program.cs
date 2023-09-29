@@ -3,6 +3,10 @@ using AtyBackend.Infrastructure.Data.Identity;
 using AtyBackend.Infrastructure.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5121); // Ouvir em qualquer IP na porta 5121
+});
 var MyAllowSpecificOrigins = "https://localhost:5173";
 
 // Add services to the container.

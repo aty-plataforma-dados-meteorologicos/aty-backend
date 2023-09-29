@@ -15,7 +15,7 @@ namespace CleanArchTemplate.Infra.Data.Context
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-            var stringConnection = "Data Source=localhost;User ID=SA;Password=pw2020@mssql;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            var stringConnection = "Data Source=localhost;User ID=SA;Password=root@123;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             //var stringConnection = "Data Source=localhost;User ID=SA;Password=mssql1Ipw;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
             // aws romildo
