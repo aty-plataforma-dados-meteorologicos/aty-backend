@@ -128,7 +128,7 @@ public class WeatherStationService : IWeatherStationService
             WeatherStationId = weatherStationUser.WeatherStationId,
             ApplicationUserId = user.Id,
             IsMaintainer = true,
-            IsDataAuthorized = false,
+            IsDataAuthorized = true,
             IsFavorite = false
         };
 
@@ -153,10 +153,11 @@ public class WeatherStationService : IWeatherStationService
     public async Task<bool> RemoveMaintainer(int weatherStationId, string maintainerId)
     {
         var totalMaintainers = await _weatherStationUserRepository.CountByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer);
-        if (totalMaintainers <= 1 ) throw new Exception("It is not possible to remove the maintainer as the station does not have another maintainer.");
+        if (totalMaintainers <= 1) throw new Exception("It is not possible to remove the maintainer as the station does not have another maintainer.");
 
         var weatherStationUserDto = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, maintainerId);
         weatherStationUserDto.IsMaintainer = false;
+        weatherStationUserDto.IsDataAuthorized = false;
 
         var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
         weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
@@ -184,7 +185,7 @@ public class WeatherStationService : IWeatherStationService
         var entitiesMaintainers = await _weatherStationUserRepository.FindByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsMaintainer, pageNumber, pageSize);
         var dtos = _mapper.Map<List<WeatherStationUserDTO>>(entitiesMaintainers);
 
-        foreach(var dto in dtos)
+        foreach (var dto in dtos)
         {
             var user = await _userManager.FindByIdAsync(dto.ApplicationUserId);
             dto.ApplicationUserEmail = user.Email;
@@ -208,7 +209,7 @@ public class WeatherStationService : IWeatherStationService
             var weatherStationIds = entitiesWeatherStations.Select(w => w.WeatherStationId).ToList();
             // get all weather stations by weatherStationIds and add to weatherStationViews using _mapper.Map<WeatherStationView>
 
-            foreach(int id in weatherStationIds)
+            foreach (int id in weatherStationIds)
             {
                 var weatherStation = await _weatherStationRepository.GetByIdAsync(id);
                 var weatherStationView = _mapper.Map<WeatherStationView>(weatherStation);
@@ -223,21 +224,30 @@ public class WeatherStationService : IWeatherStationService
 
     public async Task<bool> Favorite(WeatherStationIdUserId weatherStationUser)
     {
+        var errorMEssage = "It is not possible to favorite a private weather station that you are not data authorized.";
         var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
 
         var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
             u => u.WeatherStationId == weatherStationUser.WeatherStationId
             && u.ApplicationUserId == user.Id);
 
+        // get station
+        var weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStationUser.WeatherStationId);
+
         if (userWeatherStation.Any())
         {
             var userWeatherStationEntity = _mapper.Map<WeatherStationUser>(userWeatherStation.FirstOrDefault());
+
+            if (weatherStation.IsPrivate && !userWeatherStationEntity.IsDataAuthorized) { throw new Exception(errorMEssage); }
+
 
             userWeatherStationEntity.IsFavorite = true;
             userWeatherStationEntity = await _weatherStationUserRepository.UpdateAsync(userWeatherStationEntity);
 
             return userWeatherStationEntity.IsFavorite;
         }
+
+        if (weatherStation.IsPrivate) { throw new Exception(errorMEssage); }
 
         var userDto = new WeatherStationUserDTO
         {
@@ -307,6 +317,28 @@ public class WeatherStationService : IWeatherStationService
         }
 
         return roles.FirstOrDefault() == UserRoles.Admin || roles.FirstOrDefault() == UserRoles.Manager;
+    }
+
+    public async Task<bool> IsDataAuthorized(int weatherStationId, string userEmail)
+    {
+        // get user
+        var user = await _userManager.FindByEmailAsync(userEmail);
+        // get user/roles
+        var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+            u => u.WeatherStationId == weatherStationId
+            && u.ApplicationUserId == user.Id);
+
+
+        if (userWeatherStation.Any())
+        {
+            if (userWeatherStation.FirstOrDefault().IsDataAuthorized) { return true; }
+        }
+
+        var weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStationId);
+
+        if (!weatherStation.IsPrivate) { return true; }
+
+        return false;
     }
 
     //public async Task<bool> GetWeatherStationMaintainers(int weatherStationId)

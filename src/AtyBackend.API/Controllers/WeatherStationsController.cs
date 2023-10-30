@@ -343,6 +343,13 @@ public class WeatherStationsController : ControllerBase
         [FromQuery] string? window
         )
     {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) { return BadRequest("O token JWT não contém o email do usuário."); }
+
+        var user = await _userManager.FindByEmailAsync(userEmail);
+
+        if (await _weatherStationService.IsDataAuthorized(weatherStationId, userEmail) == false) { return Unauthorized("Unauthorized"); }
+        
         start ??= DateTime.UtcNow.AddHours(-24);
         stop ??= DateTime.UtcNow;
 

@@ -23,6 +23,9 @@ public interface IWeatherStationService
     Task<bool> RemoveFavorite(WeatherStationIdUserId weatherStationUser);
     Task<Paginated<WeatherStationView>> GetFavorites(string userEmail, int pageNumber, int pageSize);
 
+    // interfaces relacionadas com a implementação da autorização de acesso aos dados
+    Task<bool> IsDataAuthorized(int weatherStationId, string userEmail);
+
     //Task<bool> AddData(List<WeatherDataDTO> data);
     //Task<WeatherDataView> GetData();
 

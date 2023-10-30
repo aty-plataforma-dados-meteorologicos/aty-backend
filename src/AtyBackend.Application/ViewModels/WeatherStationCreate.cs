@@ -14,7 +14,7 @@ namespace AtyBackend.Application.ViewModels
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         public double AltitudeMSL { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public bool IsPrivate { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
