@@ -3,6 +3,8 @@ using AtyBackend.API.Helpers;
 using AtyBackend.Application.DTOs;
 using AtyBackend.Application.Interfaces;
 using AtyBackend.Application.ViewModels;
+using AtyBackend.Domain.Entities;
+using AtyBackend.Domain.Enums;
 using AtyBackend.Domain.Model;
 using AtyBackend.Infrastructure.Data.Identity;
 using AutoMapper;
@@ -105,8 +107,9 @@ public class WeatherStationsController : ControllerBase
             {
                 ApplicationUserId = user.Id,
                 IsMaintainer = true,
-                IsDataAuthorized = true,
-                IsFavorite = false
+                IsDataAuthorized = DataAuthEnum.YES,
+                IsFavorite = false,
+                IsCreator = true
             };
 
             weatherStationDto.WeatherStationUsers.Add(userDto);
@@ -343,6 +346,13 @@ public class WeatherStationsController : ControllerBase
         [FromQuery] string? window
         )
     {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) { return BadRequest("O token JWT não contém o email do usuário."); }
+
+        var user = await _userManager.FindByEmailAsync(userEmail);
+
+        if (await _weatherStationService.IsDataAuthorized(weatherStationId, userEmail) == false) { return Unauthorized("Unauthorized"); }
+        
         start ??= DateTime.UtcNow.AddHours(-24);
         stop ??= DateTime.UtcNow;
 
@@ -352,5 +362,102 @@ public class WeatherStationsController : ControllerBase
 
         return Ok(weatherData);
     }
+    #endregion
+
+    #region DataAuth
+    [Authorize]
+    [HttpGet("{weatherStationId:int}/RequestDataAccess")]
+    public async Task<IActionResult> DataAccessRequest(int weatherStationId)
+    {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) { return BadRequest("O token JWT não contém o email do usuário."); }
+
+        //var user = await _userManager.FindByEmailAsync(userEmail);
+
+        var weatherStationUser = new WeatherStationIdUserId
+        {
+            UserEmail = userEmail,
+            WeatherStationId = weatherStationId
+        };
+
+        await _weatherStationService.RequestDataAccess(weatherStationUser);
+
+        return Ok();
+    }
+
+    // usuários ver requests dele com filtro por status
+    [Authorize]
+    [HttpGet("RetrieveDataAccessRequests")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationAccessInfo>>> GetUserDataAccessRequest([FromQuery] int? pageNumber, [FromQuery] int? pageSize, [FromQuery] DataAuthEnum? status)
+    {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) { return BadRequest("O token JWT não contém o email do usuário."); }
+        var paginated = new ApiResponsePaginated<WeatherStationAccessInfo>(pageNumber, pageSize);
+
+        var weatherStationAccessInfo = await _weatherStationService.GetDataAccessRequest(userEmail, paginated.PageNumber, paginated.PageSize, status);
+
+        paginated.AddData(weatherStationAccessInfo, Request);
+
+        if (status is not null)
+        {
+            string filter = $"&status={(int)status}";
+
+            paginated.FirstPageUrl = paginated.FirstPageUrl is null ? null : paginated.FirstPageUrl + filter;
+            paginated.LastPageUrl = paginated.LastPageUrl is null ? null : paginated.LastPageUrl + filter;
+            paginated.PreviousPageUrl = paginated.PreviousPageUrl is null ? null : paginated.PreviousPageUrl + filter;
+            paginated.NextPageUrl = paginated.NextPageUrl is null ? null : paginated.NextPageUrl + filter;
+        }
+
+        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
+    }
+
+    // admin ver as requests por estação meteorológica
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpGet("{weatherStationId:int}/DataAccessRequests")]
+    public async Task<ActionResult<ApiResponsePaginated<WeatherStationDataAccessRequest>>> GetWeatherStationDataAccessRequest([FromQuery] int? pageNumber, [FromQuery] int? pageSize, int weatherStationId, [FromQuery] DataAuthEnum? status)
+    {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
+
+        if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+        {
+            var paginated = new ApiResponsePaginated<WeatherStationDataAccessRequest>(pageNumber, pageSize);
+
+            var weatherStationDataAccessRequests = await _weatherStationService.GetDataAccessRequest(weatherStationId, paginated.PageNumber, paginated.PageSize, status);
+
+            paginated.AddData(weatherStationDataAccessRequests, Request);
+
+            if (status is not null)
+            {
+                string filter = $"&status={(int)status}";
+
+                paginated.FirstPageUrl = paginated.FirstPageUrl is null ? null : paginated.FirstPageUrl + filter;
+                paginated.LastPageUrl = paginated.LastPageUrl is null ? null : paginated.LastPageUrl + filter;
+                paginated.PreviousPageUrl = paginated.PreviousPageUrl is null ? null : paginated.PreviousPageUrl + filter;
+                paginated.NextPageUrl = paginated.NextPageUrl is null ? null : paginated.NextPageUrl + filter;
+            }
+
+            return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
+        }
+
+        return Unauthorized("Unauthorized");
+    }
+
+   [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [HttpPut("{weatherStationId:int}/DataAccessRequests/{userId}")]
+    public async Task<IActionResult> UpdateDataAccessRequest(int weatherStationId, string userId, [FromQuery] DataAuthEnum newAuth)
+    {
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) { return BadRequest("O token JWT não contém o email do usuário."); }
+
+        if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
+        {
+            
+            return await _weatherStationService.UpdateDataAccess(userId, weatherStationId, newAuth) ? Ok() : NotFound("Data access request not found");
+        }
+
+        return Unauthorized("Unauthorized");
+    }
+
     #endregion
 }

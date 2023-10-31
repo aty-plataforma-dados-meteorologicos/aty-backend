@@ -9,7 +9,12 @@ namespace AtyBackend.Infrastructure.Data.Repositories
 {
     public class InfluxDbWeatherDataRepository : IWeatherDataRepository
     {
+        // token staging
         private readonly string _influxToken = "elKJWIjP34cLzWxvdrdKH01cd5I7pr-dlicwiEkvQply02ggjxQiHnKaH5lDHsFVEp22cw0UhDSEAr3cnN5YZg==";
+
+        // token romildo
+        //private readonly string _influxToken = "5VPrX6lStbpFdZNMVDRH_LKPeAyIPqJrLx9t_su03d-BCJsY_6JECIyDmrEk-lujUSEGThJhrXItv5KD1OG7Sw==";
+
         private readonly string _influxUrl = "http://localhost:8086";
         private readonly string _bucket = "test-bucket";
         private readonly string _org = "aty";

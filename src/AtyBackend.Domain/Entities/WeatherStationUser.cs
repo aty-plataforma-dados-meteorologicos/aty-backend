@@ -1,4 +1,5 @@
-﻿using AtyBackend.Domain.Interfaces;
+﻿using AtyBackend.Domain.Enums;
+using AtyBackend.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtyBackend.Domain.Entities
@@ -15,9 +16,10 @@ namespace AtyBackend.Domain.Entities
         [NotMapped]
         public IApplicationUser? ApplicationUser { get; set; }
 
-        public bool IsDataAuthorized { get; set; }
+        public DataAuthEnum IsDataAuthorized { get; set; }
         public bool IsFavorite { get; set; }
         public bool IsMaintainer { get; set; }
+        public bool IsCreator { get; set; }
 
         public bool IsDeleted { get; set; }
     }
