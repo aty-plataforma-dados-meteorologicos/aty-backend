@@ -372,7 +372,7 @@ public class WeatherStationsController : ControllerBase
         var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         if (userEmail is null) { return BadRequest("O token JWT não contém o email do usuário."); }
 
-        var user = await _userManager.FindByEmailAsync(userEmail);
+        //var user = await _userManager.FindByEmailAsync(userEmail);
 
         var weatherStationUser = new WeatherStationIdUserId
         {
@@ -416,23 +416,31 @@ public class WeatherStationsController : ControllerBase
     [HttpGet("{weatherStationId:int}/DataAccessRequests")]
     public async Task<ActionResult<ApiResponsePaginated<WeatherStationDataAccessRequest>>> GetWeatherStationDataAccessRequest([FromQuery] int? pageNumber, [FromQuery] int? pageSize, int weatherStationId, [FromQuery] DataAuthEnum? status)
     {
-        var paginated = new ApiResponsePaginated<WeatherStationDataAccessRequest>(pageNumber, pageSize);
+        var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (userEmail is null) return BadRequest("O token JWT não contém o email do usuário.");
 
-        var weatherStationDataAccessRequests = await _weatherStationService.GetDataAccessRequest(weatherStationId, paginated.PageNumber, paginated.PageSize, status);
-
-        paginated.AddData(weatherStationDataAccessRequests, Request);
-
-        if(status is not null)
+        if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
         {
-            string filter = $"&status={(int)status}";
+            var paginated = new ApiResponsePaginated<WeatherStationDataAccessRequest>(pageNumber, pageSize);
 
-            paginated.FirstPageUrl = paginated.FirstPageUrl is null ? null : paginated.FirstPageUrl + filter;
-            paginated.LastPageUrl = paginated.LastPageUrl is null ? null : paginated.LastPageUrl + filter;
-            paginated.PreviousPageUrl = paginated.PreviousPageUrl is null ? null : paginated.PreviousPageUrl + filter;
-            paginated.NextPageUrl = paginated.NextPageUrl is null ? null : paginated.NextPageUrl + filter;
+            var weatherStationDataAccessRequests = await _weatherStationService.GetDataAccessRequest(weatherStationId, paginated.PageNumber, paginated.PageSize, status);
+
+            paginated.AddData(weatherStationDataAccessRequests, Request);
+
+            if (status is not null)
+            {
+                string filter = $"&status={(int)status}";
+
+                paginated.FirstPageUrl = paginated.FirstPageUrl is null ? null : paginated.FirstPageUrl + filter;
+                paginated.LastPageUrl = paginated.LastPageUrl is null ? null : paginated.LastPageUrl + filter;
+                paginated.PreviousPageUrl = paginated.PreviousPageUrl is null ? null : paginated.PreviousPageUrl + filter;
+                paginated.NextPageUrl = paginated.NextPageUrl is null ? null : paginated.NextPageUrl + filter;
+            }
+
+            return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
         }
 
-        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
+        return Unauthorized("Unauthorized");
     }
 
    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
@@ -444,20 +452,12 @@ public class WeatherStationsController : ControllerBase
 
         if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
         {
-            var weatherStationUser = new WeatherStationIdUserId
-            {
-                UserEmail = userId,
-                WeatherStationId = weatherStationId
-            };
-
-            await _weatherStationService.UpdateDataAccess(weatherStationUser, newAuth);
-            return Ok();
-            //return await _weatherStationService.AddMaintainer(weatherStationUser) ? Ok() : BadRequest("Maintainer not added");
+            
+            return await _weatherStationService.UpdateDataAccess(userId, weatherStationId, newAuth) ? Ok() : NotFound("Data access request not found");
         }
 
         return Unauthorized("Unauthorized");
     }
-
 
     #endregion
 }

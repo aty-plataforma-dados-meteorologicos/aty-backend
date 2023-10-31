@@ -467,21 +467,25 @@ public class WeatherStationService : IWeatherStationService
         return new Paginated<WeatherStationDataAccessRequest>(pageNumber, pageSize, total, data);
     }
 
-    public async Task UpdateDataAccess(WeatherStationIdUserId weatherStationUser, DataAuthEnum newAuth)
+    public async Task<bool> UpdateDataAccess(string UserId, int weatherStationId, DataAuthEnum newAuth)
     {
-        var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
+        var user = await _userManager.FindByIdAsync(UserId);
 
         var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
-           u => u.WeatherStationId == weatherStationUser.WeatherStationId
+           u => u.WeatherStationId == weatherStationId
            && u.ApplicationUserId == user.Id);
 
-        if (!userWeatherStation.Any())
+        if (userWeatherStation.Any())
         {
             var wsu = userWeatherStation.FirstOrDefault();
 
             wsu.IsDataAuthorized = newAuth;
 
             await _weatherStationUserRepository.UpdateAsync(wsu);
+
+            return true;
         }
+
+        return false;
     }
 }

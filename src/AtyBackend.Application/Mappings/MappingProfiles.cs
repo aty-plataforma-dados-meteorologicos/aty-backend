@@ -99,6 +99,7 @@ public class MappingProfiles : Profile
                 }).ToList()));
 
         CreateMap<WeatherStationView, WeatherStationAccessInfo>();
+        CreateMap<WeatherStation, WeatherStationAccessInfo>();
 
         CreateMap<WeatherStationDTO, WeatherStationView>();
 

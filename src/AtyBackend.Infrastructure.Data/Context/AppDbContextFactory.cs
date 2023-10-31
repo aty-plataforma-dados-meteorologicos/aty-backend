@@ -15,11 +15,14 @@ namespace CleanArchTemplate.Infra.Data.Context
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
+            // servidor staging
             var stringConnection = "Data Source=localhost;User ID=SA;Password=root@123;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            //var stringConnection = "Data Source=localhost;User ID=SA;Password=mssql1Ipw;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
-            // aws romildo
-            //var stringConnection = "Data Source=54.172.154.69,1433;User ID=SA;Password=pw2020@mssql;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            // docker user marg
+            //var stringConnection = "Data Source=localhost;User ID=SA;Password=pw2020@mssql;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
+            // docker user rom
+            //var stringConnection = "Data Source=localhost;User ID=SA;Password=mssql1Ipw;Initial Catalog=pdm-dev;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
             optionsBuilder.UseSqlServer(stringConnection);
 

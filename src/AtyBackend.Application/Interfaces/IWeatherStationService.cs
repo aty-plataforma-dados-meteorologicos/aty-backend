@@ -38,7 +38,7 @@ public interface IWeatherStationService
     //-> get solicitações de acesso (aceitar filtro: todas (filtro nulo), pendentes, autorizadas, negadas)
     Task<Paginated<WeatherStationDataAccessRequest>> GetDataAccessRequest(int weatherStationId, int pageNumber, int pageSize, DataAuthEnum? filter);
     //-> autorizar/negar acesso
-    Task UpdateDataAccess(WeatherStationIdUserId weatherStationUser, DataAuthEnum newAuth);
+    Task<bool> UpdateDataAccess(string UserId, int weatherStationId, DataAuthEnum newAuth);
 
 
 }
