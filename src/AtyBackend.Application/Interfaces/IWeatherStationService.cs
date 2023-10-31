@@ -1,5 +1,7 @@
 ﻿using AtyBackend.Application.DTOs;
 using AtyBackend.Application.ViewModels;
+using AtyBackend.Domain.Enums;
+using System.Runtime.ConstrainedExecution;
 
 namespace AtyBackend.Application.Interfaces;
 
@@ -28,6 +30,15 @@ public interface IWeatherStationService
 
     //Task<bool> AddData(List<WeatherDataDTO> data);
     //Task<WeatherDataView> GetData();
+
+    //    -> solicitar acesso a estação
+    Task RequestDataAccess(WeatherStationIdUserId weatherStationUser);
+    //-> ver estações que solicitei acesso e estão pendente de autorização ou negação
+    Task<Paginated<WeatherStationAccessInfo>> GetDataAccessRequest(string userEmail, int pageNumber, int pageSize, DataAuthEnum? filter);
+    //-> get solicitações de acesso (aceitar filtro: todas (filtro nulo), pendentes, autorizadas, negadas)
+    Task<Paginated<WeatherStationDataAccessRequest>> GetDataAccessRequest(int weatherStationId, int pageNumber, int pageSize, DataAuthEnum? filter);
+    //-> autorizar/negar acesso
+    Task UpdateDataAccess(WeatherStationIdUserId weatherStationUser, DataAuthEnum newAuth);
 
 
 }

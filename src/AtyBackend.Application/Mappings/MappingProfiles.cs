@@ -33,6 +33,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
             .ForMember(dest => dest.IsMaintainer, opt => opt.MapFrom(src => src.IsMaintainer))
             .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => src.IsFavorite))
+            .ForMember(dest => dest.IsCreator, opt => opt.MapFrom(src => src.IsCreator))
             .ForMember(dest => dest.IsDataAuthorized, opt => opt.MapFrom(src => src.IsDataAuthorized));
 
 
@@ -96,6 +97,8 @@ public class MappingProfiles : Profile
                     MeasurementType = c.Sensor.MeasurementType,
                     IsEnabled = c.Sensor.IsEnabled
                 }).ToList()));
+
+        CreateMap<WeatherStationView, WeatherStationAccessInfo>();
 
         CreateMap<WeatherStationDTO, WeatherStationView>();
 

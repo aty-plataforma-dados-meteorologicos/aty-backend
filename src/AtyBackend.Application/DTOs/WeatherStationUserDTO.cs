@@ -1,4 +1,5 @@
-﻿using AtyBackend.Infrastructure.Data.Identity;
+﻿using AtyBackend.Domain.Enums;
+using AtyBackend.Infrastructure.Data.Identity;
 using System.Text.Json.Serialization;
 
 namespace AtyBackend.Application.DTOs
@@ -14,8 +15,9 @@ namespace AtyBackend.Application.DTOs
         public string? ApplicationUserName { get; set; }
         public string? ApplicationUserEmail { get; set; }
 
-        public bool? IsDataAuthorized { get; set; }
+        public DataAuthEnum? IsDataAuthorized { get; set; }
         public bool? IsFavorite { get; set; }
         public bool? IsMaintainer { get; set; }
+        public bool? IsCreator { get; set; }
     }
 }

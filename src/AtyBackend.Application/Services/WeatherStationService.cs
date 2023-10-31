@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using AtyBackend.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity;
 using AtyBackend.Domain.Model;
+using AtyBackend.Domain.Enums;
+using InfluxDB.Client.Api.Domain;
 
 namespace AtyBackend.Application.Services;
 
@@ -118,6 +120,7 @@ public class WeatherStationService : IWeatherStationService
             var userWeatherStationEntity = _mapper.Map<WeatherStationUser>(userWeatherStation.FirstOrDefault());
 
             userWeatherStationEntity.IsMaintainer = true;
+            userWeatherStationEntity.IsDataAuthorized = DataAuthEnum.YES;
             userWeatherStationEntity = await _weatherStationUserRepository.UpdateAsync(userWeatherStationEntity);
 
             return userWeatherStationEntity.IsMaintainer;
@@ -128,8 +131,9 @@ public class WeatherStationService : IWeatherStationService
             WeatherStationId = weatherStationUser.WeatherStationId,
             ApplicationUserId = user.Id,
             IsMaintainer = true,
-            IsDataAuthorized = true,
-            IsFavorite = false
+            IsDataAuthorized = DataAuthEnum.YES,
+            IsFavorite = false,
+            IsCreator = false
         };
 
         var userEntity = _mapper.Map<WeatherStationUser>(userDto);
@@ -157,7 +161,14 @@ public class WeatherStationService : IWeatherStationService
 
         var weatherStationUserDto = await _weatherStationUserRepository.GetByIdAsync(weatherStationId, maintainerId);
         weatherStationUserDto.IsMaintainer = false;
-        weatherStationUserDto.IsDataAuthorized = false;
+
+        // se a estação for privada, remove acesso aos dados
+        var weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStationId);
+
+        if (weatherStation.IsPrivate)
+        {
+            weatherStationUserDto.IsDataAuthorized = DataAuthEnum.NO;
+        }
 
         var weatherStationUserEntity = _mapper.Map<WeatherStationUser>(weatherStationUserDto);
         weatherStationUserEntity = await _weatherStationUserRepository.UpdateAsync(weatherStationUserEntity);
@@ -238,7 +249,7 @@ public class WeatherStationService : IWeatherStationService
         {
             var userWeatherStationEntity = _mapper.Map<WeatherStationUser>(userWeatherStation.FirstOrDefault());
 
-            if (weatherStation.IsPrivate && !userWeatherStationEntity.IsDataAuthorized) { throw new Exception(errorMEssage); }
+            if (weatherStation.IsPrivate && userWeatherStationEntity.IsDataAuthorized == DataAuthEnum.NO) { throw new Exception(errorMEssage); }
 
 
             userWeatherStationEntity.IsFavorite = true;
@@ -254,8 +265,9 @@ public class WeatherStationService : IWeatherStationService
             WeatherStationId = weatherStationUser.WeatherStationId,
             ApplicationUserId = user.Id,
             IsMaintainer = false,
-            IsDataAuthorized = false,
-            IsFavorite = true
+            IsDataAuthorized = DataAuthEnum.YES,
+            IsFavorite = true,
+            IsCreator = false
         };
 
         var userEntity = _mapper.Map<WeatherStationUser>(userDto);
@@ -331,7 +343,7 @@ public class WeatherStationService : IWeatherStationService
 
         if (userWeatherStation.Any())
         {
-            if (userWeatherStation.FirstOrDefault().IsDataAuthorized) { return true; }
+            if (userWeatherStation.FirstOrDefault().IsDataAuthorized == DataAuthEnum.YES) { return true; }
         }
 
         var weatherStation = await _weatherStationRepository.GetByIdAsync(weatherStationId);
@@ -341,6 +353,135 @@ public class WeatherStationService : IWeatherStationService
         return false;
     }
 
-    //public async Task<bool> GetWeatherStationMaintainers(int weatherStationId)
+    public async Task RequestDataAccess(WeatherStationIdUserId weatherStationUser)
+    {
+        var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
 
+        var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+           u => u.WeatherStationId == weatherStationUser.WeatherStationId
+           && u.ApplicationUserId == user.Id);
+
+        if (!userWeatherStation.Any())
+        {
+            var userDto = new WeatherStationUserDTO
+            {
+                WeatherStationId = weatherStationUser.WeatherStationId,
+                ApplicationUserId = user.Id,
+                IsDataAuthorized = DataAuthEnum.PENDING,
+                IsMaintainer = false,
+                IsFavorite = false,
+                IsCreator = false
+            };
+
+            var userEntity = _mapper.Map<WeatherStationUser>(userDto);
+            userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
+        }
+    }
+
+    public async Task<Paginated<WeatherStationAccessInfo>> GetDataAccessRequest(string userEmail, int pageNumber, int pageSize, DataAuthEnum? filter)
+    {
+        var user = await _userManager.FindByEmailAsync(userEmail);
+
+        List<WeatherStationUser> userWeatherStation = new();
+        List<WeatherStationAccessInfo> data = new();
+        int total;
+
+        if (filter is not null)
+        {
+            userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+               u => u.ApplicationUserId == user.Id
+               && u.IsDataAuthorized == filter, pageNumber, pageSize);
+
+            total = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == user.Id && u.IsDataAuthorized == filter);
+        }
+        else
+        {
+            userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+               u => u.ApplicationUserId == user.Id, pageNumber, pageSize);
+
+            total = await _weatherStationUserRepository.CountByConditionAsync(u => u.ApplicationUserId == user.Id);
+        }
+
+        if (userWeatherStation.Any())
+        {
+
+            foreach (var wsu in userWeatherStation)
+            {
+                var ws = await _weatherStationRepository.GetByIdAsync(wsu.WeatherStationId);
+
+                var wsai = _mapper.Map<WeatherStationAccessInfo>(ws);
+                wsai.RequestStatus = wsu.IsDataAuthorized;
+
+                data.Add(wsai);
+            }
+
+        }
+
+        return new Paginated<WeatherStationAccessInfo>(pageNumber, pageSize, total, data);
+    }
+
+    public async Task<Paginated<WeatherStationDataAccessRequest>> GetDataAccessRequest(int weatherStationId, int pageNumber, int pageSize, DataAuthEnum? filter)
+    {
+        // aqui vou buscar todos as wsu de uma estação
+
+        List<WeatherStationUser> userWeatherStation = new();
+        List<WeatherStationDataAccessRequest> data = new();
+        int total;
+
+        if (filter is not null)
+        {
+            userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+               u => u.WeatherStationId == weatherStationId
+               && u.IsDataAuthorized == filter, pageNumber, pageSize);
+
+            total = await _weatherStationUserRepository.CountByConditionAsync(u => u.WeatherStationId == weatherStationId && u.IsDataAuthorized == filter);
+        }
+        else
+        {
+            userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+               u => u.WeatherStationId == weatherStationId, pageNumber, pageSize);
+
+            total = await _weatherStationUserRepository.CountByConditionAsync(u => u.WeatherStationId == weatherStationId);
+        }
+
+        if (userWeatherStation.Any())
+        {
+
+            foreach (var wsu in userWeatherStation)
+            {
+                var user = await _userManager.FindByIdAsync(wsu.ApplicationUserId);
+
+                var wsdar = new WeatherStationDataAccessRequest()
+                {
+                    WeatherStationId = wsu.WeatherStationId,
+                    RequestStatus = wsu.IsDataAuthorized,
+                    UserEmail = user.Email,
+                    UserId = user.Id
+                };
+
+                data.Add(wsdar);
+            }
+
+        }
+
+        return new Paginated<WeatherStationDataAccessRequest>(pageNumber, pageSize, total, data);
+    }
+
+    public async Task UpdateDataAccess(WeatherStationIdUserId weatherStationUser, DataAuthEnum newAuth)
+    {
+        var user = await _userManager.FindByEmailAsync(weatherStationUser.UserEmail);
+
+        var userWeatherStation = await _weatherStationUserRepository.FindByConditionAsync(
+           u => u.WeatherStationId == weatherStationUser.WeatherStationId
+           && u.ApplicationUserId == user.Id);
+
+        if (!userWeatherStation.Any())
+        {
+            var wsu = userWeatherStation.FirstOrDefault();
+
+            wsu.IsDataAuthorized = newAuth;
+
+            await _weatherStationUserRepository.UpdateAsync(wsu);
+        }
+    }
 }
