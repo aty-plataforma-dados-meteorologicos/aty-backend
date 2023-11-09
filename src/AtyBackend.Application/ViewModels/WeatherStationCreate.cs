@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace AtyBackend.Application.ViewModels
 {
@@ -18,6 +19,8 @@ namespace AtyBackend.Application.ViewModels
         public bool IsPrivate { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
+        [RegularExpression(@"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$", ErrorMessage = "PhotoBase64 must be a base64")]
+        public string? PhotoBase64 { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
 

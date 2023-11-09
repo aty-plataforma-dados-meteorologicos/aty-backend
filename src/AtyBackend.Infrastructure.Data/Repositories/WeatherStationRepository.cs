@@ -151,6 +151,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                     existingEntity.Name = entity.Name;
                     existingEntity.Partners = entity.Partners;
                     existingEntity.IsEnabled = entity.IsEnabled;
+                    existingEntity.PhotoBase64 = entity.PhotoBase64;
                     //existingEntity.WeatherStationSensors = entity.WeatherStationSensors;
 
                     // Attach the updated entity to the context and mark it as modified
