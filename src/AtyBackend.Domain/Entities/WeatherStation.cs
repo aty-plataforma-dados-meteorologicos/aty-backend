@@ -11,6 +11,7 @@
         public string? Token { get; set; }
         //add isso na documentação
         public bool? Status { get; set; }
+        public string? PhotoBase64 { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdateAt { get; set; }
 
