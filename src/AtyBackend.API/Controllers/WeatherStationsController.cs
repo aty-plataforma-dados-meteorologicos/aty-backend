@@ -352,7 +352,7 @@ public class WeatherStationsController : ControllerBase
         var user = await _userManager.FindByEmailAsync(userEmail);
 
         if (await _weatherStationService.IsDataAuthorized(weatherStationId, userEmail) == false) { return Unauthorized("Unauthorized"); }
-        
+
         start ??= DateTime.UtcNow.AddHours(-24);
         stop ??= DateTime.UtcNow;
 
@@ -443,7 +443,7 @@ public class WeatherStationsController : ControllerBase
         return Unauthorized("Unauthorized");
     }
 
-   [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Maintainer}")]
     [HttpPut("{weatherStationId:int}/DataAccessRequests/{userId}")]
     public async Task<IActionResult> UpdateDataAccessRequest(int weatherStationId, string userId, [FromQuery] DataAuthEnum newAuth)
     {
@@ -452,7 +452,7 @@ public class WeatherStationsController : ControllerBase
 
         if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
         {
-            
+
             return await _weatherStationService.UpdateDataAccess(userId, weatherStationId, newAuth) ? Ok() : NotFound("Data access request not found");
         }
 
@@ -460,4 +460,18 @@ public class WeatherStationsController : ControllerBase
     }
 
     #endregion
+
+
+    [HttpGet("{weatherStationId:int}/Photo")]
+    public async Task<ActionResult<string>> GetWeatherStationPhoto(int weatherStationId)
+    {
+        var result = await _weatherStationService.GetPhotoByIdAsync(weatherStationId);
+
+        if (result is null)
+        {
+            return NotFound("Photo not found");
+        }
+
+        return result;
+    }
 }
