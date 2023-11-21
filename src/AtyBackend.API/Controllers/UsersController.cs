@@ -1,4 +1,5 @@
-﻿using AtyBackend.API.Helpers;
+﻿using AtyBackend.API.Email;
+using AtyBackend.API.Helpers;
 using AtyBackend.API.Models;
 using AtyBackend.Application.DTOs;
 using AtyBackend.Application.ViewModels;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Reactive.Subjects;
 
 
 namespace AtyBackend.API.Controllers;
@@ -23,15 +25,18 @@ public class UsersController : ControllerBase
     private readonly IAuthenticate _authentication;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly ISendEmail _sendEmail;
 
     public UsersController(IAuthenticate authentication,
         IConfiguration configuration,
+        ISendEmail sendEmail,
         UserManager<ApplicationUser> userManager)
     {
         _authentication = authentication ??
             throw new ArgumentNullException(nameof(authentication));
         _userManager = userManager;
         _configuration = configuration;
+        _sendEmail = sendEmail;
     }
 
     [HttpPost]
@@ -291,7 +296,6 @@ public class UsersController : ControllerBase
             var user = await _userManager.FindByEmailAsync(requestResetPassword.Email);
             if (user is not null && !user.IsDeleted && user.IsEnabled)
             {
-
                 _ = int.TryParse(_configuration["ResetPassword:ResetPasswordCodeValidityInMinutes"],
                     out int resetPasswordCodeValidityInMinutes);
                 var resetPasswordCodeExpiration = DateTime.UtcNow.AddMinutes(resetPasswordCodeValidityInMinutes);
@@ -301,7 +305,7 @@ public class UsersController : ControllerBase
 
                 await _userManager.UpdateAsync(user);
 
-                var result = SendResetPasswordEmail(requestResetPassword.Email, user.ResetPasswordCode.Value);
+                var result = await SendResetPasswordEmail(user.Email, user.ResetPasswordCode.Value);
 
                 return result ? Ok($"Password reset email sent to {requestResetPassword.Email}") : BadRequest("Error sending email");
             }
@@ -348,6 +352,21 @@ public class UsersController : ControllerBase
         }
     }
 
+    private async Task<bool> SendResetPasswordEmail(string email, int code)
+    {
+        try
+        {
+            string subject = "ATY - Reset Password Code";
+            string message = $"Your reset password code is {code}";
+            await _sendEmail.SendEmailAsync(email, subject, message);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return false;
+        }
+    }
 
     private static int ResetPasswordCode()
     {
@@ -363,31 +382,27 @@ public class UsersController : ControllerBase
         return num;
     }
 
-    private bool SendResetPasswordEmail(string email, int code)
-    {
-        throw new NotImplementedException();
-    }
-
-
     private static List<string> GetRoles() => UserRoles.ToList();
 
-    private static int TotalPages(double totalItems, double pageSize) => (int)Math.Ceiling(totalItems / pageSize);
+    #region old
+    //private static int TotalPages(double totalItems, double pageSize) => (int)Math.Ceiling(totalItems / pageSize);
 
-    //condição em que não tem não tem previous
-    //-> pageNumber = 1
-    //-> pageNumber > TotalPages
-    //-> pageNumber < 1
-    private static bool HasNextPage(Paginated<ApplicationUserDTO> result) =>
-        !(result.PageNumber == result.TotalPages || result.PageNumber > result.TotalPages || result.PageNumber < 1);
+    ////condição em que não tem não tem previous
+    ////-> pageNumber = 1
+    ////-> pageNumber > TotalPages
+    ////-> pageNumber < 1
+    //private static bool HasNextPage(Paginated<ApplicationUserDTO> result) =>
+    //    !(result.PageNumber == result.TotalPages || result.PageNumber > result.TotalPages || result.PageNumber < 1);
 
-    //condição em que não tem next
-    //-> pageNumber = TotalPages
-    //-> pageNumber > TotalPages
-    //-> pageNumber < 1
-    private static bool HasPreviousPage(Paginated<ApplicationUserDTO> result) =>
-        !(result.PageNumber == 1 || result.PageNumber > result.TotalPages || result.PageNumber < 1);
+    ////condição em que não tem next
+    ////-> pageNumber = TotalPages
+    ////-> pageNumber > TotalPages
+    ////-> pageNumber < 1
+    //private static bool HasPreviousPage(Paginated<ApplicationUserDTO> result) =>
+    //    !(result.PageNumber == 1 || result.PageNumber > result.TotalPages || result.PageNumber < 1);
 
-    private static string GetPageUrl(Paginated<ApplicationUserDTO> result, string url, bool isNextPage = true) => isNextPage ?
-        url + "?pageNumber=" + (result.PageNumber + 1) + "&pageSize=" + result.PageSize :
-        url + "?pageNumber=" + (result.PageNumber - 1) + "&pageSize=" + result.PageSize;
+    //private static string GetPageUrl(Paginated<ApplicationUserDTO> result, string url, bool isNextPage = true) => isNextPage ?
+    //    url + "?pageNumber=" + (result.PageNumber + 1) + "&pageSize=" + result.PageSize :
+    //    url + "?pageNumber=" + (result.PageNumber - 1) + "&pageSize=" + result.PageSize;
+    #endregion
 }

@@ -1,4 +1,4 @@
-namespace apiemail.Entities;
+namespace AtyBackend.API.Models;
 public class SmtpSettings
 {
     public string? Server { get; set; }

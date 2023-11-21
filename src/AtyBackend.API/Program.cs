@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using AtyBackend.Infrastructure.Data.Identity;
 using AtyBackend.Infrastructure.IoC;
+using AtyBackend.API.Email;
+using AtyBackend.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -40,6 +42,10 @@ builder.Services.AddCors(options =>
                           .WithMethods("GET", "POST", "PUT", "DELETE");
                       });
 });
+
+// email sender
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddSingleton<ISendEmail, SendEmail>();
 
 var app = builder.Build();
 
