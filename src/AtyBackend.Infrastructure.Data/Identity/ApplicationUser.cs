@@ -10,6 +10,8 @@ public class ApplicationUser : IdentityUser, IApplicationUser
     public string? Name { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiration { get; set; }
+    public int? ResetPasswordCode { get; set; }
+    public DateTime? ResetPasswordCodeExpiration { get; set; }
     public UserTypeEnum Type { get; set; }
 
     public bool IsEnabled { get; set; }

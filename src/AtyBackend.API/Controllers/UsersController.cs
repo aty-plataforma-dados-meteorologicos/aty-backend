@@ -22,12 +22,16 @@ public class UsersController : ControllerBase
 {
     private readonly IAuthenticate _authentication;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IConfiguration _configuration;
 
-    public UsersController(IAuthenticate authentication, UserManager<ApplicationUser> userManager)
+    public UsersController(IAuthenticate authentication,
+        IConfiguration configuration,
+        UserManager<ApplicationUser> userManager)
     {
         _authentication = authentication ??
             throw new ArgumentNullException(nameof(authentication));
         _userManager = userManager;
+        _configuration = configuration;
     }
 
     [HttpPost]
@@ -165,52 +169,6 @@ public class UsersController : ControllerBase
         }
     }
 
-    [HttpGet("Roles")]
-    public ActionResult<List<string>> GetUserRoles()
-    {
-        return Ok(GetRoles());
-    }
-
-    [HttpPut("Password")]
-    [Authorize(Roles = "Admin,Manager")]
-    public async Task<ActionResult> ChangePassword([FromBody] LoginModel userInfo)
-    {
-        try
-        {
-            var user = await _userManager.FindByEmailAsync(userInfo.Email);
-
-
-            if (user is not null && !user.IsDeleted && user.IsEnabled)
-            {
-                if (await _userManager.CheckPasswordAsync(user, userInfo.Password))
-                {
-                    throw new Exception("The new password must be different of the current password");
-                }
-
-                user.RefreshToken = null;
-                user.RefreshTokenExpiration = null;
-                await _userManager.UpdateAsync(user);
-
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var result = await _userManager.ResetPasswordAsync(user, token, userInfo.Password);
-
-                if (result.Succeeded)
-                {
-                    return Ok($"Password for user {userInfo.Email} was changed successfully");
-                }
-
-                throw new Exception("Password change failed");
-            }
-
-            throw new Exception("User not found");
-        }
-        catch (Exception e)
-        {
-            ModelState.AddModelError("Error", e.Message);
-            return BadRequest(ModelState);
-        }
-    }
-
     [HttpPut]
     [Authorize(Roles = "Admin,Manager")]
     public async Task<ActionResult<ApplicationUserDTO>> UpdateUser([FromBody] ApplicationUserDTO userDTO)
@@ -278,6 +236,138 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
     }
+
+    [HttpGet("Roles")]
+    public ActionResult<List<string>> GetUserRoles()
+    {
+        return Ok(GetRoles());
+    }
+
+    [HttpPut("Password")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<ActionResult> ChangePassword([FromBody] LoginModel userInfo)
+    {
+        try
+        {
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+
+            if (user is not null && !user.IsDeleted && user.IsEnabled)
+            {
+                if (await _userManager.CheckPasswordAsync(user, userInfo.Password))
+                {
+                    throw new Exception("The new password must be different of the current password");
+                }
+
+                user.RefreshToken = null;
+                user.RefreshTokenExpiration = null;
+                await _userManager.UpdateAsync(user);
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await _userManager.ResetPasswordAsync(user, token, userInfo.Password);
+
+                if (result.Succeeded)
+                {
+                    return Ok($"Password for user {userInfo.Email} was changed successfully");
+                }
+
+                throw new Exception("Password change failed");
+            }
+
+            throw new Exception("User not found");
+        }
+        catch (Exception e)
+        {
+            ModelState.AddModelError("Error", e.Message);
+            return BadRequest(ModelState);
+        }
+    }
+
+    [HttpPost("ResetPassword")]
+    public async Task<ActionResult> ResetPassword([FromBody] RequestResetPassword requestResetPassword)
+    {
+        try
+        {
+            var user = await _userManager.FindByEmailAsync(requestResetPassword.Email);
+            if (user is not null && !user.IsDeleted && user.IsEnabled)
+            {
+
+                _ = int.TryParse(_configuration["ResetPassword:ResetPasswordCodeValidityInMinutes"],
+                    out int resetPasswordCodeValidityInMinutes);
+                var resetPasswordCodeExpiration = DateTime.UtcNow.AddMinutes(resetPasswordCodeValidityInMinutes);
+
+                user.ResetPasswordCodeExpiration = resetPasswordCodeExpiration;
+                user.ResetPasswordCode = ResetPasswordCode();
+
+                await _userManager.UpdateAsync(user);
+
+                var result = SendResetPasswordEmail(requestResetPassword.Email, user.ResetPasswordCode.Value);
+
+                return result ? Ok($"Password reset email sent to {requestResetPassword.Email}") : BadRequest("Error sending email");
+            }
+            throw new Exception("Invalid user");
+        }
+        catch (Exception e)
+        {
+            ModelState.AddModelError("Error", e.Message);
+            return BadRequest(ModelState);
+        }
+    }
+
+    [HttpPut("ResetPassword")]
+    public async Task<ActionResult> NewPassword([FromBody] ResetPassword requestResetPassword)
+    {
+        try
+        {
+            var user = await _userManager.FindByEmailAsync(requestResetPassword.Email);
+            if (user is not null && !user.IsDeleted && user.IsEnabled)
+            {
+                if(user.ResetPasswordCodeExpiration <= DateTime.UtcNow) { return BadRequest("Reset password code expired"); }
+
+                if (user.ResetPasswordCode != requestResetPassword.Code) { return BadRequest("Invalid reset password code"); }
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await _userManager.ResetPasswordAsync(user, token, requestResetPassword.Password);
+
+                if (result.Succeeded)
+                {
+                    user.ResetPasswordCodeExpiration = null;
+                    user.ResetPasswordCode = null;
+                    await _userManager.UpdateAsync(user);
+
+                    return Ok($"Password for user {requestResetPassword.Email} was reseted successfully");
+                }
+                throw new Exception("Password reset failed");
+            }
+            throw new Exception("Invalid user");
+        }
+        catch (Exception e)
+        {
+            ModelState.AddModelError("Error", e.Message);
+            return BadRequest(ModelState);
+        }
+    }
+
+
+    private static int ResetPasswordCode()
+    {
+        Guid guid = Guid.NewGuid();
+        byte[] bytes = guid.ToByteArray();
+        int num = BitConverter.ToInt32(bytes, 0) % 1000000;
+
+        if (num < 0) // Garante um número positivo com 6 dígitos
+        {
+            num = -num;
+        }
+
+        return num;
+    }
+
+    private bool SendResetPasswordEmail(string email, int code)
+    {
+        throw new NotImplementedException();
+    }
+
 
     private static List<string> GetRoles() => UserRoles.ToList();
 
