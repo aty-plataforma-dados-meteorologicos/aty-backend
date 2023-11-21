@@ -14,5 +14,7 @@ public interface IWeatherStationRepository
     Task<List<WeatherStation>> FindByConditionAsync(Expression<Func<WeatherStation, bool>> expression, int pageSize, int pageNumber);
     Task<WeatherStation> GetByIdAsync(int? id);
     Task<WeatherStation> UpdateAsync(WeatherStation entity);
-    Task<bool> DeleteAsync(WeatherStation entity); 
+    Task<bool> DeleteAsync(WeatherStation entity);
+    
+    Task<string?> GetPhotoByIdAsync(int weatherStationId);
 }

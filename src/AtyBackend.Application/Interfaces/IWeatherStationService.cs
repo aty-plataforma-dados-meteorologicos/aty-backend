@@ -41,4 +41,9 @@ public interface IWeatherStationService
     Task<bool> UpdateDataAccess(string UserId, int weatherStationId, DataAuthEnum newAuth);
 
 
+    //photo
+    Task<string?> GetPhotoByIdAsync(int weatherStationId);
+
+
+
 }

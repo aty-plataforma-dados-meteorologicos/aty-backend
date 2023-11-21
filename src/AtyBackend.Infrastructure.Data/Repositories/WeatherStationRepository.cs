@@ -98,32 +98,145 @@ namespace AtyBackend.Infrastructure.Data.Repositories
         public async Task<List<WeatherStation>> GetAllAsync() => await _entitiesWeatherStation
             .ToListAsync();
 
-        public async Task<List<WeatherStation>> GetAllAsync(int pageSize, int pageNumber) => await _entitiesWeatherStation
+        public async Task<List<WeatherStation>> GetAllAsync(int pageSize, int pageNumber)
+        {
+            var result = await _entitiesWeatherStation
             .Include(i => i.WeatherStationSensors)
             .ThenInclude(i => i.Sensor)
             .Include(i => i.Partners)
-
+            //.Where(i => i.IsDeleted == false)
             .OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .Select(ws => new WeatherStation // Selecionar apenas os campos necessários
+            {
+                Id = ws.Id,
+                PublicId = ws.PublicId,
+                Name = ws.Name,
+                Latitude = ws.Latitude,
+                Longitude = ws.Longitude,
+                AltitudeMSL = ws.AltitudeMSL,
+                IsPrivate = ws.IsPrivate,
+                IsEnabled = ws.IsEnabled,
+                Status = ws.Status,
+                CreatedAt = ws.CreatedAt,
+                UpdateAt = ws.UpdateAt,
+                Partners = ws.Partners,
+                WeatherStationSensors = ws.WeatherStationSensors
+            })
             .ToListAsync();
 
+            return result;
+        }
+        //public async Task<List<WeatherStation>> GetAllAsync(int pageSize, int pageNumber) => await _entitiesWeatherStation
+        //    .Include(i => i.WeatherStationSensors)
+        //    .ThenInclude(i => i.Sensor)
+        //    .Include(i => i.Partners)
+        //    .Where(i => i.IsDeleted == false)
+        //    .Select(ws => new WeatherStation // Selecionar apenas os campos necessários
+        //    {
+        //        PublicId = ws.PublicId,
+        //        Name = ws.Name,
+        //        Latitude = ws.Latitude,
+        //        Longitude = ws.Longitude,
+        //        AltitudeMSL = ws.AltitudeMSL,
+        //        IsPrivate = ws.IsPrivate,
+        //        Token = ws.Token,
+        //        Status = ws.Status,
+        //        CreatedAt = ws.CreatedAt,
+        //        UpdateAt = ws.UpdateAt,
+        //        Partners = ws.Partners, // Manter a lista de Partners
+        //        WeatherStationSensors = ws.WeatherStationSensors // Manter a lista de WeatherStationSensors
+        //    })
+        //    .OrderByDescending(i => i.Id)
+        //    .Skip((pageNumber - 1) * pageSize)
+        //    .Take(pageSize)
+        //    .ToListAsync();
+
+        // old gold, but with Photo DB break
+        //.Include(i => i.WeatherStationSensors)
+        //.ThenInclude(i => i.Sensor)
+        //.Include(i => i.Partners)
+
+        //.OrderByDescending(i => i.Id)
+        //.Skip((pageNumber - 1) * pageSize)
+        //.Take(pageSize)
+        //.ToListAsync();
+
         public async Task<List<WeatherStation>> FindByConditionAsync(Expression<Func<WeatherStation, bool>> expression) => await _entitiesWeatherStation
+            .Include(i => i.WeatherStationSensors)
+            .ThenInclude(i => i.Sensor)
+            .Include(i => i.Partners)
             .Where(expression)
+            .Select(ws => new WeatherStation // Selecionar apenas os campos necessários
+            {
+                Id = ws.Id,
+                PublicId = ws.PublicId,
+                Name = ws.Name,
+                Latitude = ws.Latitude,
+                Longitude = ws.Longitude,
+                AltitudeMSL = ws.AltitudeMSL,
+                IsPrivate = ws.IsPrivate,
+                Token = ws.Token,
+                Status = ws.Status,
+                CreatedAt = ws.CreatedAt,
+                UpdateAt = ws.UpdateAt,
+                Partners = ws.Partners, // Manter a lista de Partners
+                WeatherStationSensors = ws.WeatherStationSensors // Manter a lista de WeatherStationSensors
+            })
             .ToListAsync();
 
         public async Task<List<WeatherStation>> FindByConditionAsync(Expression<Func<WeatherStation, bool>> expression, int pageSize, int pageNumber) => await _entitiesWeatherStation
-            .Where(expression)
             .OrderByDescending(i => i.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .Where(expression)
+            .Select(ws => new WeatherStation // Selecionar apenas os campos necessários
+            {
+                Id = ws.Id,
+                PublicId = ws.PublicId,
+                Name = ws.Name,
+                Latitude = ws.Latitude,
+                Longitude = ws.Longitude,
+                AltitudeMSL = ws.AltitudeMSL,
+                IsPrivate = ws.IsPrivate,
+                Token = ws.Token,
+                Status = ws.Status,
+                CreatedAt = ws.CreatedAt,
+                UpdateAt = ws.UpdateAt,
+                Partners = ws.Partners, // Manter a lista de Partners
+                WeatherStationSensors = ws.WeatherStationSensors // Manter a lista de WeatherStationSensors
+            })
             .ToListAsync();
 
         public async Task<WeatherStation> GetByIdAsync(int? id) => await _entitiesWeatherStation
             .Include(i => i.WeatherStationSensors)
             .ThenInclude(i => i.Sensor)
             .Include(i => i.Partners)
-            .SingleOrDefaultAsync(s => s.Id == id);
+            .Where(s => s.Id == id)
+            .Select(ws => new WeatherStation // Selecionar apenas os campos necessários
+            {
+                Id = ws.Id,
+                PublicId = ws.PublicId,
+                Name = ws.Name,
+                Latitude = ws.Latitude,
+                Longitude = ws.Longitude,
+                AltitudeMSL = ws.AltitudeMSL,
+                IsPrivate = ws.IsPrivate,
+                Token = ws.Token,
+                Status = ws.Status,
+                CreatedAt = ws.CreatedAt,
+                UpdateAt = ws.UpdateAt,
+                Partners = ws.Partners, // Manter a lista de Partners
+                WeatherStationSensors = ws.WeatherStationSensors // Manter a lista de WeatherStationSensors
+            })
+            .SingleOrDefaultAsync();
+
+        // old but gold, with base64Photo
+        //.Include(i => i.WeatherStationSensors)
+        //.ThenInclude(i => i.Sensor)
+        //.Include(i => i.Partners)
+        //.SingleOrDefaultAsync(s => s.Id == id);
 
         public async Task<WeatherStation> UpdateAsync(WeatherStation entity)
         {
@@ -141,7 +254,7 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                         .ThenInclude(i => i.Sensor)
                         .Include(i => i.Partners)
                         .SingleOrDefaultAsync(s => s.Id == entity.Id);
-                        //.FindAsync(entity.Id);
+                //.FindAsync(entity.Id);
                 if (existingEntity != null)
                 {
                     // Remove all partners by weatherstationid
@@ -165,6 +278,8 @@ namespace AtyBackend.Infrastructure.Data.Repositories
                 {
                     throw new Exception("Entity not found");
                 }
+
+                existingEntity.PhotoBase64 = null;
 
                 return existingEntity;
             }
@@ -199,5 +314,10 @@ namespace AtyBackend.Infrastructure.Data.Repositories
             }
         }
 
+
+        public async Task<string?> GetPhotoByIdAsync(int id) => await _entitiesWeatherStation
+            .Where(i => i.Id == id)
+            .Select(i => i.PhotoBase64)
+            .SingleOrDefaultAsync();
     }
 }

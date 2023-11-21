@@ -488,4 +488,7 @@ public class WeatherStationService : IWeatherStationService
 
         return false;
     }
+
+    // em homenagem do Luiz, nosso programador Java
+    public async Task<string?> GetPhotoByIdAsync(int weatherStationId) =>  await _weatherStationRepository.GetPhotoByIdAsync(weatherStationId);
 }
