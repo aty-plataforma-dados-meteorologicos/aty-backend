@@ -408,7 +408,7 @@ public class WeatherStationsController : ControllerBase
             paginated.NextPageUrl = paginated.NextPageUrl is null ? null : paginated.NextPageUrl + filter;
         }
 
-        return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
+        return paginated.Data.Count() < 1 ? NoContent() : paginated.TotalItems < 1 ? NoContent() : Ok(paginated);
     }
 
     // admin ver as requests por estação meteorológica
@@ -437,7 +437,7 @@ public class WeatherStationsController : ControllerBase
                 paginated.NextPageUrl = paginated.NextPageUrl is null ? null : paginated.NextPageUrl + filter;
             }
 
-            return paginated.Data.Count() < 1 ? NotFound("Empty page") : paginated.TotalItems < 1 ? NotFound("Weather Stations not found") : Ok(paginated);
+            return paginated.Data.Count() < 1 ? NoContent() : paginated.TotalItems < 1 ? NoContent() : Ok(paginated);
         }
 
         return Unauthorized("Unauthorized");
@@ -453,7 +453,7 @@ public class WeatherStationsController : ControllerBase
         if (await _weatherStationService.IsAdminManagerMainteiner(weatherStationId, userEmail))
         {
 
-            return await _weatherStationService.UpdateDataAccess(userId, weatherStationId, newAuth) ? Ok() : NotFound("Data access request not found");
+            return await _weatherStationService.UpdateDataAccess(userId, weatherStationId, newAuth) ? Ok() : NoContent();
         }
 
         return Unauthorized("Unauthorized");
@@ -469,7 +469,7 @@ public class WeatherStationsController : ControllerBase
 
         if (result is null)
         {
-            return NotFound("Photo not found");
+            return NoContent();
         }
 
         return result;
