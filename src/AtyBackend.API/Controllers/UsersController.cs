@@ -305,7 +305,7 @@ public class UsersController : ControllerBase
 
                 await _userManager.UpdateAsync(user);
 
-                var result = await SendResetPasswordEmail(user.Email, user.ResetPasswordCode.Value);
+                var result = await SendResetPasswordEmail(user.Email, user.ResetPasswordCode.Value, resetPasswordCodeValidityInMinutes);
 
                 return result ? Ok($"Password reset email sent to {requestResetPassword.Email}") : BadRequest("Error sending email");
             }
@@ -352,12 +352,12 @@ public class UsersController : ControllerBase
         }
     }
 
-    private async Task<bool> SendResetPasswordEmail(string email, int code)
+    private async Task<bool> SendResetPasswordEmail(string email, int code, int codeValidityInMinutes)
     {
         try
         {
             string subject = "ATY - Reset Password Code";
-            string message = $"Your reset password code is {code}";
+            string message = $"Your reset password code is {code}. Expires in {codeValidityInMinutes} minutes.";
             await _sendEmail.SendEmailAsync(email, subject, message);
             return true;
         }
