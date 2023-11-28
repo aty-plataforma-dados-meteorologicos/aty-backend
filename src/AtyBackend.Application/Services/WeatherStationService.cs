@@ -376,6 +376,17 @@ public class WeatherStationService : IWeatherStationService
             var userEntity = _mapper.Map<WeatherStationUser>(userDto);
             userEntity = await _weatherStationUserRepository.CreateAsync(userEntity);
         }
+        else
+        {
+            var uws = userWeatherStation.FirstOrDefault();
+
+            if (uws.IsDataAuthorized == DataAuthEnum.NO)
+            {
+                uws.IsDataAuthorized = DataAuthEnum.PENDING;
+                await _weatherStationUserRepository.UpdateAsync(uws);
+            }
+        }
+
     }
 
     public async Task<Paginated<WeatherStationAccessInfo>> GetDataAccessRequest(string userEmail, int pageNumber, int pageSize, DataAuthEnum? filter)
